@@ -55,6 +55,42 @@
         </div>
     </div>
 
+    <!-- EXCEL-STYLE SERVICE MODAL -->
+    <div id="serviceModal" class="hidden fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-800 w-full max-w-2xl rounded-2xl p-6 shadow-2xl space-y-4">
+            <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+                <h3 class="text-sm font-bold text-white flex items-center gap-2"><i class="fa-solid fa-screwdriver-wrench text-pink-600"></i> Нов Сервис (Excel Формат)</h3>
+                <button onclick="app.closeServiceModal()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                <div>
+                    <label class="block text-slate-400 mb-1">Избери Возило:</label>
+                    <select id="modalSVehicle" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white"><option value="">-- Избери возило --</option></select>
+                </div>
+                <div>
+                    <label class="block text-slate-400 mb-1">Зафат / Дел (напр. Ламела, Мал сервис):</label>
+                    <input type="text" id="modalSDesc" placeholder="Внеси опис..." class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white">
+                </div>
+                <div>
+                    <label class="block text-slate-400 mb-1">Цена (МКД):</label>
+                    <input type="number" id="modalSCost" placeholder="0" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white">
+                </div>
+                <div>
+                    <label class="block text-slate-400 mb-1">Километри при сервис:</label>
+                    <input type="number" id="modalSKm" placeholder="0" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white">
+                </div>
+                <div class="sm:col-span-2">
+                    <label class="block text-slate-400 mb-1">Следен сервис на Км (Потсетник):</label>
+                    <input type="number" id="modalSNextKm" placeholder="на пр. 150000" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white">
+                </div>
+            </div>
+            <div class="flex justify-end gap-2 pt-2 border-t border-slate-800">
+                <button onclick="app.closeServiceModal()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 rounded-xl text-xs text-slate-300">Откажи</button>
+                <button onclick="app.saveModalService()" class="px-4 py-2 bg-pink-600 hover:bg-pink-500 rounded-xl text-xs font-semibold text-white shadow-md">Зачувај Сервис</button>
+            </div>
+        </div>
+    </div>
+
     <!-- MAIN APP -->
     <div class="p-6 max-w-7xl mx-auto w-full flex-1 flex flex-col">
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 border-b border-slate-800 pb-4 gap-4">
@@ -150,9 +186,11 @@
         <!-- TAB 2: FUEL -->
         <div id="tabFuel" class="hidden space-y-6">
             <div id="adminPanelFuel" class="hidden bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl">
-                <h3 class="text-sm font-bold text-white mb-3 flex items-center gap-2"><i class="fa-solid fa-plus-circle text-pink-600"></i> Евиденција на Точење Гориво (со Км)</h3>
+                <h3 class="text-sm font-bold text-white mb-3 flex items-center gap-2"><i class="fa-solid fa-plus-circle text-pink-600"></i> Евиденција на Точење Гориво (со Км и менија)</h3>
                 <div class="grid grid-cols-1 sm:grid-cols-7 gap-3 text-xs">
-                    <input type="text" id="fVehicle" placeholder="Возило / Табличка" class="bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white">
+                    <select id="fVehicle" class="bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white">
+                        <option value="">-- Избери возило --</option>
+                    </select>
                     <select id="fType" class="bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white">
                         <option value="Дизел">Дизел</option>
                         <option value="Бензин">Бензин</option>
@@ -162,7 +200,9 @@
                     <input type="number" id="fLiters" placeholder="Литри" class="bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white">
                     <input type="number" id="fCost" placeholder="Сума (МКД)" class="bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white">
                     <input type="number" id="fKm" placeholder="Километри при точење" class="bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white">
-                    <input type="text" id="fDriver" placeholder="Возач" class="bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white">
+                    <select id="fDriver" class="bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white">
+                        <option value="">-- Избери возач --</option>
+                    </select>
                     <button onclick="app.addFuel()" class="bg-pink-600 hover:bg-pink-500 text-white font-semibold py-2 rounded-xl transition shadow-md">Зачувај</button>
                 </div>
             </div>
@@ -192,16 +232,14 @@
 
         <!-- TAB 3: SERVICE -->
         <div id="tabService" class="hidden space-y-6">
-            <div id="adminPanelService" class="hidden bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl">
-                <h3 class="text-sm font-bold text-white mb-3 flex items-center gap-2"><i class="fa-solid fa-plus-circle text-pink-600"></i> Нов Сервис & Километражен потсетник</h3>
-                <div class="grid grid-cols-1 sm:grid-cols-6 gap-3 text-xs">
-                    <input type="text" id="sVehicle" placeholder="Возило / Табличка" class="bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white">
-                    <input type="text" id="sDesc" placeholder="Опис (Мал сервис, Ламела, Гуми)" class="bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white">
-                    <input type="number" id="sCost" placeholder="Цена (МКД)" class="bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white">
-                    <input type="number" id="sKm" placeholder="Километри при сервис" class="bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white">
-                    <input type="number" id="sNextKm" placeholder="Следен сервис на Км" class="bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white" title="На која км треба повторно сервис">
-                    <button onclick="app.addService()" class="bg-pink-600 hover:bg-pink-500 text-white font-semibold py-2 rounded-xl transition shadow-md">Зачувај Сервис</button>
+            <div id="adminPanelService" class="hidden bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl flex justify-between items-center">
+                <div>
+                    <h3 class="text-sm font-bold text-white mb-1"><i class="fa-solid fa-screwdriver-wrench text-pink-600"></i> Управување со Сервиси</h3>
+                    <p class="text-xs text-slate-400">Внеси нов сервис преку професионален Ексел-лик прозорец со километри и потсетници.</p>
                 </div>
+                <button onclick="app.openServiceModal()" class="bg-pink-600 hover:bg-pink-500 text-white font-semibold px-4 py-2.5 rounded-xl transition shadow-md text-xs flex items-center gap-2">
+                    <i class="fa-solid fa-plus"></i> <span>Внеси Нов Сервис (Excel Прозорец)</span>
+                </button>
             </div>
             <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl">
                 <h3 class="text-sm font-bold text-white mb-4 flex items-center gap-2"><i class="fa-solid fa-screwdriver-wrench text-pink-600"></i> Историја на Сервиси и Километри</h3>
@@ -231,8 +269,12 @@
             <div id="adminPanelTolls" class="hidden bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl">
                 <h3 class="text-sm font-bold text-white mb-3 flex items-center gap-2"><i class="fa-solid fa-plus-circle text-pink-600"></i> Патарина, Возач, Патен Налог & Релација</h3>
                 <div class="grid grid-cols-1 sm:grid-cols-6 gap-3 text-xs">
-                    <input type="text" id="tVehicle" placeholder="Возило / Табличка" class="bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white">
-                    <input type="text" id="tDriver" placeholder="Име на возач" class="bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white">
+                    <select id="tVehicle" class="bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white">
+                        <option value="">-- Избери возило --</option>
+                    </select>
+                    <select id="tDriver" class="bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white">
+                        <option value="">-- Избери возач --</option>
+                    </select>
                     <input type="text" id="tWaybill" placeholder="Бр. на патен налог" class="bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white">
                     <input type="text" id="tRoute" placeholder="Релација (на пр. Скопје - Куманово)" class="bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white">
                     <input type="number" id="tCost" placeholder="Сума за патарина (МКД)" class="bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white">
@@ -265,10 +307,10 @@
         <!-- TAB 5: REPORTS & ADVANCED FILTERS -->
         <div id="tabReports" class="hidden space-y-6">
             <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-4">
-                <h3 class="text-sm font-bold text-white flex items-center gap-2"><i class="fa-solid fa-chart-pie text-pink-600"></i> Филтри & Напредни Извештаи</h3>
-                <p class="text-xs text-slate-400">Избери период и возило (поединечно или сите) за комплетен извештај за сите трошоци, точења со километри, сервиси и патарини со релации.</p>
+                <h3 class="text-sm font-bold text-white flex items-center gap-2"><i class="fa-solid fa-chart-pie text-pink-600"></i> Филтри & Напредни Извештаи (Поединечно, Група или Избор)</h3>
+                <p class="text-xs text-slate-400">Избери временски период и штиклирај ги саканите возила (едно, повеќе или сите во група) за детален увид во секој зафат (ламела, сервиси, гориво, патарини).</p>
                 
-                <div class="grid grid-cols-1 sm:grid-cols-4 gap-3 text-xs bg-slate-950 p-4 rounded-xl border border-slate-800">
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs bg-slate-950 p-4 rounded-xl border border-slate-800">
                     <div>
                         <label class="block text-slate-400 mb-1">Од датум:</label>
                         <input type="date" id="repStartDate" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white">
@@ -277,19 +319,27 @@
                         <label class="block text-slate-400 mb-1">До датум:</label>
                         <input type="date" id="repEndDate" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white">
                     </div>
-                    <div>
-                        <label class="block text-slate-400 mb-1">Избери возило:</label>
-                        <select id="repVehicle" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white">
-                            <option value="all">Сите возила (Група)</option>
-                        </select>
-                    </div>
                     <div class="flex items-end">
-                        <button onclick="app.generateReport()" class="w-full bg-pink-600 hover:bg-pink-500 text-white font-semibold py-2 rounded-xl transition shadow-md"><i class="fa-solid fa-magnifying-glass mr-1"></i> Генерирај</button>
+                        <button onclick="app.generateReport()" class="w-full bg-pink-600 hover:bg-pink-500 text-white font-semibold py-2 rounded-xl transition shadow-md"><i class="fa-solid fa-magnifying-glass mr-1"></i> Генерирај Извештај</button>
+                    </div>
+                </div>
+
+                <!-- VEHICLES CHECKBOX SELECTION -->
+                <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 text-xs">
+                    <div class="flex justify-between items-center mb-2">
+                        <label class="font-bold text-slate-300">Избери возила за извештај (Штиклирај ги саканите):</label>
+                        <div class="space-x-3">
+                            <button onclick="app.selectAllVehicles(true)" class="text-pink-500 hover:underline">Штиклирај сите</button>
+                            <button onclick="app.selectAllVehicles(false)" class="text-slate-400 hover:underline">Одштиклирај сите</button>
+                        </div>
+                    </div>
+                    <div id="reportVehicleCheckboxes" class="grid grid-cols-2 sm:grid-cols-4 gap-2 mt-2 max-h-32 overflow-y-auto p-2 bg-slate-900 rounded-lg border border-slate-800">
+                        <span class="text-slate-500">Вчитување возила...</span>
                     </div>
                 </div>
 
                 <div id="reportResultArea" class="mt-4 p-4 bg-slate-950 rounded-xl border border-slate-800 text-xs text-slate-300 space-y-4">
-                    <p class="text-slate-500 text-center py-4">Кликни „Генерирај“ за комплетен приказ на сите евидентирани податоци.</p>
+                    <p class="text-slate-500 text-center py-4">Кликни „Генерирај Извештај“ за целосен приказ.</p>
                 </div>
             </div>
         </div>
@@ -332,29 +382,62 @@
                 document.getElementById('tab' + tab.charAt(0).toUpperCase() + tab.slice(1)).classList.remove('hidden');
                 document.getElementById('tabBtn' + tab.charAt(0).toUpperCase() + tab.slice(1)).className = 'px-4 py-2 rounded-xl text-xs font-semibold bg-pink-600 text-white transition whitespace-nowrap';
             },
+            openServiceModal() {
+                document.getElementById('serviceModal').classList.remove('hidden');
+            },
+            closeServiceModal() {
+                document.getElementById('serviceModal').classList.add('hidden');
+                document.getElementById('modalSDesc').value = '';
+                document.getElementById('modalSCost').value = '';
+                document.getElementById('modalSKm').value = '';
+                document.getElementById('modalSNextKm').value = '';
+            },
             initData() {
-                // Populate vehicle dropdown and main table
                 db.ref('vehicles').on('value', (snapshot) => {
                     const data = snapshot.val();
                     const tbody = document.getElementById('vehiclesTableBody');
-                    const repSelect = document.getElementById('repVehicle');
+                    const fVehSelect = document.getElementById('fVehicle');
+                    const tVehSelect = document.getElementById('tVehicle');
+                    const modalSVSelect = document.getElementById('modalSVehicle');
+                    const cbContainer = document.getElementById('reportVehicleCheckboxes');
+
                     tbody.innerHTML = '';
-                    repSelect.innerHTML = `<option value="all">Сите возила (Група)</option>`;
-                    
+                    fVehSelect.innerHTML = `<option value="">-- Избери возило --</option>`;
+                    tVehSelect.innerHTML = `<option value="">-- Избери возило --</option>`;
+                    modalSVSelect.innerHTML = `<option value="">-- Избери возило --</option>`;
+                    cbContainer.innerHTML = '';
+
+                    // Collect unique drivers as well
+                    const driversSet = new Set();
+
                     if (!data) {
                         tbody.innerHTML = `<tr><td colspan="7" class="text-center py-6 text-slate-500">Нема внесено возила.</td></tr>`;
+                        cbContainer.innerHTML = `<span class="text-slate-500">Нема возила.</span>`;
                         document.getElementById('statTotalVehicles').innerText = '0';
                         document.getElementById('statExpiring').innerText = '0';
                         return;
                     }
+
                     const today = new Date();
                     let totalCount = 0;
                     let expiringCount = 0;
+
                     Object.keys(data).forEach(key => {
                         totalCount++;
                         const v = data[key];
-                        // Populate report dropdown with vehicle plate or model
-                        repSelect.innerHTML += `<option value="${v.plate}">${v.model} (${v.plate})</option>`;
+                        if(v.driver) driversSet.add(v.driver);
+
+                        const optHtml = `<option value="${v.plate}">${v.model} (${v.plate})</option>`;
+                        fVehSelect.innerHTML += optHtml;
+                        tVehSelect.innerHTML += optHtml;
+                        modalSVSelect.innerHTML += optHtml;
+
+                        cbContainer.innerHTML += `
+                            <label class="flex items-center gap-2 text-slate-300 cursor-pointer hover:text-white">
+                                <input type="checkbox" name="reportVehicleCb" value="${v.plate}" checked class="rounded bg-slate-800 border-slate-700 text-pink-600 focus:ring-0">
+                                <span>${v.model} (${v.plate})</span>
+                            </label>
+                        `;
 
                         let regBadge = v.regDate || 'Нема';
                         if(v.regDate) {
@@ -386,11 +469,22 @@
                             </tr>
                         `;
                     });
+
+                    // Populate drivers dropdowns
+                    const fDrvSelect = document.getElementById('fDriver');
+                    const tDrvSelect = document.getElementById('tDriver');
+                    fDrvSelect.innerHTML = `<option value="">-- Избери возач --</option>`;
+                    tDrvSelect.innerHTML = `<option value="">-- Избери возач --</option>`;
+                    driversSet.forEach(drv => {
+                        fDrvSelect.innerHTML += `<option value="${drv}">${drv}</option>`;
+                        tDrvSelect.innerHTML += `<option value="${drv}">${drv}</option>`;
+                    });
+
                     document.getElementById('statTotalVehicles').innerText = totalCount;
                     document.getElementById('statExpiring').innerText = expiringCount;
                 });
 
-                // Fuel
+                // Fuel listener
                 db.ref('fuel').on('value', (snapshot) => {
                     const data = snapshot.val();
                     const tbody = document.getElementById('fuelTableBody');
@@ -415,7 +509,7 @@
                     });
                 });
 
-                // Service
+                // Service listener
                 db.ref('service').on('value', (snapshot) => {
                     const data = snapshot.val();
                     const tbody = document.getElementById('serviceTableBody');
@@ -439,7 +533,7 @@
                     });
                 });
 
-                // Tolls & Waybills
+                // Tolls listener
                 db.ref('tolls').on('value', (snapshot) => {
                     const data = snapshot.val();
                     const tbody = document.getElementById('tollsTableBody');
@@ -475,6 +569,9 @@
                     document.getElementById('statTotalCosts').innerText = totalCostsSum.toLocaleString() + ' ден.';
                 });
             },
+            selectAllVehicles(status) {
+                document.querySelectorAll('input[name="reportVehicleCb"]').forEach(cb => cb.checked = status);
+            },
             addVehicle() {
                 const model = document.getElementById('vModel').value.trim();
                 const plate = document.getElementById('vPlate').value.trim();
@@ -492,47 +589,39 @@
                 document.getElementById('vDocDate').value = '';
             },
             addFuel() {
-                const vehicle = document.getElementById('fVehicle').value.trim();
+                const vehicle = document.getElementById('fVehicle').value;
                 const type = document.getElementById('fType').value;
                 const liters = document.getElementById('fLiters').value.trim();
                 const cost = document.getElementById('fCost').value.trim();
                 const km = document.getElementById('fKm').value.trim();
-                const driver = document.getElementById('fDriver').value.trim();
-                if(!vehicle || !liters || !cost) { alert('Пополни ги задолжителните полиња!'); return; }
+                const driver = document.getElementById('fDriver').value;
+                if(!vehicle || !liters || !cost) { alert('Избери возило и внеси литри и сума!'); return; }
                 const date = new Date().toISOString().split('T')[0];
                 db.ref('fuel').push({ vehicle, type, liters, cost, km, driver, date });
-                document.getElementById('fVehicle').value = '';
                 document.getElementById('fLiters').value = '';
                 document.getElementById('fCost').value = '';
                 document.getElementById('fKm').value = '';
-                document.getElementById('fDriver').value = '';
             },
-            addService() {
-                const vehicle = document.getElementById('sVehicle').value.trim();
-                const desc = document.getElementById('sDesc').value.trim();
-                const cost = document.getElementById('sCost').value.trim();
-                const km = document.getElementById('sKm').value.trim();
-                const nextKm = document.getElementById('sNextKm').value.trim();
-                if(!vehicle || !desc || !cost) { alert('Пополни ги задолжителните полиња!'); return; }
+            saveModalService() {
+                const vehicle = document.getElementById('modalSVehicle').value;
+                const desc = document.getElementById('modalSDesc').value.trim();
+                const cost = document.getElementById('modalSCost').value.trim();
+                const km = document.getElementById('modalSKm').value.trim();
+                const nextKm = document.getElementById('modalSNextKm').value.trim();
+                if(!vehicle || !desc || !cost) { alert('Избери возило, опис и цена!'); return; }
                 const date = new Date().toISOString().split('T')[0];
                 db.ref('service').push({ vehicle, desc, cost, km, nextKm, date });
-                document.getElementById('sVehicle').value = '';
-                document.getElementById('sDesc').value = '';
-                document.getElementById('sCost').value = '';
-                document.getElementById('sKm').value = '';
-                document.getElementById('sNextKm').value = '';
+                this.closeServiceModal();
             },
             addToll() {
-                const vehicle = document.getElementById('tVehicle').value.trim();
-                const driver = document.getElementById('tDriver').value.trim();
+                const vehicle = document.getElementById('tVehicle').value;
+                const driver = document.getElementById('tDriver').value;
                 const waybill = document.getElementById('tWaybill').value.trim();
                 const route = document.getElementById('tRoute').value.trim();
                 const cost = document.getElementById('tCost').value.trim();
-                if(!vehicle || !cost) { alert('Внеси возило и сума!'); return; }
+                if(!vehicle || !cost) { alert('Избери возило и внеси сума!'); return; }
                 const date = new Date().toISOString().split('T')[0];
                 db.ref('tolls').push({ vehicle, driver, waybill, route, cost, date });
-                document.getElementById('tVehicle').value = '';
-                document.getElementById('tDriver').value = '';
                 document.getElementById('tWaybill').value = '';
                 document.getElementById('tRoute').value = '';
                 document.getElementById('tCost').value = '';
@@ -545,8 +634,18 @@
             generateReport() {
                 const sDate = document.getElementById('repStartDate').value;
                 const eDate = document.getElementById('repEndDate').value;
-                const vFilter = document.getElementById('repVehicle').value;
+                
+                const selectedVehicles = [];
+                document.querySelectorAll('input[name="reportVehicleCb"]:checked').forEach(cb => {
+                    selectedVehicles.push(cb.value);
+                });
+
                 const resArea = document.getElementById('reportResultArea');
+
+                if(selectedVehicles.length === 0) {
+                    resArea.innerHTML = `<p class="text-amber-400 text-center py-4">Мора да избереш барем едно возило од листите погоре!</p>`;
+                    return;
+                }
 
                 Promise.all([
                     db.ref('fuel').once('value'),
@@ -561,7 +660,7 @@
                     let fRows = '', sRows = '', tRows = '';
 
                     Object.values(fuels).forEach(f => {
-                        if(vFilter === 'all' || f.vehicle === vFilter) {
+                        if(selectedVehicles.includes(f.vehicle)) {
                             if((!sDate || f.date >= sDate) && (!eDate || f.date <= eDate)) {
                                 fTotal += Number(f.cost) || 0;
                                 fRows += `<tr class="border-b border-slate-800/40"><td class="py-2 px-2">${f.date}</td><td class="py-2 px-2 font-medium text-white">${f.vehicle}</td><td class="py-2 px-2">${f.type}</td><td class="py-2 px-2">${f.liters} L</td><td class="py-2 px-2">${f.cost} ден.</td><td class="py-2 px-2">${f.km || '-'} км</td><td class="py-2 px-2">${f.driver || '-'}</td></tr>`;
@@ -570,21 +669,19 @@
                     });
 
                     Object.values(servs).forEach(s => {
-                        if(vFilter === 'all' || s.vehicle === vFilter) {
+                        if(selectedVehicles.includes(s.vehicle)) {
                             if((!sDate || s.date >= sDate) && (!eDate || s.date <= eDate)) {
                                 sTotal += Number(s.cost) || 0;
-                                sRows += `<tr class="border-b border-slate-800/40"><td class="py-2 px-2">${s.date}</td><td class="py-2 px-2 font-medium text-white">${s.vehicle}</td><td class="py-2 px-2">${s.desc}</td><td class="py-2 px-2">${s.cost} ден.</td><td class="py-2 px-2">${s.km || '-'} км</td><td class="py-2 px-2 text-amber-400">${s.nextKm || '-'} км</td></tr>`;
+                                sRows += `<tr class="border-b border-slate-800/40"><td class="py-2 px-2">${s.date}</td><td class="py-2 px-2 font-medium text-white">${s.vehicle}</td><td class="py-2 px-2 font-bold text-pink-400">${s.desc}</td><td class="py-2 px-2">${s.cost} ден.</td><td class="py-2 px-2">${s.km || '-'} км</td><td class="py-2 px-2 text-amber-400">${s.nextKm || '-'} км</td></tr>`;
                             }
                         }
                     });
 
                     Object.values(tolls).forEach(t => {
-                        if(vFilter === 'all' || t.vehicle === t.vehicle) { // safety check
-                            if(vFilter === 'all' || t.vehicle === vFilter) {
-                                if((!sDate || t.date >= sDate) && (!eDate || t.date <= eDate)) {
-                                    tTotal += Number(t.cost) || 0;
-                                    tRows += `<tr class="border-b border-slate-800/40"><td class="py-2 px-2">${t.date}</td><td class="py-2 px-2 font-medium text-white">${t.vehicle}</td><td class="py-2 px-2">${t.driver || '-'}</td><td class="py-2 px-2">${t.waybill || '-'}</td><td class="py-2 px-2">${t.route || '-'}</td><td class="py-2 px-2">${t.cost} ден.</td></tr>`;
-                                }
+                        if(selectedVehicles.includes(t.vehicle)) {
+                            if((!sDate || t.date >= sDate) && (!eDate || t.date <= eDate)) {
+                                tTotal += Number(t.cost) || 0;
+                                tRows += `<tr class="border-b border-slate-800/40"><td class="py-2 px-2">${t.date}</td><td class="py-2 px-2 font-medium text-white">${t.vehicle}</td><td class="py-2 px-2">${t.driver || '-'}</td><td class="py-2 px-2 font-semibold">${t.waybill || '-'}</td><td class="py-2 px-2">${t.route || '-'}</td><td class="py-2 px-2">${t.cost} ден.</td></tr>`;
                             }
                         }
                     });
@@ -594,8 +691,8 @@
                     resArea.innerHTML = `
                         <div class="border-b border-slate-800 pb-3 flex justify-between items-center flex-wrap gap-2">
                             <div>
-                                <h4 class="font-bold text-white text-sm">Извештај (Период: ${sDate || 'Почеток'} до ${eDate || 'Денес'} | Возило: ${vFilter})</h4>
-                                <p class="text-xs text-slate-400 mt-0.5">Ги прикажува сите евидентирани трошоци, точења со километри, сервиси и патарини.</p>
+                                <h4 class="font-bold text-white text-sm">Извештај (Период: ${sDate || 'Почеток'} до ${eDate || 'Денес'} | Избрани возила: ${selectedVehicles.join(', ')})</h4>
+                                <p class="text-xs text-slate-400 mt-0.5">Ги прикажува сите евидентирани трошоци, точења со километри, сервиси (ламели итн.), патарини и релации.</p>
                             </div>
                             <div class="bg-pink-950/60 border border-pink-900 px-4 py-2 rounded-xl text-right">
                                 <span class="text-[10px] text-pink-300 block">ВКУПНИ ТРОШОЦИ</span>
@@ -616,10 +713,10 @@
 
                         <!-- SERVICE REPORT -->
                         <div>
-                            <h5 class="font-bold text-white mb-2 flex items-center gap-2"><i class="fa-solid fa-screwdriver-wrench text-pink-500"></i> Сервиси (${sTotal.toLocaleString()} ден.)</h5>
+                            <h5 class="font-bold text-white mb-2 flex items-center gap-2"><i class="fa-solid fa-screwdriver-wrench text-pink-500"></i> Сервиси & Зафати (${sTotal.toLocaleString()} ден.)</h5>
                             <div class="overflow-x-auto bg-slate-900 rounded-xl p-2 border border-slate-800">
                                 <table class="w-full text-left text-xs">
-                                    <thead><tr class="border-b border-slate-800 text-slate-400"><th class="py-2 px-2">Датум</th><th class="py-2 px-2">Возило</th><th class="py-2 px-2">Опис / Зафат</th><th class="py-2 px-2">Цена</th><th class="py-2 px-2">Км при сервис</th><th class="py-2 px-2">Следен сервис (Км)</th></tr></thead>
+                                    <thead><tr class="border-b border-slate-800 text-slate-400"><th class="py-2 px-2">Датум</th><th class="py-2 px-2">Возило</th><th class="py-2 px-2">Зафат / Дел</th><th class="py-2 px-2">Цена</th><th class="py-2 px-2">Км при сервис</th><th class="py-2 px-2">Следен сервис (Км)</th></tr></thead>
                                     <tbody>${sRows || '<tr><td colspan="6" class="text-center py-3 text-slate-500">Нема сервиси.</td></tr>'}</tbody>
                                 </table>
                             </div>
@@ -627,7 +724,7 @@
 
                         <!-- TOLLS REPORT -->
                         <div>
-                            <h5 class="font-bold text-white mb-2 flex items-center gap-2"><i class="fa-solid fa-road text-pink-500"></i> Патарини & Патни Налози (${tTotal.toLocaleString()} ден.)</h5>
+                            <h5 class="font-bold text-white mb-2 flex items-center gap-2"><i class="fa-solid fa-road text-pink-500"></i> Патарини, Налози & Релации (${tTotal.toLocaleString()} ден.)</h5>
                             <div class="overflow-x-auto bg-slate-900 rounded-xl p-2 border border-slate-800">
                                 <table class="w-full text-left text-xs">
                                     <thead><tr class="border-b border-slate-800 text-slate-400"><th class="py-2 px-2">Датум</th><th class="py-2 px-2">Возило</th><th class="py-2 px-2">Возач</th><th class="py-2 px-2">Патен Налог</th><th class="py-2 px-2">Релација</th><th class="py-2 px-2">Патарина</th></tr></thead>
