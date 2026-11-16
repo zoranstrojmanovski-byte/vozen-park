@@ -68,34 +68,108 @@
             </div>
         </div>
 
-        <!-- ADMIN CONTROLS -->
-        <div id="adminPanel" class="hidden bg-slate-900 border border-slate-800 rounded-2xl p-5 mb-6 shadow-xl">
-            <h3 class="text-sm font-bold text-white mb-3 flex items-center gap-2"><i class="fa-solid fa-plus-circle text-pink-600"></i> Внеси Ново Возило</h3>
-            <div class="grid grid-cols-1 sm:grid-cols-4 gap-3 text-xs">
-                <input type="text" id="vehicleModel" placeholder="Модел на возило (на пр. Ford Transit)" class="bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white">
-                <input type="text" id="vehiclePlate" placeholder="Регистарски таблички (SK-...)" class="bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white">
-                <input type="text" id="vehicleDriver" placeholder="Задолжен возач" class="bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white">
-                <button onclick="app.addVehicle()" class="bg-pink-600 hover:bg-pink-500 text-white font-semibold py-2 rounded-xl transition shadow-md">Зачувај Возило</button>
+        <!-- TABS -->
+        <div class="flex gap-2 mb-6">
+            <button onclick="app.switchTab('vehicles')" id="tabBtnVehicles" class="px-4 py-2 rounded-xl text-xs font-semibold bg-pink-600 text-white transition"><i class="fa-solid fa-truck mr-1.5"></i> Возила</button>
+            <button onclick="app.switchTab('fuel')" id="tabBtnFuel" class="px-4 py-2 rounded-xl text-xs font-semibold bg-slate-900 border border-slate-800 text-slate-300 hover:bg-slate-800 transition"><i class="fa-solid fa-gas-pump mr-1.5"></i> Точење Гориво</button>
+            <button onclick="app.switchTab('service')" id="tabBtnService" class="px-4 py-2 rounded-xl text-xs font-semibold bg-slate-900 border border-slate-800 text-slate-300 hover:bg-slate-800 transition"><i class="fa-solid fa-screwdriver-wrench mr-1.5"></i> Сервиси и Трошоци</button>
+        </div>
+
+        <!-- TAB 1: VEHICLES -->
+        <div id="tabVehicles" class="space-y-6">
+            <div id="adminPanelVehicles" class="hidden bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl">
+                <h3 class="text-sm font-bold text-white mb-3 flex items-center gap-2"><i class="fa-solid fa-plus-circle text-pink-600"></i> Внеси Ново Возило</h3>
+                <div class="grid grid-cols-1 sm:grid-cols-4 gap-3 text-xs">
+                    <input type="text" id="vModel" placeholder="Модел (на пр. Ford Transit)" class="bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white">
+                    <input type="text" id="vPlate" placeholder="Таблички (SK-0000-XX)" class="bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white">
+                    <input type="text" id="vDriver" placeholder="Задолжен возач" class="bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white">
+                    <button onclick="app.addVehicle()" class="bg-pink-600 hover:bg-pink-500 text-white font-semibold py-2 rounded-xl transition shadow-md">Зачувај Возило</button>
+                </div>
+            </div>
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl">
+                <h3 class="text-sm font-bold text-white mb-4 flex items-center gap-2"><i class="fa-solid fa-list text-pink-600"></i> Список на Возила</h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs">
+                        <thead>
+                            <tr class="border-b border-slate-800 text-slate-400">
+                                <th class="pb-3 px-3">Модел</th>
+                                <th class="pb-3 px-3">Таблички</th>
+                                <th class="pb-3 px-3">Возач</th>
+                                <th class="pb-3 px-3 text-right">Акција</th>
+                            </tr>
+                        </thead>
+                        <tbody id="vehiclesTableBody">
+                            <tr><td colspan="4" class="text-center py-6 text-slate-500">Вчитување...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
 
-        <!-- VEHICLES LIST -->
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 flex-1 shadow-xl flex flex-col">
-            <h3 class="text-sm font-bold text-white mb-4 flex items-center gap-2"><i class="fa-solid fa-list text-pink-600"></i> Активни Возила во Базата</h3>
-            <div class="overflow-x-auto flex-1">
-                <table class="w-full text-left text-xs">
-                    <thead>
-                        <tr class="border-b border-slate-800 text-slate-400">
-                            <th class="pb-3 px-3">Модел</th>
-                            <th class="pb-3 px-3">Таблички</th>
-                            <th class="pb-3 px-3">Возач</th>
-                            <th class="pb-3 px-3 text-right">Акции</th>
-                        </tr>
-                    </thead>
-                    <tbody id="vehiclesTableBody">
-                        <tr><td colspan="4" class="text-center py-6 text-slate-500">Вчитување на податоци од Firebase...</td></tr>
-                    </tbody>
-                </table>
+        <!-- TAB 2: FUEL -->
+        <div id="tabFuel" class="hidden space-y-6">
+            <div id="adminPanelFuel" class="hidden bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl">
+                <h3 class="text-sm font-bold text-white mb-3 flex items-center gap-2"><i class="fa-solid fa-plus-circle text-pink-600"></i> Евиденција на Точење Гориво</h3>
+                <div class="grid grid-cols-1 sm:grid-cols-5 gap-3 text-xs">
+                    <input type="text" id="fVehicle" placeholder="Возило / Табличка" class="bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white">
+                    <input type="number" id="fLiters" placeholder="Литри" class="bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white">
+                    <input type="number" id="fCost" placeholder="Сума (МКД)" class="bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white">
+                    <input type="text" id="fDriver" placeholder="Возач" class="bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white">
+                    <button onclick="app.addFuel()" class="bg-pink-600 hover:bg-pink-500 text-white font-semibold py-2 rounded-xl transition shadow-md">Зачувај Точење</button>
+                </div>
+            </div>
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl">
+                <h3 class="text-sm font-bold text-white mb-4 flex items-center gap-2"><i class="fa-solid fa-gas-pump text-pink-600"></i> Историја на Точења</h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs">
+                        <thead>
+                            <tr class="border-b border-slate-800 text-slate-400">
+                                <th class="pb-3 px-3">Датум</th>
+                                <th class="pb-3 px-3">Возило</th>
+                                <th class="pb-3 px-3">Литри</th>
+                                <th class="pb-3 px-3">Сума (МКД)</th>
+                                <th class="pb-3 px-3">Возач</th>
+                                <th class="pb-3 px-3 text-right">Акција</th>
+                            </tr>
+                        </thead>
+                        <tbody id="fuelTableBody">
+                            <tr><td colspan="6" class="text-center py-6 text-slate-500">Вчитување...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 3: SERVICE -->
+        <div id="tabService" class="hidden space-y-6">
+            <div id="adminPanelService" class="hidden bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl">
+                <h3 class="text-sm font-bold text-white mb-3 flex items-center gap-2"><i class="fa-solid fa-plus-circle text-pink-600"></i> Нов Сервис / Трошок</h3>
+                <div class="grid grid-cols-1 sm:grid-cols-5 gap-3 text-xs">
+                    <input type="text" id="sVehicle" placeholder="Возило / Табличка" class="bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white">
+                    <input type="text" id="sDesc" placeholder="Опис (на пр. Мал сервис, Гуми)" class="bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white">
+                    <input type="number" id="sCost" placeholder="Цена (МКД)" class="bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white">
+                    <input type="date" id="sDate" class="bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white">
+                    <button onclick="app.addService()" class="bg-pink-600 hover:bg-pink-500 text-white font-semibold py-2 rounded-xl transition shadow-md">Зачувај Сервис</button>
+                </div>
+            </div>
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl">
+                <h3 class="text-sm font-bold text-white mb-4 flex items-center gap-2"><i class="fa-solid fa-screwdriver-wrench text-pink-600"></i> Историја на Сервиси и Трошоци</h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs">
+                        <thead>
+                            <tr class="border-b border-slate-800 text-slate-400">
+                                <th class="pb-3 px-3">Датум</th>
+                                <th class="pb-3 px-3">Возило</th>
+                                <th class="pb-3 px-3">Опис</th>
+                                <th class="pb-3 px-3">Цена (МКД)</th>
+                                <th class="pb-3 px-3 text-right">Акција</th>
+                            </tr>
+                        </thead>
+                        <tbody id="serviceTableBody">
+                            <tr><td colspan="5" class="text-center py-6 text-slate-500">Вчитување...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
@@ -110,7 +184,10 @@
                     this.isAdmin = true;
                     document.getElementById('loginScreen').style.display = 'none';
                     document.getElementById('userRoleBadge').innerText = 'Режим: Администратор';
-                    document.getElementById('adminPanel').classList.remove('hidden');
+                    document.getElementById('adminPanelVehicles').classList.remove('hidden');
+                    document.getElementById('adminPanelFuel').classList.remove('hidden');
+                    document.getElementById('adminPanelService').classList.remove('hidden');
+                    this.initData();
                 } else {
                     alert('Погрешна лозинка!');
                 }
@@ -119,15 +196,38 @@
                 this.isAdmin = false;
                 document.getElementById('loginScreen').style.display = 'none';
                 document.getElementById('userRoleBadge').innerText = 'Режим: Само Преглед (View-Only)';
-                document.getElementById('adminPanel').classList.add('hidden');
+                document.getElementById('adminPanelVehicles').classList.add('hidden');
+                document.getElementById('adminPanelFuel').classList.add('hidden');
+                document.getElementById('adminPanelService').classList.add('hidden');
+                this.initData();
             },
-            init() {
+            switchTab(tab) {
+                document.getElementById('tabVehicles').classList.add('hidden');
+                document.getElementById('tabFuel').classList.add('hidden');
+                document.getElementById('tabService').classList.add('hidden');
+                document.getElementById('tabBtnVehicles').className = 'px-4 py-2 rounded-xl text-xs font-semibold bg-slate-900 border border-slate-800 text-slate-300 hover:bg-slate-800 transition';
+                document.getElementById('tabBtnFuel').className = 'px-4 py-2 rounded-xl text-xs font-semibold bg-slate-900 border border-slate-800 text-slate-300 hover:bg-slate-800 transition';
+                document.getElementById('tabBtnService').className = 'px-4 py-2 rounded-xl text-xs font-semibold bg-slate-900 border border-slate-800 text-slate-300 hover:bg-slate-800 transition';
+
+                if(tab === 'vehicles') {
+                    document.getElementById('tabVehicles').classList.remove('hidden');
+                    document.getElementById('tabBtnVehicles').className = 'px-4 py-2 rounded-xl text-xs font-semibold bg-pink-600 text-white transition';
+                } else if(tab === 'fuel') {
+                    document.getElementById('tabFuel').classList.remove('hidden');
+                    document.getElementById('tabBtnFuel').className = 'px-4 py-2 rounded-xl text-xs font-semibold bg-pink-600 text-white transition';
+                } else if(tab === 'service') {
+                    document.getElementById('tabService').classList.remove('hidden');
+                    document.getElementById('tabBtnService').className = 'px-4 py-2 rounded-xl text-xs font-semibold bg-pink-600 text-white transition';
+                }
+            },
+            initData() {
+                // Vehicles listener
                 db.ref('vehicles').on('value', (snapshot) => {
                     const data = snapshot.val();
                     const tbody = document.getElementById('vehiclesTableBody');
                     tbody.innerHTML = '';
                     if (!data) {
-                        tbody.innerHTML = `<tr><td colspan="4" class="text-center py-6 text-slate-500">Нема внесено возила во базата.</td></tr>`;
+                        tbody.innerHTML = `<tr><td colspan="4" class="text-center py-6 text-slate-500">Нема внесено возила.</td></tr>`;
                         return;
                     }
                     Object.keys(data).forEach(key => {
@@ -138,7 +238,58 @@
                                 <td class="py-3 px-3 text-slate-300">${v.plate}</td>
                                 <td class="py-3 px-3 text-slate-300">${v.driver}</td>
                                 <td class="py-3 px-3 text-right">
-                                    ${this.isAdmin ? `<button onclick="app.deleteVehicle('${key}')" class="text-red-400 hover:text-red-300 bg-red-950/40 border border-red-900/50 px-2.5 py-1 rounded-lg"><i class="fa-solid fa-trash"></i></button>` : '<span class="text-slate-600">-</span>'}
+                                    ${this.isAdmin ? `<button onclick="app.removeRecord('vehicles', '${key}')" class="text-red-400 hover:text-red-300 bg-red-950/40 border border-red-900/50 px-2.5 py-1 rounded-lg"><i class="fa-solid fa-trash"></i></button>` : '<span class="text-slate-600">-</span>'}
+                                </td>
+                            </tr>
+                        `;
+                    });
+                });
+
+                // Fuel listener
+                db.ref('fuel').on('value', (snapshot) => {
+                    const data = snapshot.val();
+                    const tbody = document.getElementById('fuelTableBody');
+                    tbody.innerHTML = '';
+                    if (!data) {
+                        tbody.innerHTML = `<tr><td colspan="6" class="text-center py-6 text-slate-500">Нема записи за точење.</td></tr>`;
+                        return;
+                    }
+                    Object.keys(data).forEach(key => {
+                        const f = data[key];
+                        tbody.innerHTML += `
+                            <tr class="border-b border-slate-800/50 hover:bg-slate-800/30">
+                                <td class="py-3 px-3 text-slate-400">${f.date || '-'}</td>
+                                <td class="py-3 px-3 font-medium text-white">${f.vehicle}</td>
+                                <td class="py-3 px-3 text-slate-300">${f.liters} L</td>
+                                <td class="py-3 px-3 text-slate-300">${f.cost} ден.</td>
+                                <td class="py-3 px-3 text-slate-300">${f.driver}</td>
+                                <td class="py-3 px-3 text-right">
+                                    ${this.isAdmin ? `<button onclick="app.removeRecord('fuel', '${key}')" class="text-red-400 hover:text-red-300 bg-red-950/40 border border-red-900/50 px-2.5 py-1 rounded-lg"><i class="fa-solid fa-trash"></i></button>` : '<span class="text-slate-600">-</span>'}
+                                </td>
+                            </tr>
+                        `;
+                    });
+                });
+
+                // Service listener
+                db.ref('service').on('value', (snapshot) => {
+                    const data = snapshot.val();
+                    const tbody = document.getElementById('serviceTableBody');
+                    tbody.innerHTML = '';
+                    if (!data) {
+                        tbody.innerHTML = `<tr><td colspan="5" class="text-center py-6 text-slate-500">Нема сервиси или трошоци.</td></tr>`;
+                        return;
+                    }
+                    Object.keys(data).forEach(key => {
+                        const s = data[key];
+                        tbody.innerHTML += `
+                            <tr class="border-b border-slate-800/50 hover:bg-slate-800/30">
+                                <td class="py-3 px-3 text-slate-400">${s.date || '-'}</td>
+                                <td class="py-3 px-3 font-medium text-white">${s.vehicle}</td>
+                                <td class="py-3 px-3 text-slate-300">${s.desc}</td>
+                                <td class="py-3 px-3 text-slate-300">${s.cost} ден.</td>
+                                <td class="py-3 px-3 text-right">
+                                    ${this.isAdmin ? `<button onclick="app.removeRecord('service', '${key}')" class="text-red-400 hover:text-red-300 bg-red-950/40 border border-red-900/50 px-2.5 py-1 rounded-lg"><i class="fa-solid fa-trash"></i></button>` : '<span class="text-slate-600">-</span>'}
                                 </td>
                             </tr>
                         `;
@@ -146,25 +297,46 @@
                 });
             },
             addVehicle() {
-                const model = document.getElementById('vehicleModel').value.trim();
-                const plate = document.getElementById('vehiclePlate').value.trim();
-                const driver = document.getElementById('vehicleDriver').value.trim();
-                if(!model || !plate) {
-                    alert('Внеси барем модел и таблички!');
-                    return;
-                }
-                db.ref('vehicles').push({ model, plate, driver, date: new Date().toISOString() });
-                document.getElementById('vehicleModel').value = '';
-                document.getElementById('vehiclePlate').value = '';
-                document.getElementById('vehicleDriver').value = '';
+                const model = document.getElementById('vModel').value.trim();
+                const plate = document.getElementById('vPlate').value.trim();
+                const driver = document.getElementById('vDriver').value.trim();
+                if(!model || !plate) { alert('Внеси барем модел и таблички!'); return; }
+                db.ref('vehicles').push({ model, plate, driver });
+                document.getElementById('vModel').value = '';
+                document.getElementById('vPlate').value = '';
+                document.getElementById('vDriver').value = '';
             },
-            deleteVehicle(key) {
-                if(confirm('Дали си сигурен дека сакаш да го избришеш ова возило?')) {
-                    db.ref('vehicles/' + key).remove();
+            addFuel() {
+                const vehicle = document.getElementById('fVehicle').value.trim();
+                const liters = document.getElementById('fLiters').value.trim();
+                const cost = document.getElementById('fCost').value.trim();
+                const driver = document.getElementById('fDriver').value.trim();
+                if(!vehicle || !liters || !cost) { alert('Пополни ги задолжителните полиња!'); return; }
+                const date = new Date().toLocaleDateString('mk-MK');
+                db.ref('fuel').push({ vehicle, liters, cost, driver, date });
+                document.getElementById('fVehicle').value = '';
+                document.getElementById('fLiters').value = '';
+                document.getElementById('fCost').value = '';
+                document.getElementById('fDriver').value = '';
+            },
+            addService() {
+                const vehicle = document.getElementById('sVehicle').value.trim();
+                const desc = document.getElementById('sDesc').value.trim();
+                const cost = document.getElementById('sCost').value.trim();
+                const date = document.getElementById('sDate').value.trim();
+                if(!vehicle || !desc || !cost) { alert('Пополни ги задолжителните полиња!'); return; }
+                db.ref('service').push({ vehicle, desc, cost, date: date || new Date().toLocaleDateString('mk-MK') });
+                document.getElementById('sVehicle').value = '';
+                document.getElementById('sDesc').value = '';
+                document.getElementById('sCost').value = '';
+                document.getElementById('sDate').value = '';
+            },
+            removeRecord(path, key) {
+                if(confirm('Дали си сигурен дека сакаш да го избришеш овој запис?')) {
+                    db.ref(path + '/' + key).remove();
                 }
             }
         };
-        window.onload = () => app.init();
     </script>
 </body>
 </html>
