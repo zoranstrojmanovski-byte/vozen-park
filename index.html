@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Менаџмент на Возен Парк - Сара Фешн</title>
+    <title>Менаџмент на Возен Парк & Сервисна Книга - Сара Фешн</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Firebase SDKs -->
@@ -60,7 +60,7 @@
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 border-b border-slate-800 pb-4 gap-4">
             <div>
                 <h1 class="text-xl font-bold text-white flex items-center gap-2"><i class="fa-solid fa-truck text-pink-600"></i> Сара Фешн - Возен Парк & Сервисна Книга</h1>
-                <p class="text-xs text-slate-400">Реално време: возила, километража, точења, сервиси и предупредувања за регистации</p>
+                <p class="text-xs text-slate-400">Реално време: возила, регистрации, точења, сервиси, патарини и трошоци</p>
             </div>
             <div class="flex items-center gap-3 flex-wrap">
                 <div id="userRoleBadge" class="text-xs bg-slate-900 border border-slate-800 px-3 py-1.5 rounded-xl text-slate-300">Режим: Преглед</div>
@@ -70,7 +70,7 @@
         </div>
 
         <!-- STATS / ALERTS BAR -->
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+        <div class="grid grid-cols-1 sm:grid-cols-4 gap-4 mb-6">
             <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl flex items-center gap-4 shadow-lg">
                 <div class="bg-pink-600/20 text-pink-500 p-3 rounded-xl"><i class="fa-solid fa-car text-lg"></i></div>
                 <div>
@@ -81,15 +81,22 @@
             <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl flex items-center gap-4 shadow-lg">
                 <div class="bg-amber-600/20 text-amber-500 p-3 rounded-xl"><i class="fa-solid fa-triangle-exclamation text-lg"></i></div>
                 <div>
-                    <p class="text-xs text-slate-400">Истекуваат Регистрации (30 дена)</p>
+                    <p class="text-xs text-slate-400">Истекуваат Регистрации (30 д.)</p>
                     <h3 id="statExpiring" class="text-lg font-bold text-white">0</h3>
                 </div>
             </div>
             <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl flex items-center gap-4 shadow-lg">
-                <div class="bg-emerald-600/20 text-emerald-500 p-3 rounded-xl"><i class="fa-solid fa-gas-pump text-lg"></i></div>
+                <div class="bg-blue-600/20 text-blue-500 p-3 rounded-xl"><i class="fa-solid fa-road text-lg"></i></div>
                 <div>
-                    <p class="text-xs text-slate-400">Вкупно Точења (Записи)</p>
-                    <h3 id="statTotalFuel" class="text-lg font-bold text-white">0</h3>
+                    <p class="text-xs text-slate-400">Вкупно Патарини (МКД)</p>
+                    <h3 id="statTotalTolls" class="text-lg font-bold text-white">0 ден.</h3>
+                </div>
+            </div>
+            <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl flex items-center gap-4 shadow-lg">
+                <div class="bg-emerald-600/20 text-emerald-500 p-3 rounded-xl"><i class="fa-solid fa-receipt text-lg"></i></div>
+                <div>
+                    <p class="text-xs text-slate-400">Вкупно Трошоци (МКД)</p>
+                    <h3 id="statTotalCosts" class="text-lg font-bold text-white">0 ден.</h3>
                 </div>
             </div>
         </div>
@@ -98,13 +105,15 @@
         <div class="flex gap-2 mb-6 overflow-x-auto pb-2">
             <button onclick="app.switchTab('vehicles')" id="tabBtnVehicles" class="px-4 py-2 rounded-xl text-xs font-semibold bg-pink-600 text-white transition whitespace-nowrap"><i class="fa-solid fa-truck mr-1.5"></i> Возила & Регистрации</button>
             <button onclick="app.switchTab('fuel')" id="tabBtnFuel" class="px-4 py-2 rounded-xl text-xs font-semibold bg-slate-900 border border-slate-800 text-slate-300 hover:bg-slate-800 transition whitespace-nowrap"><i class="fa-solid fa-gas-pump mr-1.5"></i> Точење Гориво</button>
-            <button onclick="app.switchTab('service')" id="tabBtnService" class="px-4 py-2 rounded-xl text-xs font-semibold bg-slate-900 border border-slate-800 text-slate-300 hover:bg-slate-800 transition whitespace-nowrap"><i class="fa-solid fa-screwdriver-wrench mr-1.5"></i> Сервиси и Трошоци</button>
+            <button onclick="app.switchTab('service')" id="tabBtnService" class="px-4 py-2 rounded-xl text-xs font-semibold bg-slate-900 border border-slate-800 text-slate-300 hover:bg-slate-800 transition whitespace-nowrap"><i class="fa-solid fa-screwdriver-wrench mr-1.5"></i> Сервиси</button>
+            <button onclick="app.switchTab('tolls')" id="tabBtnTolls" class="px-4 py-2 rounded-xl text-xs font-semibold bg-slate-900 border border-slate-800 text-slate-300 hover:bg-slate-800 transition whitespace-nowrap"><i class="fa-solid fa-road mr-1.5"></i> Патарини & Други Трошоци</button>
+            <button onclick="app.switchTab('reports')" id="tabBtnReports" class="px-4 py-2 rounded-xl text-xs font-semibold bg-slate-900 border border-slate-800 text-slate-300 hover:bg-slate-800 transition whitespace-nowrap"><i class="fa-solid fa-chart-pie mr-1.5"></i> Извештаи</button>
         </div>
 
         <!-- TAB 1: VEHICLES -->
         <div id="tabVehicles" class="space-y-6">
             <div id="adminPanelVehicles" class="hidden bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl">
-                <h3 class="text-sm font-bold text-white mb-3 flex items-center gap-2"><i class="fa-solid fa-plus-circle text-pink-600"></i> Внеси Ново Возило / Сервисна Книга</h3>
+                <h3 class="text-sm font-bold text-white mb-3 flex items-center gap-2"><i class="fa-solid fa-plus-circle text-pink-600"></i> Внеси Ново Возило</h3>
                 <div class="grid grid-cols-1 sm:grid-cols-6 gap-3 text-xs">
                     <input type="text" id="vModel" placeholder="Модел (на пр. Ford Transit)" class="bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white">
                     <input type="text" id="vPlate" placeholder="Таблички (SK-0000-XX)" class="bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white">
@@ -115,7 +124,7 @@
                 </div>
             </div>
             <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl">
-                <h3 class="text-sm font-bold text-white mb-4 flex items-center gap-2"><i class="fa-solid fa-list text-pink-600"></i> Список на Возила, Километража и Статус на Регистрација</h3>
+                <h3 class="text-sm font-bold text-white mb-4 flex items-center gap-2"><i class="fa-solid fa-list text-pink-600"></i> Список на Возила & Статус на Регистрации</h3>
                 <div class="overflow-x-auto">
                     <table class="w-full text-left text-xs">
                         <thead>
@@ -144,7 +153,7 @@
                     <input type="text" id="fVehicle" placeholder="Возило / Табличка" class="bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white">
                     <input type="number" id="fLiters" placeholder="Литри" class="bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white">
                     <input type="number" id="fCost" placeholder="Сума (МКД)" class="bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white">
-                    <input type="number" id="fKm" placeholder="Километража при точење" class="bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white">
+                    <input type="number" id="fKm" placeholder="Километри" class="bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white">
                     <input type="text" id="fDriver" placeholder="Возач" class="bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white">
                     <button onclick="app.addFuel()" class="bg-pink-600 hover:bg-pink-500 text-white font-semibold py-2 rounded-xl transition shadow-md">Зачувај Точење</button>
                 </div>
@@ -175,17 +184,17 @@
         <!-- TAB 3: SERVICE -->
         <div id="tabService" class="hidden space-y-6">
             <div id="adminPanelService" class="hidden bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl">
-                <h3 class="text-sm font-bold text-white mb-3 flex items-center gap-2"><i class="fa-solid fa-plus-circle text-pink-600"></i> Нов Сервис / Трошок / Патарина</h3>
+                <h3 class="text-sm font-bold text-white mb-3 flex items-center gap-2"><i class="fa-solid fa-plus-circle text-pink-600"></i> Нов Сервис</h3>
                 <div class="grid grid-cols-1 sm:grid-cols-5 gap-3 text-xs">
                     <input type="text" id="sVehicle" placeholder="Возило / Табличка" class="bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white">
-                    <input type="text" id="sDesc" placeholder="Опис (Мал сервис, Гуми, Патарина)" class="bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white">
+                    <input type="text" id="sDesc" placeholder="Опис (Мал сервис, Гуми, Кочници)" class="bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white">
                     <input type="number" id="sCost" placeholder="Цена (МКД)" class="bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white">
                     <input type="date" id="sDate" class="bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white">
                     <button onclick="app.addService()" class="bg-pink-600 hover:bg-pink-500 text-white font-semibold py-2 rounded-xl transition shadow-md">Зачувај Сервис</button>
                 </div>
             </div>
             <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl">
-                <h3 class="text-sm font-bold text-white mb-4 flex items-center gap-2"><i class="fa-solid fa-screwdriver-wrench text-pink-600"></i> Историја на Сервиси и Трошоци</h3>
+                <h3 class="text-sm font-bold text-white mb-4 flex items-center gap-2"><i class="fa-solid fa-screwdriver-wrench text-pink-600"></i> Историја на Сервиси</h3>
                 <div class="overflow-x-auto">
                     <table class="w-full text-left text-xs">
                         <thead>
@@ -204,6 +213,56 @@
                 </div>
             </div>
         </div>
+
+        <!-- TAB 4: TOLLS & OTHER COSTS -->
+        <div id="tabTolls" class="hidden space-y-6">
+            <div id="adminPanelTolls" class="hidden bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl">
+                <h3 class="text-sm font-bold text-white mb-3 flex items-center gap-2"><i class="fa-solid fa-plus-circle text-pink-600"></i> Внеси Патарина или Друг Трошок</h3>
+                <div class="grid grid-cols-1 sm:grid-cols-5 gap-3 text-xs">
+                    <input type="text" id="tVehicle" placeholder="Возило / Табличка" class="bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white">
+                    <select id="tCategory" class="bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white">
+                        <option value="Патарина">Патарина</option>
+                        <option value="Паркинг">Паркинг</option>
+                        <option value="Казна / Прекршок">Казна / Прекршок</option>
+                        <option value="Друг Трошок">Друг Трошок</option>
+                    </select>
+                    <input type="number" id="tCost" placeholder="Сума (МКД)" class="bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white">
+                    <input type="text" id="tDesc" placeholder="Забелешка / Детали" class="bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white">
+                    <button onclick="app.addToll()" class="bg-pink-600 hover:bg-pink-500 text-white font-semibold py-2 rounded-xl transition shadow-md">Зачувај Трошок</button>
+                </div>
+            </div>
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl">
+                <h3 class="text-sm font-bold text-white mb-4 flex items-center gap-2"><i class="fa-solid fa-road text-pink-600"></i> Историја на Патарини и Други Трошоци</h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs">
+                        <thead>
+                            <tr class="border-b border-slate-800 text-slate-400">
+                                <th class="pb-3 px-3">Датум</th>
+                                <th class="pb-3 px-3">Возило</th>
+                                <th class="pb-3 px-3">Категорија</th>
+                                <th class="pb-3 px-3">Сума (МКД)</th>
+                                <th class="pb-3 px-3">Забелешка</th>
+                                <th class="pb-3 px-3 text-right">Акција</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tollsTableBody">
+                            <tr><td colspan="6" class="text-center py-6 text-slate-500">Вчитување...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 5: REPORTS -->
+        <div id="tabReports" class="hidden space-y-6">
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-4">
+                <h3 class="text-sm font-bold text-white flex items-center gap-2"><i class="fa-solid fa-chart-pie text-pink-600"></i> Финансиски Извештаи за Возилата</h3>
+                <p class="text-xs text-slate-400">Преглед на целокупните трошоци по сите основи (Гориво, Сервиси, Патарини и Други трошоци) во реално време.</p>
+                <div id="reportsContent" class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs pt-2">
+                    <!-- Dynamic report cards -->
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- APP LOGIC -->
@@ -219,6 +278,7 @@
                     document.getElementById('adminPanelVehicles').classList.remove('hidden');
                     document.getElementById('adminPanelFuel').classList.remove('hidden');
                     document.getElementById('adminPanelService').classList.remove('hidden');
+                    document.getElementById('adminPanelTolls').classList.remove('hidden');
                     this.initData();
                 } else {
                     alert('Погрешна лозинка!');
@@ -231,28 +291,19 @@
                 document.getElementById('adminPanelVehicles').classList.add('hidden');
                 document.getElementById('adminPanelFuel').classList.add('hidden');
                 document.getElementById('adminPanelService').classList.add('hidden');
+                document.getElementById('adminPanelTolls').classList.add('hidden');
                 this.initData();
             },
             switchTab(tab) {
-                document.getElementById('tabVehicles').classList.add('hidden');
-                document.getElementById('tabFuel').classList.add('hidden');
-                document.getElementById('tabService').classList.add('hidden');
-                document.getElementById('tabBtnVehicles').className = 'px-4 py-2 rounded-xl text-xs font-semibold bg-slate-900 border border-slate-800 text-slate-300 hover:bg-slate-800 transition whitespace-nowrap';
-                document.getElementById('tabBtnFuel').className = 'px-4 py-2 rounded-xl text-xs font-semibold bg-slate-900 border border-slate-800 text-slate-300 hover:bg-slate-800 transition whitespace-nowrap';
-                document.getElementById('tabBtnService').className = 'px-4 py-2 rounded-xl text-xs font-semibold bg-slate-900 border border-slate-800 text-slate-300 hover:bg-slate-800 transition whitespace-nowrap';
-
-                if(tab === 'vehicles') {
-                    document.getElementById('tabVehicles').classList.remove('hidden');
-                    document.getElementById('tabBtnVehicles').className = 'px-4 py-2 rounded-xl text-xs font-semibold bg-pink-600 text-white transition whitespace-nowrap';
-                } else if(tab === 'fuel') {
-                    document.getElementById('tabFuel').classList.remove('hidden');
-                    document.getElementById('tabBtnFuel').className = 'px-4 py-2 rounded-xl text-xs font-semibold bg-pink-600 text-white transition whitespace-nowrap';
-                } else if(tab === 'service') {
-                    document.getElementById('tabService').classList.remove('hidden');
-                    document.getElementById('tabBtnService').className = 'px-4 py-2 rounded-xl text-xs font-semibold bg-pink-600 text-white transition whitespace-nowrap';
-                }
+                ['vehicles', 'fuel', 'service', 'tolls', 'reports'].forEach(t => {
+                    document.getElementById('tab' + t.charAt(0).toUpperCase() + t.slice(1)).classList.add('hidden');
+                    document.getElementById('tabBtn' + t.charAt(0).toUpperCase() + t.slice(1)).className = 'px-4 py-2 rounded-xl text-xs font-semibold bg-slate-900 border border-slate-800 text-slate-300 hover:bg-slate-800 transition whitespace-nowrap';
+                });
+                document.getElementById('tab' + tab.charAt(0).toUpperCase() + tab.slice(1)).classList.remove('hidden');
+                document.getElementById('tabBtn' + tab.charAt(0).toUpperCase() + tab.slice(1)).className = 'px-4 py-2 rounded-xl text-xs font-semibold bg-pink-600 text-white transition whitespace-nowrap';
             },
             initData() {
+                // Vehicles
                 db.ref('vehicles').on('value', (snapshot) => {
                     const data = snapshot.val();
                     const tbody = document.getElementById('vehiclesTableBody');
@@ -300,18 +351,16 @@
                     document.getElementById('statExpiring').innerText = expiringCount;
                 });
 
+                // Fuel
                 db.ref('fuel').on('value', (snapshot) => {
                     const data = snapshot.val();
                     const tbody = document.getElementById('fuelTableBody');
                     tbody.innerHTML = '';
                     if (!data) {
                         tbody.innerHTML = `<tr><td colspan="7" class="text-center py-6 text-slate-500">Нема записи за точење.</td></tr>`;
-                        document.getElementById('statTotalFuel').innerText = '0';
                         return;
                     }
-                    let fuelCount = 0;
                     Object.keys(data).forEach(key => {
-                        fuelCount++;
                         const f = data[key];
                         tbody.innerHTML += `
                             <tr class="border-b border-slate-800/50 hover:bg-slate-800/30">
@@ -327,15 +376,15 @@
                             </tr>
                         `;
                     });
-                    document.getElementById('statTotalFuel').innerText = fuelCount;
                 });
 
+                // Service
                 db.ref('service').on('value', (snapshot) => {
                     const data = snapshot.val();
                     const tbody = document.getElementById('serviceTableBody');
                     tbody.innerHTML = '';
                     if (!data) {
-                        tbody.innerHTML = `<tr><td colspan="5" class="text-center py-6 text-slate-500">Нема сервиси или трошоци.</td></tr>`;
+                        tbody.innerHTML = `<tr><td colspan="5" class="text-center py-6 text-slate-500">Нема сервиси.</td></tr>`;
                         return;
                     }
                     Object.keys(data).forEach(key => {
@@ -352,6 +401,43 @@
                             </tr>
                         `;
                     });
+                });
+
+                // Tolls & Other Costs
+                db.ref('tolls').on('value', (snapshot) => {
+                    const data = snapshot.val();
+                    const tbody = document.getElementById('tollsTableBody');
+                    tbody.innerHTML = '';
+                    let totalTollsSum = 0;
+                    let totalCostsSum = 0;
+                    if (!data) {
+                        tbody.innerHTML = `<tr><td colspan="6" class="text-center py-6 text-slate-500">Нема записи за патарини или трошоци.</td></tr>`;
+                        document.getElementById('statTotalTolls').innerText = '0 ден.';
+                        document.getElementById('statTotalCosts').innerText = '0 ден.';
+                        return;
+                    }
+                    Object.keys(data).forEach(key => {
+                        const t = data[key];
+                        const cNum = Number(t.cost) || 0;
+                        if(t.category === 'Патарина') {
+                            totalTollsSum += cNum;
+                        }
+                        totalCostsSum += cNum;
+                        tbody.innerHTML += `
+                            <tr class="border-b border-slate-800/50 hover:bg-slate-800/30">
+                                <td class="py-3 px-3 text-slate-400">${t.date || '-'}</td>
+                                <td class="py-3 px-3 font-medium text-white">${t.vehicle}</td>
+                                <td class="py-3 px-3 text-slate-300"><span class="bg-slate-800 border border-slate-700 px-2 py-0.5 rounded-lg">${t.category}</span></td>
+                                <td class="py-3 px-3 text-slate-300 font-semibold">${t.cost} ден.</td>
+                                <td class="py-3 px-3 text-slate-400">${t.desc || '-'}</td>
+                                <td class="py-3 px-3 text-right">
+                                    ${this.isAdmin ? `<button onclick="app.removeRecord('tolls', '${key}')" class="text-red-400 hover:text-red-300 bg-red-950/40 border border-red-900/50 px-2.5 py-1 rounded-lg"><i class="fa-solid fa-trash"></i></button>` : '<span class="text-slate-600">-</span>'}
+                                </td>
+                            </tr>
+                        `;
+                    });
+                    document.getElementById('statTotalTolls').innerText = totalTollsSum.toLocaleString() + ' ден.';
+                    document.getElementById('statTotalCosts').innerText = totalCostsSum.toLocaleString() + ' ден.';
                 });
             },
             addVehicle() {
@@ -395,13 +481,25 @@
                 document.getElementById('sCost').value = '';
                 document.getElementById('sDate').value = '';
             },
+            addToll() {
+                const vehicle = document.getElementById('tVehicle').value.trim();
+                const category = document.getElementById('tCategory').value;
+                const cost = document.getElementById('tCost').value.trim();
+                const desc = document.getElementById('tDesc').value.trim();
+                if(!vehicle || !cost) { alert('Внеси возило и сума!'); return; }
+                const date = new Date().toLocaleDateString('mk-MK');
+                db.ref('tolls').push({ vehicle, category, cost, desc, date });
+                document.getElementById('tVehicle').value = '';
+                document.getElementById('tCost').value = '';
+                document.getElementById('tDesc').value = '';
+            },
             removeRecord(path, key) {
                 if(confirm('Дали си сигурен дека сакаш да го избришеш овој запис?')) {
                     db.ref(path + '/' + key).remove();
                 }
             },
             shareReport() {
-                const text = encodeURIComponent("Здраво! Еве линк од активната апликација за Возен Парк - Сара Фешн: https://zoranstrojmanovski-byte.github.io/vozen-park/");
+                const text = encodeURIComponent("Здраво! Еве линк од активната Сервисна Книга за Возен Парк - Сара Фешн: https://zoranstrojmanovski-byte.github.io/vozen-park/");
                 if(confirm("Дали сакаш да го споделиш линкот преку Viber?")) {
                     window.open("viber://forward?text=" + text, "_blank");
                 } else {
