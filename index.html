@@ -341,7 +341,7 @@
                 document.getElementById('tabBtn' + tab.charAt(0).toUpperCase() + tab.slice(1)).className = 'px-4 py-2 rounded-xl text-xs font-semibold bg-pink-600 text-white transition whitespace-nowrap';
             },
             initData() {
-                // Populate vehicle checkboxes for reports & table
+                // Populate vehicle checkboxes and main table
                 db.ref('vehicles').on('value', (snapshot) => {
                     const data = snapshot.val();
                     const tbody = document.getElementById('vehiclesTableBody');
@@ -363,7 +363,7 @@
                         totalCount++;
                         const v = data[key];
                         
-                        // Add checkbox for reports
+                        // Add checkbox for reports (using plate as value)
                         cbContainer.innerHTML += `
                             <label class="flex items-center gap-2 text-slate-300 cursor-pointer hover:text-white">
                                 <input type="checkbox" name="reportVehicleCb" value="${v.plate}" checked class="rounded bg-slate-800 border-slate-700 text-pink-600 focus:ring-0">
@@ -565,7 +565,6 @@
                 const sDate = document.getElementById('repStartDate').value;
                 const eDate = document.getElementById('repEndDate').value;
                 
-                // Get selected vehicles from checkboxes
                 const selectedVehicles = [];
                 document.querySelectorAll('input[name="reportVehicleCb"]:checked').forEach(cb => {
                     selectedVehicles.push(cb.value);
