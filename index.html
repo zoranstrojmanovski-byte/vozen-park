@@ -393,6 +393,7 @@
                 document.getElementById('modalSNextKm').value = '';
             },
             initData() {
+                // Fetch vehicles and populate all selects and tables immediately
                 db.ref('vehicles').on('value', (snapshot) => {
                     const data = snapshot.val();
                     const tbody = document.getElementById('vehiclesTableBody');
@@ -407,7 +408,6 @@
                     modalSVSelect.innerHTML = `<option value="">-- Избери возило --</option>`;
                     cbContainer.innerHTML = '';
 
-                    // Collect unique drivers as well
                     const driversSet = new Set();
 
                     if (!data) {
@@ -692,7 +692,7 @@
                         <div class="border-b border-slate-800 pb-3 flex justify-between items-center flex-wrap gap-2">
                             <div>
                                 <h4 class="font-bold text-white text-sm">Извештај (Период: ${sDate || 'Почеток'} до ${eDate || 'Денес'} | Избрани возила: ${selectedVehicles.join(', ')})</h4>
-                                <p class="text-xs text-slate-400 mt-0.5">Ги прикажува сите евидентирани трошоци, точења со километри, сервиси (ламели итн.), патарини и релации.</p>
+                                <p class="text-xs text-slate-400 mt-0.5">Ги прикажува сите евидентирани трошоци, точења со километри, сервиси (ламела итн.), патарини и релации.</p>
                             </div>
                             <div class="bg-pink-950/60 border border-pink-900 px-4 py-2 rounded-xl text-right">
                                 <span class="text-[10px] text-pink-300 block">ВКУПНИ ТРОШОЦИ</span>
