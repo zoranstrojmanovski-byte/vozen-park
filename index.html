@@ -469,11 +469,9 @@
                     const data = snapshot.val();
                     const tbody = document.getElementById('fuelTableBody');
                     tbody.innerHTML = '';
-                    let totalF = 0;
-                    if (!data) { tbody.innerHTML = `<tr><td colspan="8" class="text-center py-6 text-slate-500">Нема точења.</td>return; }`; return; }
+                    if (!data) { tbody.innerHTML = `<tr><td colspan="8" class="text-center py-6 text-slate-500">Нема точења.</td></tr>`; return; }
                     Object.keys(data).forEach(key => {
                         const f = data[key];
-                        totalF += Number(f.cost) || 0;
                         tbody.innerHTML += `
                             <tr class="border-b border-slate-800/50 hover:bg-slate-800/30">
                                 <td class="py-3 px-3 text-slate-400">${f.date || '-'}</td>
@@ -521,7 +519,6 @@
                     const tbody = document.getElementById('tollsTableBody');
                     tbody.innerHTML = '';
                     let totalTollsSum = 0;
-                    let totalCostsSum = 0;
                     if (!data) {
                         tbody.innerHTML = `<tr><td colspan="7" class="text-center py-6 text-slate-500">Нема патни налози.</td></tr>`;
                         document.getElementById('statTotalTolls').innerText = '0 ден.';
@@ -532,7 +529,6 @@
                         const t = data[key];
                         const cNum = Number(t.cost) || 0;
                         totalTollsSum += cNum;
-                        totalCostsSum += cNum;
                         tbody.innerHTML += `
                             <tr class="border-b border-slate-800/50 hover:bg-slate-800/30">
                                 <td class="py-3 px-3 text-slate-400">${t.date || '-'}</td>
@@ -549,7 +545,6 @@
                     });
                     document.getElementById('statTotalTolls').innerText = totalTollsSum.toLocaleString() + ' ден.';
                     
-                    // Grand total of all costs
                     Promise.all([db.ref('fuel').once('value'), db.ref('service').once('value')]).then(([fSnap, sSnap]) => {
                         let fSum = 0, sSum = 0;
                         if(fSnap.val()) Object.values(fSnap.val()).forEach(x => fSum += Number(x.cost) || 0);
@@ -629,7 +624,6 @@
                     db.ref('tolls').once('value')
                 ]).then(([vehSnap, fuelSnap, servSnap, tollSnap]) => {
                     const vehicles = vehSnap.val() || {};
-                    const fuels = fuelSnap.val() || fuelSnap.val() ? fuelSnap.val() : {};
                     const fuelData = fuelSnap.val() || {};
                     const servData = servSnap.val() || {};
                     const tollData = tollSnap.val() || {};
@@ -645,7 +639,6 @@
                         const v = vehicles[vKey];
                         const plate = v.plate;
 
-                        // Filter fuel for this vehicle & date range
                         let fRows = '';
                         let vFuelTotal = 0;
                         Object.values(fuelData).forEach(f => {
@@ -657,7 +650,6 @@
                             }
                         });
 
-                        // Filter services for this vehicle & date range
                         let sRows = '';
                         let vServTotal = 0;
                         Object.values(servData).forEach(s => {
@@ -669,7 +661,6 @@
                             }
                         });
 
-                        // Filter tolls for this vehicle & date range
                         let tRows = '';
                         let vTollTotal = 0;
                         Object.values(tollData).forEach(t => {
@@ -683,7 +674,6 @@
 
                         const vehicleGrandTotal = vFuelTotal + vServTotal + vTollTotal;
 
-                        // Create professional card for each vehicle
                         container.innerHTML += `
                             <div class="bg-slate-950 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-4">
                                 <div class="flex justify-between items-start border-b border-slate-800 pb-3">
