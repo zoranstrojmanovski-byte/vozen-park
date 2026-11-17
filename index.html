@@ -60,10 +60,12 @@
     <div id="serviceModal" class="hidden fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4">
         <div class="bg-slate-900 border border-slate-800 w-full max-w-4xl rounded-2xl p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
             <div class="flex justify-between items-center border-b border-slate-800 pb-3">
-                <h3 class="text-sm font-bold text-white flex items-center gap-2"><i class="fa-solid fa-screwdriver-wrench text-pink-600"></i> Нов Сервис - Внеси Фактура и Делови</h3>
+                <h3 id="serviceModalTitle" class="text-sm font-bold text-white flex items-center gap-2"><i class="fa-solid fa-screwdriver-wrench text-pink-600"></i> Нов Сервис - Внеси Фактура и Делови</h3>
                 <button onclick="app.closeServiceModal()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
             </div>
             
+            <input type="hidden" id="modalEditServiceKey" value="">
+
             <div class="grid grid-cols-1 sm:grid-cols-5 gap-3 text-xs bg-slate-950 p-4 rounded-xl border border-slate-800">
                 <div>
                     <label class="block text-slate-400 mb-1">Избери Возило:</label>
@@ -175,7 +177,8 @@
         <!-- TAB 1: VEHICLES -->
         <div id="tabVehicles" class="space-y-6">
             <div id="adminPanelVehicles" class="hidden bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl">
-                <h3 class="text-sm font-bold text-white mb-3 flex items-center gap-2"><i class="fa-solid fa-plus-circle text-pink-600"></i> Внеси Ново Возило / Документи</h3>
+                <h3 id="vehicleFormTitle" class="text-sm font-bold text-white mb-3 flex items-center gap-2"><i class="fa-solid fa-plus-circle text-pink-600"></i> Внеси Ново Возило / Документи</h3>
+                <input type="hidden" id="editVehicleKey" value="">
                 <div class="grid grid-cols-1 sm:grid-cols-7 gap-3 text-xs">
                     <input type="text" id="vModel" placeholder="Модел (Ford Transit)" class="bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white">
                     <input type="text" id="vPlate" placeholder="Таблички (SK-0000)" class="bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white">
@@ -183,7 +186,10 @@
                     <input type="number" id="vKm" placeholder="Тренутна км" class="bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white">
                     <input type="date" id="vRegDate" class="bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white" title="Истек на регистрација">
                     <input type="date" id="vDocDate" class="bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white" title="Прва помош / Апарат истекува">
-                    <button onclick="app.addVehicle()" class="bg-pink-600 hover:bg-pink-500 text-white font-semibold py-2 rounded-xl transition shadow-md">Зачувај</button>
+                    <div class="flex gap-1">
+                        <button onclick="app.saveVehicle()" class="flex-1 bg-pink-600 hover:bg-pink-500 text-white font-semibold py-2 rounded-xl transition shadow-md">Зачувај</button>
+                        <button id="cancelVehicleEditBtn" onclick="app.cancelVehicleEdit()" class="hidden bg-slate-800 hover:bg-slate-750 text-slate-300 px-3 py-2 rounded-xl">Откажи</button>
+                    </div>
                 </div>
             </div>
             <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl">
@@ -212,7 +218,8 @@
         <!-- TAB 2: FUEL -->
         <div id="tabFuel" class="hidden space-y-6">
             <div id="adminPanelFuel" class="hidden bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl">
-                <h3 class="text-sm font-bold text-white mb-3 flex items-center gap-2"><i class="fa-solid fa-plus-circle text-pink-600"></i> Евиденција на Точење Гориво (со Км и менија)</h3>
+                <h3 id="fuelFormTitle" class="text-sm font-bold text-white mb-3 flex items-center gap-2"><i class="fa-solid fa-plus-circle text-pink-600"></i> Евиденција на Точење Гориво</h3>
+                <input type="hidden" id="editFuelKey" value="">
                 <div class="grid grid-cols-1 sm:grid-cols-7 gap-3 text-xs">
                     <select id="fVehicle" class="bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white">
                         <option value="">-- Избери возило --</option>
@@ -229,7 +236,10 @@
                     <select id="fDriver" class="bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white">
                         <option value="">-- Избери возач --</option>
                     </select>
-                    <button onclick="app.addFuel()" class="bg-pink-600 hover:bg-pink-500 text-white font-semibold py-2 rounded-xl transition shadow-md">Зачувај</button>
+                    <div class="flex gap-1">
+                        <button onclick="app.saveFuel()" class="flex-1 bg-pink-600 hover:bg-pink-500 text-white font-semibold py-2 rounded-xl transition shadow-md">Зачувај</button>
+                        <button id="cancelFuelEditBtn" onclick="app.cancelFuelEdit()" class="hidden bg-slate-800 hover:bg-slate-750 text-slate-300 px-3 py-2 rounded-xl">Откажи</button>
+                    </div>
                 </div>
             </div>
             <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl">
@@ -293,7 +303,8 @@
         <!-- TAB 3.5: REGISTRATIONS & OTHER COSTS -->
         <div id="tabRegs" class="hidden space-y-6">
             <div id="adminPanelRegs" class="hidden bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl">
-                <h3 class="text-sm font-bold text-white mb-3 flex items-center gap-2"><i class="fa-solid fa-file-shield text-pink-600"></i> Евиденција на Регистрации, Осигурувања, Каско & Други Трошоци</h3>
+                <h3 id="regFormTitle" class="text-sm font-bold text-white mb-3 flex items-center gap-2"><i class="fa-solid fa-file-shield text-pink-600"></i> Евиденција на Регистрации, Осигурувања, Каско & Други Трошоци</h3>
+                <input type="hidden" id="editRegKey" value="">
                 <div class="grid grid-cols-1 sm:grid-cols-6 gap-3 text-xs">
                     <select id="regVehicle" class="bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white">
                         <option value="">-- Избери возило --</option>
@@ -307,7 +318,10 @@
                     <input type="text" id="regDesc" placeholder="Опис (на пр. Осигурување Лојц)" class="bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white">
                     <input type="number" id="regCost" placeholder="Сума (МКД)" class="bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white">
                     <input type="date" id="regDate" class="bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white">
-                    <button onclick="app.addRegCost()" class="bg-pink-600 hover:bg-pink-500 text-white font-semibold py-2 rounded-xl transition shadow-md">Зачувај Трошок</button>
+                    <div class="flex gap-1">
+                        <button onclick="app.saveRegCost()" class="flex-1 bg-pink-600 hover:bg-pink-500 text-white font-semibold py-2 rounded-xl transition shadow-md">Зачувај</button>
+                        <button id="cancelRegEditBtn" onclick="app.cancelRegEdit()" class="hidden bg-slate-800 hover:bg-slate-750 text-slate-300 px-3 py-2 rounded-xl">Откажи</button>
+                    </div>
                 </div>
             </div>
             <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl">
@@ -335,7 +349,8 @@
         <!-- TAB 4: TOLLS & WAYBILLS -->
         <div id="tabTolls" class="hidden space-y-6">
             <div id="adminPanelTolls" class="hidden bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl">
-                <h3 class="text-sm font-bold text-white mb-3 flex items-center gap-2"><i class="fa-solid fa-plus-circle text-pink-600"></i> Патарина, Возач, Патен Налог & Релација</h3>
+                <h3 id="tollFormTitle" class="text-sm font-bold text-white mb-3 flex items-center gap-2"><i class="fa-solid fa-plus-circle text-pink-600"></i> Патарина, Возач, Патен Налог & Релација</h3>
+                <input type="hidden" id="editTollKey" value="">
                 <div class="grid grid-cols-1 sm:grid-cols-6 gap-3 text-xs">
                     <select id="tVehicle" class="bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white">
                         <option value="">-- Избери возило --</option>
@@ -346,7 +361,10 @@
                     <input type="text" id="tWaybill" placeholder="Бр. на патен налог" class="bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white">
                     <input type="text" id="tRoute" placeholder="Релација (на пр. Скопје - Куманово)" class="bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white">
                     <input type="number" id="tCost" placeholder="Сума за патарина (МКД)" class="bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white">
-                    <button onclick="app.addToll()" class="bg-pink-600 hover:bg-pink-500 text-white font-semibold py-2 rounded-xl transition shadow-md">Зачувај Налог</button>
+                    <div class="flex gap-1">
+                        <button onclick="app.saveToll()" class="flex-1 bg-pink-600 hover:bg-pink-500 text-white font-semibold py-2 rounded-xl transition shadow-md">Зачувај</button>
+                        <button id="cancelTollEditBtn" onclick="app.cancelTollEdit()" class="hidden bg-slate-800 hover:bg-slate-750 text-slate-300 px-3 py-2 rounded-xl">Откажи</button>
+                    </div>
                 </div>
             </div>
             <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl">
@@ -447,33 +465,59 @@
                     this.generateDashboardReport();
                 }
             },
-            openServiceModal() {
+            
+            // SERVICE MODAL & EDIT
+            openServiceModal(editKey = null) {
                 document.getElementById('serviceModal').classList.remove('hidden');
-                document.getElementById('modalSDate').value = new Date().toISOString().split('T')[0];
-                document.getElementById('modalTotalInvoice').value = '';
-                document.getElementById('modalSKm').value = '';
-                document.getElementById('modalSNextKm').value = '';
                 const tbody = document.getElementById('serviceRowsBody');
                 tbody.innerHTML = '';
+                document.getElementById('modalEditServiceKey').value = '';
+
+                if(editKey) {
+                    document.getElementById('serviceModalTitle').innerHTML = `<i class="fa-solid fa-pen-to-square text-pink-600"></i> Измени Сервис / Фактура`;
+                    document.getElementById('modalEditServiceKey').value = editKey;
+                    db.ref('service/' + editKey).once('value').then(snap => {
+                        const s = snap.val();
+                        if(s) {
+                            document.getElementById('modalSVehicle').value = s.vehicle || '';
+                            document.getElementById('modalSDate').value = s.date || '';
+                            document.getElementById('modalTotalInvoice').value = s.totalInvoice || s.cost || '';
+                            document.getElementById('modalSKm').value = s.km || '';
+                            document.getElementById('modalSNextKm').value = s.nextKm || '';
+                            if(s.items && Array.isArray(s.items)) {
+                                s.items.forEach(item => {
+                                    this.addServiceRow(item.desc, item.cost);
+                                });
+                            }
+                        }
+                    });
+                } else {
+                    document.getElementById('serviceModalTitle').innerHTML = `<i class="fa-solid fa-screwdriver-wrench text-pink-600"></i> Нов Сервис - Внеси Фактура и Делови`;
+                    document.getElementById('modalSDate').value = new Date().toISOString().split('T')[0];
+                    document.getElementById('modalTotalInvoice').value = '';
+                    document.getElementById('modalSKm').value = '';
+                    document.getElementById('modalSNextKm').value = '';
+                }
             },
             closeServiceModal() {
                 document.getElementById('serviceModal').classList.add('hidden');
             },
-            addServiceRow() {
+            addServiceRow(descVal = '', costVal = '') {
                 const tbody = document.getElementById('serviceRowsBody');
                 const rowId = 'srow_' + Date.now() + Math.random().toString(36).substring(2, 5);
                 const tr = document.createElement('tr');
                 tr.id = rowId;
                 tr.className = 'border-b border-slate-900 hover:bg-slate-900/50';
                 tr.innerHTML = `
-                    <td class="py-2 px-2"><input type="text" placeholder="на пр. Ламела, Масло, Филтер..." class="service-desc w-full bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1.5 text-white text-xs"></td>
-                    <td class="py-2 px-2"><input type="number" placeholder="0" class="service-cost w-full bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1.5 text-white text-xs"></td>
+                    <td class="py-2 px-2"><input type="text" placeholder="на пр. Ламела, Масло, Филтер..." value="${descVal}" class="service-desc w-full bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1.5 text-white text-xs"></td>
+                    <td class="py-2 px-2"><input type="number" placeholder="0" value="${costVal}" class="service-cost w-full bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1.5 text-white text-xs"></td>
                     <td class="py-2 px-2 text-right"><button onclick="document.getElementById('${rowId}').remove()" class="text-red-400 hover:text-red-300 px-2 py-1"><i class="fa-solid fa-trash"></i></button></td>
                 `;
                 tbody.appendChild(tr);
             },
             saveModalServices() {
-                if(!this.isAdmin) { alert('Немате администраторски права за внесување!'); return; }
+                if(!this.isAdmin) { alert('Немате администраторски права!'); return; }
+                const editKey = document.getElementById('modalEditServiceKey').value;
                 const vehicle = document.getElementById('modalSVehicle').value;
                 const date = document.getElementById('modalSDate').value;
                 const totalInvoice = Number(document.getElementById('modalTotalInvoice').value) || 0;
@@ -492,10 +536,205 @@
                     }
                 });
 
-                db.ref('service').push({ vehicle, date, km, nextKm, totalInvoice, items });
+                const payload = { vehicle, date, km, nextKm, totalInvoice, items };
+                if(editKey) {
+                    db.ref('service/' + editKey).set(payload);
+                    alert('Успешно ажуриран сервисот!');
+                } else {
+                    db.ref('service').push(payload);
+                    alert(`Успешно зачуван сервис со фактура од ${totalInvoice.toLocaleString()} ден.!`);
+                }
                 this.closeServiceModal();
-                alert(`Успешно зачуван сервис со фактура од ${totalInvoice.toLocaleString()} ден.!`);
             },
+
+            // VEHICLE EDIT
+            saveVehicle() {
+                if(!this.isAdmin) { alert('Немате администраторски права!'); return; }
+                const editKey = document.getElementById('editVehicleKey').value;
+                const model = document.getElementById('vModel').value.trim();
+                const plate = document.getElementById('vPlate').value.trim();
+                const driver = document.getElementById('vDriver').value.trim();
+                const km = document.getElementById('vKm').value.trim();
+                const regDate = document.getElementById('vRegDate').value.trim();
+                const docDate = document.getElementById('vDocDate').value.trim();
+                if(!model || !plate) { alert('Внеси модел и таблички!'); return; }
+
+                const payload = { model, plate, driver, km, regDate, docDate };
+                if(editKey) {
+                    db.ref('vehicles/' + editKey).set(payload);
+                    alert('Успешно ажурирано возилото!');
+                    this.cancelVehicleEdit();
+                } else {
+                    db.ref('vehicles').push(payload);
+                    alert('Успешно додадено ново возило!');
+                }
+                document.getElementById('vModel').value = '';
+                document.getElementById('vPlate').value = '';
+                document.getElementById('vDriver').value = '';
+                document.getElementById('vKm').value = '';
+                document.getElementById('vRegDate').value = '';
+                document.getElementById('vDocDate').value = '';
+            },
+            editVehicle(key, model, plate, driver, km, regDate, docDate) {
+                document.getElementById('editVehicleKey').value = key;
+                document.getElementById('vModel').value = model;
+                document.getElementById('vPlate').value = plate;
+                document.getElementById('vDriver').value = driver;
+                document.getElementById('vKm').value = km;
+                document.getElementById('vRegDate').value = regDate;
+                document.getElementById('vDocDate').value = docDate;
+                document.getElementById('vehicleFormTitle').innerHTML = `<i class="fa-solid fa-pen-to-square text-pink-600"></i> Измени Возило`;
+                document.getElementById('cancelVehicleEditBtn').classList.remove('hidden');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            },
+            cancelVehicleEdit() {
+                document.getElementById('editVehicleKey').value = '';
+                document.getElementById('vModel').value = '';
+                document.getElementById('vPlate').value = '';
+                document.getElementById('vDriver').value = '';
+                document.getElementById('vKm').value = '';
+                document.getElementById('vRegDate').value = '';
+                document.getElementById('vDocDate').value = '';
+                document.getElementById('vehicleFormTitle').innerHTML = `<i class="fa-solid fa-plus-circle text-pink-600"></i> Внеси Ново Возило / Документи`;
+                document.getElementById('cancelVehicleEditBtn').classList.add('hidden');
+            },
+
+            // FUEL EDIT
+            saveFuel() {
+                if(!this.isAdmin) { alert('Немате администраторски права!'); return; }
+                const editKey = document.getElementById('editFuelKey').value;
+                const vehicle = document.getElementById('fVehicle').value;
+                const type = document.getElementById('fType').value;
+                const liters = document.getElementById('fLiters').value.trim();
+                const cost = document.getElementById('fCost').value.trim();
+                const km = document.getElementById('fKm').value.trim();
+                const driver = document.getElementById('fDriver').value;
+                if(!vehicle || !liters || !cost) { alert('Избери возило и внеси литри и сума!'); return; }
+                const date = new Date().toISOString().split('T')[0];
+
+                const payload = { vehicle, type, liters, cost, km, driver, date };
+                if(editKey) {
+                    db.ref('fuel/' + editKey).set(payload);
+                    alert('Успешно ажурирано точењето!');
+                    this.cancelFuelEdit();
+                } else {
+                    db.ref('fuel').push(payload);
+                    alert('Успешно зачувано точење гориво!');
+                }
+                document.getElementById('fLiters').value = '';
+                document.getElementById('fCost').value = '';
+                document.getElementById('fKm').value = '';
+            },
+            editFuel(key, vehicle, type, liters, cost, km, driver) {
+                document.getElementById('editFuelKey').value = key;
+                document.getElementById('fVehicle').value = vehicle;
+                document.getElementById('fType').value = type;
+                document.getElementById('fLiters').value = liters;
+                document.getElementById('fCost').value = cost;
+                document.getElementById('fKm').value = km;
+                document.getElementById('fDriver').value = driver;
+                document.getElementById('fuelFormTitle').innerHTML = `<i class="fa-solid fa-pen-to-square text-pink-600"></i> Измени Точење Гориво`;
+                document.getElementById('cancelFuelEditBtn').classList.remove('hidden');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            },
+            cancelFuelEdit() {
+                document.getElementById('editFuelKey').value = '';
+                document.getElementById('fLiters').value = '';
+                document.getElementById('fCost').value = '';
+                document.getElementById('fKm').value = '';
+                document.getElementById('fuelFormTitle').innerHTML = `<i class="fa-solid fa-plus-circle text-pink-600"></i> Евиденција на Точење Гориво`;
+                document.getElementById('cancelFuelEditBtn').classList.add('hidden');
+            },
+
+            // REGISTRATION & OTHER COSTS EDIT
+            saveRegCost() {
+                if(!this.isAdmin) { alert('Немате администраторски права!'); return; }
+                const editKey = document.getElementById('editRegKey').value;
+                const vehicle = document.getElementById('regVehicle').value;
+                const type = document.getElementById('regType').value;
+                const desc = document.getElementById('regDesc').value.trim();
+                const cost = Number(document.getElementById('regCost').value) || 0;
+                const date = document.getElementById('regDate').value || new Date().toISOString().split('T')[0];
+                if(!vehicle || cost <= 0) { alert('Избери возило и внеси валидна сума!'); return; }
+
+                const payload = { vehicle, type, desc, cost, date };
+                if(editKey) {
+                    db.ref('registrations/' + editKey).set(payload);
+                    alert('Успешно ажуриран трошок!');
+                    this.cancelRegEdit();
+                } else {
+                    db.ref('registrations').push(payload);
+                    alert('Успешно зачуван трошок за регистрација/друго!');
+                }
+                document.getElementById('regDesc').value = '';
+                document.getElementById('regCost').value = '';
+                document.getElementById('regDate').value = '';
+            },
+            editRegCost(key, vehicle, type, desc, cost, date) {
+                document.getElementById('editRegKey').value = key;
+                document.getElementById('regVehicle').value = vehicle;
+                document.getElementById('regType').value = type;
+                document.getElementById('regDesc').value = desc;
+                document.getElementById('regCost').value = cost;
+                document.getElementById('regDate').value = date;
+                document.getElementById('regFormTitle').innerHTML = `<i class="fa-solid fa-pen-to-square text-pink-600"></i> Измени Регистрација / Трошок`;
+                document.getElementById('cancelRegEditBtn').classList.remove('hidden');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            },
+            cancelRegEdit() {
+                document.getElementById('editRegKey').value = '';
+                document.getElementById('regDesc').value = '';
+                document.getElementById('regCost').value = '';
+                document.getElementById('regDate').value = '';
+                document.getElementById('regFormTitle').innerHTML = `<i class="fa-solid fa-file-shield text-pink-600"></i> Евиденција на Регистрации, Осигурувања, Каско & Други Трошоци`;
+                document.getElementById('cancelRegEditBtn').classList.add('hidden');
+            },
+
+            // TOLLS EDIT
+            saveToll() {
+                if(!this.isAdmin) { alert('Немате администраторски права!'); return; }
+                const editKey = document.getElementById('editTollKey').value;
+                const vehicle = document.getElementById('tVehicle').value;
+                const driver = document.getElementById('tDriver').value;
+                const waybill = document.getElementById('tWaybill').value.trim();
+                const route = document.getElementById('tRoute').value.trim();
+                const cost = document.getElementById('tCost').value.trim();
+                if(!vehicle || !cost) { alert('Избери возило и внеси сума!'); return; }
+                const date = new Date().toISOString().split('T')[0];
+
+                const payload = { vehicle, driver, waybill, route, cost, date };
+                if(editKey) {
+                    db.ref('tolls/' + editKey).set(payload);
+                    alert('Успешно ажуриран патен налог!');
+                    this.cancelTollEdit();
+                } else {
+                    db.ref('tolls').push(payload);
+                    alert('Успешно зачуван патен налог!');
+                }
+                document.getElementById('tWaybill').value = '';
+                document.getElementById('tRoute').value = '';
+                document.getElementById('tCost').value = '';
+            },
+            editToll(key, vehicle, driver, waybill, route, cost) {
+                document.getElementById('editTollKey').value = key;
+                document.getElementById('tVehicle').value = vehicle;
+                document.getElementById('tDriver').value = driver;
+                document.getElementById('tWaybill').value = waybill;
+                document.getElementById('tRoute').value = route;
+                document.getElementById('tCost').value = cost;
+                document.getElementById('tollFormTitle').innerHTML = `<i class="fa-solid fa-pen-to-square text-pink-600"></i> Измени Патен Налог & Патарина`;
+                document.getElementById('cancelTollEditBtn').classList.remove('hidden');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            },
+            cancelTollEdit() {
+                document.getElementById('editTollKey').value = '';
+                document.getElementById('tWaybill').value = '';
+                document.getElementById('tRoute').value = '';
+                document.getElementById('tCost').value = '';
+                document.getElementById('tollFormTitle').innerHTML = `<i class="fa-solid fa-plus-circle text-pink-600"></i> Патарина, Возач, Патен Налог & Релација`;
+                document.getElementById('cancelTollEditBtn').classList.add('hidden');
+            },
+
             initData() {
                 db.ref('vehicles').on('value', (snapshot) => {
                     const data = snapshot.val();
@@ -559,8 +798,11 @@
                                 <td class="py-3 px-3 text-slate-300">${v.km ? v.km + ' км' : '-'}</td>
                                 <td class="py-3 px-3 text-slate-300">${regBadge}</td>
                                 <td class="py-3 px-3 text-slate-300">${docBadge}</td>
-                                <td class="py-3 px-3 text-right">
-                                    ${this.isAdmin ? `<button onclick="app.removeRecord('vehicles', '${key}')" class="text-red-400 hover:text-red-300 bg-red-950/40 border border-red-900/50 px-2.5 py-1 rounded-lg"><i class="fa-solid fa-trash"></i></button>` : '<span class="text-slate-600">-</span>'}
+                                <td class="py-3 px-3 text-right space-x-1">
+                                    ${this.isAdmin ? `
+                                        <button onclick="app.editVehicle('${key}', '${v.model}', '${v.plate}', '${v.driver || ''}', '${v.km || ''}', '${v.regDate || ''}', '${v.docDate || ''}')" class="text-amber-400 hover:text-amber-300 bg-amber-950/40 border border-amber-900/50 px-2 py-1 rounded-lg" title="Измени"><i class="fa-solid fa-pen"></i></button>
+                                        <button onclick="app.removeRecord('vehicles', '${key}')" class="text-red-400 hover:text-red-300 bg-red-950/40 border border-red-900/50 px-2 py-1 rounded-lg" title="Избриши"><i class="fa-solid fa-trash"></i></button>
+                                    ` : '<span class="text-slate-600">-</span>'}
                                 </td>
                             </tr>
                         `;
@@ -596,8 +838,11 @@
                                 <td class="py-3 px-3 text-slate-300">${f.cost} ден.</td>
                                 <td class="py-3 px-3 text-slate-300">${f.km ? f.km + ' км' : '-'}</td>
                                 <td class="py-3 px-3 text-slate-300">${f.driver || '-'}</td>
-                                <td class="py-3 px-3 text-right">
-                                    ${this.isAdmin ? `<button onclick="app.removeRecord('fuel', '${key}')" class="text-red-400 hover:text-red-300 bg-red-950/40 border border-red-900/50 px-2.5 py-1 rounded-lg"><i class="fa-solid fa-trash"></i></button>` : '<span class="text-slate-600">-</span>'}
+                                <td class="py-3 px-3 text-right space-x-1">
+                                    ${this.isAdmin ? `
+                                        <button onclick="app.editFuel('${key}', '${f.vehicle}', '${f.type || 'Дизел'}', '${f.liters}', '${f.cost}', '${f.km || ''}', '${f.driver || ''}')" class="text-amber-400 hover:text-amber-300 bg-amber-950/40 border border-amber-900/50 px-2 py-1 rounded-lg" title="Измени"><i class="fa-solid fa-pen"></i></button>
+                                        <button onclick="app.removeRecord('fuel', '${key}')" class="text-red-400 hover:text-red-300 bg-red-950/40 border border-red-900/50 px-2 py-1 rounded-lg" title="Избриши"><i class="fa-solid fa-trash"></i></button>
+                                    ` : '<span class="text-slate-600">-</span>'}
                                 </td>
                             </tr>
                         `;
@@ -628,8 +873,11 @@
                                 <td class="py-3 px-3 text-pink-400 font-bold">${Number(totalInv).toLocaleString()} ден.</td>
                                 <td class="py-3 px-3 text-slate-300">${s.km ? s.km + ' км' : '-'}</td>
                                 <td class="py-3 px-3 text-amber-400 font-semibold">${s.nextKm ? s.nextKm + ' км' : '-'}</td>
-                                <td class="py-3 px-3 text-right">
-                                    ${this.isAdmin ? `<button onclick="app.removeRecord('service', '${key}')" class="text-red-400 hover:text-red-300 bg-red-950/40 border border-red-900/50 px-2.5 py-1 rounded-lg"><i class="fa-solid fa-trash"></i></button>` : '<span class="text-slate-600">-</span>'}
+                                <td class="py-3 px-3 text-right space-x-1">
+                                    ${this.isAdmin ? `
+                                        <button onclick="app.openServiceModal('${key}')" class="text-amber-400 hover:text-amber-300 bg-amber-950/40 border border-amber-900/50 px-2 py-1 rounded-lg" title="Измени"><i class="fa-solid fa-pen"></i></button>
+                                        <button onclick="app.removeRecord('service', '${key}')" class="text-red-400 hover:text-red-300 bg-red-950/40 border border-red-900/50 px-2 py-1 rounded-lg" title="Избриши"><i class="fa-solid fa-trash"></i></button>
+                                    ` : '<span class="text-slate-600">-</span>'}
                                 </td>
                             </tr>
                         `;
@@ -651,8 +899,11 @@
                                 <td class="py-3 px-3 text-amber-400">${r.type}</td>
                                 <td class="py-3 px-3 text-slate-300">${r.desc || '-'}</td>
                                 <td class="py-3 px-3 text-pink-400 font-bold">${Number(r.cost).toLocaleString()} ден.</td>
-                                <td class="py-3 px-3 text-right">
-                                    ${this.isAdmin ? `<button onclick="app.removeRecord('registrations', '${key}')" class="text-red-400 hover:text-red-300 bg-red-950/40 border border-red-900/50 px-2.5 py-1 rounded-lg"><i class="fa-solid fa-trash"></i></button>` : '<span class="text-slate-600">-</span>'}
+                                <td class="py-3 px-3 text-right space-x-1">
+                                    ${this.isAdmin ? `
+                                        <button onclick="app.editRegCost('${key}', '${r.vehicle}', '${r.type}', '${r.desc || ''}', '${r.cost}', '${r.date || ''}')" class="text-amber-400 hover:text-amber-300 bg-amber-950/40 border border-amber-900/50 px-2 py-1 rounded-lg" title="Измени"><i class="fa-solid fa-pen"></i></button>
+                                        <button onclick="app.removeRecord('registrations', '${key}')" class="text-red-400 hover:text-red-300 bg-red-950/40 border border-red-900/50 px-2 py-1 rounded-lg" title="Избриши"><i class="fa-solid fa-trash"></i></button>
+                                    ` : '<span class="text-slate-600">-</span>'}
                                 </td>
                             </tr>
                         `;
@@ -683,15 +934,17 @@
                                 <td class="py-3 px-3 text-slate-300 font-semibold">${t.waybill || '-'}</td>
                                 <td class="py-3 px-3 text-slate-300">${t.route || '-'}</td>
                                 <td class="py-3 px-3 text-slate-300">${t.cost} ден.</td>
-                                <td class="py-3 px-3 text-right">
-                                    ${this.isAdmin ? `<button onclick="app.removeRecord('tolls', '${key}')" class="text-red-400 hover:text-red-300 bg-red-950/40 border border-red-900/50 px-2.5 py-1 rounded-lg"><i class="fa-solid fa-trash"></i></button>` : '<span class="text-slate-600">-</span>'}
+                                <td class="py-3 px-3 text-right space-x-1">
+                                    ${this.isAdmin ? `
+                                        <button onclick="app.editToll('${key}', '${t.vehicle}', '${t.driver || ''}', '${t.waybill || ''}', '${t.route || ''}', '${t.cost}')" class="text-amber-400 hover:text-amber-300 bg-amber-950/40 border border-amber-900/50 px-2 py-1 rounded-lg" title="Измени"><i class="fa-solid fa-pen"></i></button>
+                                        <button onclick="app.removeRecord('tolls', '${key}')" class="text-red-400 hover:text-red-300 bg-red-950/40 border border-red-900/50 px-2 py-1 rounded-lg" title="Избриши"><i class="fa-solid fa-trash"></i></button>
+                                    ` : '<span class="text-slate-600">-</span>'}
                                 </td>
                             </tr>
                         `;
                     });
                     document.getElementById('statTotalTolls').innerText = totalTollsSum.toLocaleString() + ' ден.';
                     
-                    // Grand total including fuel, service, registrations, tolls
                     Promise.all([
                         db.ref('fuel').once('value'), 
                         db.ref('service').once('value'),
@@ -704,66 +957,6 @@
                         document.getElementById('statTotalCosts').innerText = (fSum + sSum + rSum + totalTollsSum).toLocaleString() + ' ден.';
                     });
                 });
-            },
-            addVehicle() {
-                if(!this.isAdmin) { alert('Немате администраторски права!'); return; }
-                const model = document.getElementById('vModel').value.trim();
-                const plate = document.getElementById('vPlate').value.trim();
-                const driver = document.getElementById('vDriver').value.trim();
-                const km = document.getElementById('vKm').value.trim();
-                const regDate = document.getElementById('vRegDate').value.trim();
-                const docDate = document.getElementById('vDocDate').value.trim();
-                if(!model || !plate) { alert('Внеси модел и таблички!'); return; }
-                db.ref('vehicles').push({ model, plate, driver, km, regDate, docDate });
-                document.getElementById('vModel').value = '';
-                document.getElementById('vPlate').value = '';
-                document.getElementById('vDriver').value = '';
-                document.getElementById('vKm').value = '';
-                document.getElementById('vRegDate').value = '';
-                document.getElementById('vDocDate').value = '';
-            },
-            addFuel() {
-                if(!this.isAdmin) { alert('Немате администраторски права!'); return; }
-                const vehicle = document.getElementById('fVehicle').value;
-                const type = document.getElementById('fType').value;
-                const liters = document.getElementById('fLiters').value.trim();
-                const cost = document.getElementById('fCost').value.trim();
-                const km = document.getElementById('fKm').value.trim();
-                const driver = document.getElementById('fDriver').value;
-                if(!vehicle || !liters || !cost) { alert('Избери возило и внеси литри и сума!'); return; }
-                const date = new Date().toISOString().split('T')[0];
-                db.ref('fuel').push({ vehicle, type, liters, cost, km, driver, date });
-                document.getElementById('fLiters').value = '';
-                document.getElementById('fCost').value = '';
-                document.getElementById('fKm').value = '';
-            },
-            addRegCost() {
-                if(!this.isAdmin) { alert('Немате администраторски права!'); return; }
-                const vehicle = document.getElementById('regVehicle').value;
-                const type = document.getElementById('regType').value;
-                const desc = document.getElementById('regDesc').value.trim();
-                const cost = Number(document.getElementById('regCost').value) || 0;
-                const date = document.getElementById('regDate').value || new Date().toISOString().split('T')[0];
-                if(!vehicle || cost <= 0) { alert('Избери возило и внеси валидна сума!'); return; }
-                db.ref('registrations').push({ vehicle, type, desc, cost, date });
-                document.getElementById('regDesc').value = '';
-                document.getElementById('regCost').value = '';
-                document.getElementById('regDate').value = '';
-                alert('Успешно зачуван трошок за регистрација/друго!');
-            },
-            addToll() {
-                if(!this.isAdmin) { alert('Немате администраторски права!'); return; }
-                const vehicle = document.getElementById('tVehicle').value;
-                const driver = document.getElementById('tDriver').value;
-                const waybill = document.getElementById('tWaybill').value.trim();
-                const route = document.getElementById('tRoute').value.trim();
-                const cost = document.getElementById('tCost').value.trim();
-                if(!vehicle || !cost) { alert('Избери возило и внеси сума!'); return; }
-                const date = new Date().toISOString().split('T')[0];
-                db.ref('tolls').push({ vehicle, driver, waybill, route, cost, date });
-                document.getElementById('tWaybill').value = '';
-                document.getElementById('tRoute').value = '';
-                document.getElementById('tCost').value = '';
             },
             removeRecord(path, key) {
                 if(!this.isAdmin) { alert('Само администраторот може да брише записи!'); return; }
