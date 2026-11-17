@@ -167,6 +167,7 @@
             <button onclick="app.switchTab('vehicles')" id="tabBtnVehicles" class="px-4 py-2 rounded-xl text-xs font-semibold bg-pink-600 text-white transition whitespace-nowrap"><i class="fa-solid fa-truck mr-1.5"></i> Возила & Регистрации</button>
             <button onclick="app.switchTab('fuel')" id="tabBtnFuel" class="px-4 py-2 rounded-xl text-xs font-semibold bg-slate-900 border border-slate-800 text-slate-300 hover:bg-slate-800 transition whitespace-nowrap"><i class="fa-solid fa-gas-pump mr-1.5"></i> Точење Гориво</button>
             <button onclick="app.switchTab('service')" id="tabBtnService" class="px-4 py-2 rounded-xl text-xs font-semibold bg-slate-900 border border-slate-800 text-slate-300 hover:bg-slate-800 transition whitespace-nowrap"><i class="fa-solid fa-screwdriver-wrench mr-1.5"></i> Сервиси & Километри</button>
+            <button onclick="app.switchTab('regs')" id="tabBtnRegs" class="px-4 py-2 rounded-xl text-xs font-semibold bg-slate-900 border border-slate-800 text-slate-300 hover:bg-slate-800 transition whitespace-nowrap"><i class="fa-solid fa-file-shield mr-1.5"></i> Регистрации & Други</button>
             <button onclick="app.switchTab('tolls')" id="tabBtnTolls" class="px-4 py-2 rounded-xl text-xs font-semibold bg-slate-900 border border-slate-800 text-slate-300 hover:bg-slate-800 transition whitespace-nowrap"><i class="fa-solid fa-road mr-1.5"></i> Патарини & Налози</button>
             <button onclick="app.switchTab('reports')" id="tabBtnReports" class="px-4 py-2 rounded-xl text-xs font-semibold bg-slate-900 border border-slate-800 text-slate-300 hover:bg-slate-800 transition whitespace-nowrap"><i class="fa-solid fa-chart-pie mr-1.5"></i> Контролна Табла & Извештаи</button>
         </div>
@@ -289,6 +290,48 @@
             </div>
         </div>
 
+        <!-- TAB 3.5: REGISTRATIONS & OTHER COSTS -->
+        <div id="tabRegs" class="hidden space-y-6">
+            <div id="adminPanelRegs" class="hidden bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl">
+                <h3 class="text-sm font-bold text-white mb-3 flex items-center gap-2"><i class="fa-solid fa-file-shield text-pink-600"></i> Евиденција на Регистрации, Осигурувања, Каско & Други Трошоци</h3>
+                <div class="grid grid-cols-1 sm:grid-cols-6 gap-3 text-xs">
+                    <select id="regVehicle" class="bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white">
+                        <option value="">-- Избери возило --</option>
+                    </select>
+                    <select id="regType" class="bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white">
+                        <option value="Регистрација & Полиса">Регистрација & Полиса</option>
+                        <option value="Каско Осигурување">Каско Осигурување</option>
+                        <option value="Прва Помош / ПП Апарат">Прва Помош / ПП Апарат</option>
+                        <option value="Други Трошоци">Други Трошоци</option>
+                    </select>
+                    <input type="text" id="regDesc" placeholder="Опис (на пр. Осигурување Лојц)" class="bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white">
+                    <input type="number" id="regCost" placeholder="Сума (МКД)" class="bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white">
+                    <input type="date" id="regDate" class="bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white">
+                    <button onclick="app.addRegCost()" class="bg-pink-600 hover:bg-pink-500 text-white font-semibold py-2 rounded-xl transition shadow-md">Зачувај Трошок</button>
+                </div>
+            </div>
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl">
+                <h3 class="text-sm font-bold text-white mb-4 flex items-center gap-2"><i class="fa-solid fa-file-shield text-pink-600"></i> Историја на Регистрации, Осигурувања и Други Административни Трошоци</h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs">
+                        <thead>
+                            <tr class="border-b border-slate-800 text-slate-400">
+                                <th class="pb-3 px-3">Датум</th>
+                                <th class="pb-3 px-3">Возило</th>
+                                <th class="pb-3 px-3">Тип</th>
+                                <th class="pb-3 px-3">Опис</th>
+                                <th class="pb-3 px-3">Сума (МКД)</th>
+                                <th class="pb-3 px-3 text-right">Акција</th>
+                            </tr>
+                        </thead>
+                        <tbody id="regsTableBody">
+                            <tr><td colspan="6" class="text-center py-6 text-slate-500">Вчитување...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
         <!-- TAB 4: TOLLS & WAYBILLS -->
         <div id="tabTolls" class="hidden space-y-6">
             <div id="adminPanelTolls" class="hidden bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl">
@@ -322,7 +365,7 @@
                             </tr>
                         </thead>
                         <tbody id="tollsTableBody">
-                            <tr><td colspan="7" class="text-center py-6 text-slate-500">Вчитување...</td></tr>
+                            <tr><td colspan="7" class="text-center py-6 text-slate-500">Нема патни налози.</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -333,7 +376,7 @@
         <div id="tabReports" class="hidden space-y-6">
             <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-4">
                 <h3 class="text-sm font-bold text-white flex items-center gap-2"><i class="fa-solid fa-chart-pie text-pink-600"></i> Професионална Контролна Табла & Извештаи по Период</h3>
-                <p class="text-xs text-slate-400">Внеси сакан временски период (Од - До) и добиј поединечна картичка за секое возило со датуми, фактури и поединечни делови.</p>
+                <p class="text-xs text-slate-400">Внеси сакан временски период (Од - До) и добиј поединечна картичка за секое возило со сите трошоци (гориво, сервиси, регистрации, патарини).</p>
                 
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs bg-slate-950 p-4 rounded-xl border border-slate-800">
                     <div>
@@ -370,6 +413,7 @@
                     document.getElementById('adminPanelVehicles').classList.remove('hidden');
                     document.getElementById('adminPanelFuel').classList.remove('hidden');
                     document.getElementById('adminPanelService').classList.remove('hidden');
+                    document.getElementById('adminPanelRegs').classList.remove('hidden');
                     document.getElementById('adminPanelTolls').classList.remove('hidden');
                     this.initData();
                 } else {
@@ -383,16 +427,21 @@
                 document.getElementById('adminPanelVehicles').classList.add('hidden');
                 document.getElementById('adminPanelFuel').classList.add('hidden');
                 document.getElementById('adminPanelService').classList.add('hidden');
+                document.getElementById('adminPanelRegs').classList.add('hidden');
                 document.getElementById('adminPanelTolls').classList.add('hidden');
                 this.initData();
             },
             switchTab(tab) {
-                ['vehicles', 'fuel', 'service', 'tolls', 'reports'].forEach(t => {
-                    document.getElementById('tab' + t.charAt(0).toUpperCase() + t.slice(1)).classList.add('hidden');
-                    document.getElementById('tabBtn' + t.charAt(0).toUpperCase() + t.slice(1)).className = 'px-4 py-2 rounded-xl text-xs font-semibold bg-slate-900 border border-slate-800 text-slate-300 hover:bg-slate-800 transition whitespace-nowrap';
+                ['vehicles', 'fuel', 'service', 'regs', 'tolls', 'reports'].forEach(t => {
+                    const el = document.getElementById('tab' + t.charAt(0).toUpperCase() + t.slice(1));
+                    const btn = document.getElementById('tabBtn' + t.charAt(0).toUpperCase() + t.slice(1));
+                    if(el) el.classList.add('hidden');
+                    if(btn) btn.className = 'px-4 py-2 rounded-xl text-xs font-semibold bg-slate-900 border border-slate-800 text-slate-300 hover:bg-slate-800 transition whitespace-nowrap';
                 });
-                document.getElementById('tab' + tab.charAt(0).toUpperCase() + tab.slice(1)).classList.remove('hidden');
-                document.getElementById('tabBtn' + tab.charAt(0).toUpperCase() + tab.slice(1)).className = 'px-4 py-2 rounded-xl text-xs font-semibold bg-pink-600 text-white transition whitespace-nowrap';
+                const activeEl = document.getElementById('tab' + tab.charAt(0).toUpperCase() + tab.slice(1));
+                const activeBtn = document.getElementById('tabBtn' + tab.charAt(0).toUpperCase() + tab.slice(1));
+                if(activeEl) activeEl.classList.remove('hidden');
+                if(activeBtn) activeBtn.className = 'px-4 py-2 rounded-xl text-xs font-semibold bg-pink-600 text-white transition whitespace-nowrap';
                 
                 if(tab === 'reports') {
                     this.generateDashboardReport();
@@ -453,11 +502,13 @@
                     const tbody = document.getElementById('vehiclesTableBody');
                     const fVehSelect = document.getElementById('fVehicle');
                     const tVehSelect = document.getElementById('tVehicle');
+                    const regVehSelect = document.getElementById('regVehicle');
                     const modalSVSelect = document.getElementById('modalSVehicle');
 
                     tbody.innerHTML = '';
                     fVehSelect.innerHTML = `<option value="">-- Избери возило --</option>`;
                     tVehSelect.innerHTML = `<option value="">-- Избери возило --</option>`;
+                    regVehSelect.innerHTML = `<option value="">-- Избери возило --</option>`;
                     modalSVSelect.innerHTML = `<option value="">-- Избери возило --</option>`;
 
                     const driversSet = new Set();
@@ -481,6 +532,7 @@
                         const optHtml = `<option value="${v.plate}">${v.model} (${v.plate})</option>`;
                         fVehSelect.innerHTML += optHtml;
                         tVehSelect.innerHTML += optHtml;
+                        regVehSelect.innerHTML += optHtml;
                         modalSVSelect.innerHTML += optHtml;
 
                         let regBadge = v.regDate || 'Нема';
@@ -584,6 +636,29 @@
                     });
                 });
 
+                // Registrations & Other Costs listener
+                db.ref('registrations').on('value', (snapshot) => {
+                    const data = snapshot.val();
+                    const tbody = document.getElementById('regsTableBody');
+                    tbody.innerHTML = '';
+                    if (!data) { tbody.innerHTML = `<tr><td colspan="6" class="text-center py-6 text-slate-500">Нема внесено регистрации или други трошоци.</td></tr>`; return; }
+                    Object.keys(data).forEach(key => {
+                        const r = data[key];
+                        tbody.innerHTML += `
+                            <tr class="border-b border-slate-800/50 hover:bg-slate-800/30">
+                                <td class="py-3 px-3 text-slate-400">${r.date || '-'}</td>
+                                <td class="py-3 px-3 font-medium text-white">${r.vehicle}</td>
+                                <td class="py-3 px-3 text-amber-400">${r.type}</td>
+                                <td class="py-3 px-3 text-slate-300">${r.desc || '-'}</td>
+                                <td class="py-3 px-3 text-pink-400 font-bold">${Number(r.cost).toLocaleString()} ден.</td>
+                                <td class="py-3 px-3 text-right">
+                                    ${this.isAdmin ? `<button onclick="app.removeRecord('registrations', '${key}')" class="text-red-400 hover:text-red-300 bg-red-950/40 border border-red-900/50 px-2.5 py-1 rounded-lg"><i class="fa-solid fa-trash"></i></button>` : '<span class="text-slate-600">-</span>'}
+                                </td>
+                            </tr>
+                        `;
+                    });
+                });
+
                 // Tolls listener
                 db.ref('tolls').on('value', (snapshot) => {
                     const data = snapshot.val();
@@ -616,13 +691,17 @@
                     });
                     document.getElementById('statTotalTolls').innerText = totalTollsSum.toLocaleString() + ' ден.';
                     
-                    Promise.all([db.ref('fuel').once('value'), db.ref('service').once('value')]).then(([fSnap, sSnap]) => {
-                        let fSum = 0, sSum = 0;
+                    // Grand total including fuel, service, registrations, tolls
+                    Promise.all([
+                        db.ref('fuel').once('value'), 
+                        db.ref('service').once('value'),
+                        db.ref('registrations').once('value')
+                    ]).then(([fSnap, sSnap, rSnap]) => {
+                        let fSum = 0, sSum = 0, rSum = 0;
                         if(fSnap.val()) Object.values(fSnap.val()).forEach(x => fSum += Number(x.cost) || 0);
-                        if(sSnap.val()) Object.values(sSnap.val()).forEach(x => {
-                            sSum += Number(x.totalInvoice || x.cost) || 0;
-                        });
-                        document.getElementById('statTotalCosts').innerText = (fSum + sSum + totalTollsSum).toLocaleString() + ' ден.';
+                        if(sSnap.val()) Object.values(sSnap.val()).forEach(x => sSum += Number(x.totalInvoice || x.cost) || 0);
+                        if(rSnap.val()) Object.values(rSnap.val()).forEach(x => rSum += Number(x.cost) || 0);
+                        document.getElementById('statTotalCosts').innerText = (fSum + sSum + rSum + totalTollsSum).toLocaleString() + ' ден.';
                     });
                 });
             },
@@ -658,6 +737,20 @@
                 document.getElementById('fCost').value = '';
                 document.getElementById('fKm').value = '';
             },
+            addRegCost() {
+                if(!this.isAdmin) { alert('Немате администраторски права!'); return; }
+                const vehicle = document.getElementById('regVehicle').value;
+                const type = document.getElementById('regType').value;
+                const desc = document.getElementById('regDesc').value.trim();
+                const cost = Number(document.getElementById('regCost').value) || 0;
+                const date = document.getElementById('regDate').value || new Date().toISOString().split('T')[0];
+                if(!vehicle || cost <= 0) { alert('Избери возило и внеси валидна сума!'); return; }
+                db.ref('registrations').push({ vehicle, type, desc, cost, date });
+                document.getElementById('regDesc').value = '';
+                document.getElementById('regCost').value = '';
+                document.getElementById('regDate').value = '';
+                alert('Успешно зачуван трошок за регистрација/друго!');
+            },
             addToll() {
                 if(!this.isAdmin) { alert('Немате администраторски права!'); return; }
                 const vehicle = document.getElementById('tVehicle').value;
@@ -687,11 +780,13 @@
                     db.ref('vehicles').once('value'),
                     db.ref('fuel').once('value'),
                     db.ref('service').once('value'),
+                    db.ref('registrations').once('value'),
                     db.ref('tolls').once('value')
-                ]).then(([vehSnap, fuelSnap, servSnap, tollSnap]) => {
+                ]).then(([vehSnap, fuelSnap, servSnap, regSnap, tollSnap]) => {
                     const vehicles = vehSnap.val() || {};
                     const fuelData = fuelSnap.val() || {};
                     const servData = servSnap.val() || {};
+                    const regData = regSnap.val() || {};
                     const tollData = tollSnap.val() || {};
 
                     container.innerHTML = '';
@@ -734,6 +829,17 @@
                             }
                         });
 
+                        let rRows = '';
+                        let vRegTotal = 0;
+                        Object.values(regData).forEach(r => {
+                            if(r.vehicle === plate) {
+                                if((!sDate || r.date >= sDate) && (!eDate || r.date <= eDate)) {
+                                    vRegTotal += Number(r.cost) || 0;
+                                    rRows += `<tr class="border-b border-slate-800/30"><td class="py-1 px-1">${r.date}</td><td class="py-1 px-1 text-amber-400">${r.type}</td><td class="py-1 px-1">${r.desc || '-'}</td><td class="py-1 px-1 text-right font-bold">${r.cost} ден.</td></tr>`;
+                                }
+                            }
+                        });
+
                         let tRows = '';
                         let vTollTotal = 0;
                         Object.values(tollData).forEach(t => {
@@ -745,7 +851,7 @@
                             }
                         });
 
-                        const vehicleGrandTotal = vFuelTotal + vServTotal + vTollTotal;
+                        const vehicleGrandTotal = vFuelTotal + vServTotal + vRegTotal + vTollTotal;
 
                         container.innerHTML += `
                             <div class="bg-slate-950 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-4">
@@ -786,6 +892,19 @@
                                     </div>
                                 </div>
 
+                                <!-- Registrations & Other Group -->
+                                <div>
+                                    <h5 class="text-xs font-bold text-slate-300 mb-1 flex justify-between">
+                                        <span><i class="fa-solid fa-file-shield mr-1 text-pink-500"></i> Регистрации, Каско & Други</span>
+                                        <span class="text-pink-400">${vRegTotal.toLocaleString()} ден.</span>
+                                    </h5>
+                                    <div class="bg-slate-900 rounded-xl p-2 max-h-28 overflow-y-auto border border-slate-800">
+                                        <table class="w-full text-left text-[11px]">
+                                            <tbody>${rRows || '<tr><td colspan="4" class="text-center text-slate-500 py-1">Нема записи за регистрации во периодот</td></tr>'}</tbody>
+                                        </table>
+                                    </div>
+                                </div>
+
                                 <!-- Tolls Group -->
                                 <div>
                                     <h5 class="text-xs font-bold text-slate-300 mb-1 flex justify-between">
@@ -805,7 +924,7 @@
             },
             shareReport() {
                 const text = encodeURIComponent("Здраво! Еве линк од активната Контролна Табла за Возен Парк - Сара Фешн: https://zoranstrojmanovski-byte.github.io/vozen-park/");
-                if(confirm("Дали сакаš да го споделиш линкот преку Viber?")) {
+                if(confirm("Дали сакаш да го споделиш линкот преку Viber?")) {
                     window.open("viber://forward?text=" + text, "_blank");
                 } else {
                     window.open("mailto:?subject=Контролна Табла Возен Парк Сара Фешн&body=" + text, "_blank");
