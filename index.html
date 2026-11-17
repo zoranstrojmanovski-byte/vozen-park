@@ -59,7 +59,7 @@
     <div id="serviceModal" class="hidden fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4">
         <div class="bg-slate-900 border border-slate-800 w-full max-w-2xl rounded-2xl p-6 shadow-2xl space-y-4">
             <div class="flex justify-between items-center border-b border-slate-800 pb-3">
-                <h3 class="text-sm font-bold text-white flex items-center gap-2"><i class="fa-solid fa-screwdriver-wrench text-pink-600"></i> Нов Сервис (Excel Формат)</h3>
+                <h3 class="text-sm font-bold text-white flex items-center gap-2"><i class="fa-solid fa-screwdriver-wrench text-pink-600"></i> Нов Сервис / Зафат (Excel Прозорец)</h3>
                 <button onclick="app.closeServiceModal()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
             </div>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
@@ -96,7 +96,7 @@
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 border-b border-slate-800 pb-4 gap-4">
             <div>
                 <h1 class="text-xl font-bold text-white flex items-center gap-2"><i class="fa-solid fa-truck text-pink-600"></i> Сара Фешн - Возен Парк & Сервисна Книга</h1>
-                <p class="text-xs text-slate-400">Систем за возила, километарски сервиси, гориво со км, патарини, налози и извештаи</p>
+                <p class="text-xs text-slate-400">Професионална контролна табла со поединечни картички по возила и извештаи по период</p>
             </div>
             <div class="flex items-center gap-3 flex-wrap">
                 <div id="userRoleBadge" class="text-xs bg-slate-900 border border-slate-800 px-3 py-1.5 rounded-xl text-slate-300">Режим: Преглед</div>
@@ -143,7 +143,7 @@
             <button onclick="app.switchTab('fuel')" id="tabBtnFuel" class="px-4 py-2 rounded-xl text-xs font-semibold bg-slate-900 border border-slate-800 text-slate-300 hover:bg-slate-800 transition whitespace-nowrap"><i class="fa-solid fa-gas-pump mr-1.5"></i> Точење Гориво</button>
             <button onclick="app.switchTab('service')" id="tabBtnService" class="px-4 py-2 rounded-xl text-xs font-semibold bg-slate-900 border border-slate-800 text-slate-300 hover:bg-slate-800 transition whitespace-nowrap"><i class="fa-solid fa-screwdriver-wrench mr-1.5"></i> Сервиси & Километри</button>
             <button onclick="app.switchTab('tolls')" id="tabBtnTolls" class="px-4 py-2 rounded-xl text-xs font-semibold bg-slate-900 border border-slate-800 text-slate-300 hover:bg-slate-800 transition whitespace-nowrap"><i class="fa-solid fa-road mr-1.5"></i> Патарини & Налози</button>
-            <button onclick="app.switchTab('reports')" id="tabBtnReports" class="px-4 py-2 rounded-xl text-xs font-semibold bg-slate-900 border border-slate-800 text-slate-300 hover:bg-slate-800 transition whitespace-nowrap"><i class="fa-solid fa-chart-pie mr-1.5"></i> Филтри & Извештаи</button>
+            <button onclick="app.switchTab('reports')" id="tabBtnReports" class="px-4 py-2 rounded-xl text-xs font-semibold bg-slate-900 border border-slate-800 text-slate-300 hover:bg-slate-800 transition whitespace-nowrap"><i class="fa-solid fa-chart-pie mr-1.5"></i> Контролна Табла & Извештаи</button>
         </div>
 
         <!-- TAB 1: VEHICLES -->
@@ -304,11 +304,11 @@
             </div>
         </div>
 
-        <!-- TAB 5: REPORTS & ADVANCED FILTERS -->
+        <!-- TAB 5: REPORTS & VEHICLE CARDS DASHBOARD -->
         <div id="tabReports" class="hidden space-y-6">
             <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-4">
-                <h3 class="text-sm font-bold text-white flex items-center gap-2"><i class="fa-solid fa-chart-pie text-pink-600"></i> Филтри & Напредни Извештаи (Поединечно, Група или Избор)</h3>
-                <p class="text-xs text-slate-400">Избери временски период и штиклирај ги саканите возила (едно, повеќе или сите во група) за детален увид во секој зафат (ламела, сервиси, гориво, патарини).</p>
+                <h3 class="text-sm font-bold text-white flex items-center gap-2"><i class="fa-solid fa-chart-pie text-pink-600"></i> Професионална Контролна Табла & Извештаи по Период</h3>
+                <p class="text-xs text-slate-400">Внеси сакан временски период (Од - До) и добиј посебна професионална картичка (квадратче) за секое возило со сите негови трошоци по групи.</p>
                 
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs bg-slate-950 p-4 rounded-xl border border-slate-800">
                     <div>
@@ -320,26 +320,13 @@
                         <input type="date" id="repEndDate" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white">
                     </div>
                     <div class="flex items-end">
-                        <button onclick="app.generateReport()" class="w-full bg-pink-600 hover:bg-pink-500 text-white font-semibold py-2 rounded-xl transition shadow-md"><i class="fa-solid fa-magnifying-glass mr-1"></i> Генерирај Извештај</button>
+                        <button onclick="app.generateDashboardReport()" class="w-full bg-pink-600 hover:bg-pink-500 text-white font-semibold py-2 rounded-xl transition shadow-md"><i class="fa-solid fa-magnifying-glass mr-1"></i> Прикажи Контролна Табла</button>
                     </div>
                 </div>
 
-                <!-- VEHICLES CHECKBOX SELECTION -->
-                <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 text-xs">
-                    <div class="flex justify-between items-center mb-2">
-                        <label class="font-bold text-slate-300">Избери возила за извештај (Штиклирај ги саканите):</label>
-                        <div class="space-x-3">
-                            <button onclick="app.selectAllVehicles(true)" class="text-pink-500 hover:underline">Штиклирај сите</button>
-                            <button onclick="app.selectAllVehicles(false)" class="text-slate-400 hover:underline">Одштиклирај сите</button>
-                        </div>
-                    </div>
-                    <div id="reportVehicleCheckboxes" class="grid grid-cols-2 sm:grid-cols-4 gap-2 mt-2 max-h-32 overflow-y-auto p-2 bg-slate-900 rounded-lg border border-slate-800">
-                        <span class="text-slate-500">Вчитување возила...</span>
-                    </div>
-                </div>
-
-                <div id="reportResultArea" class="mt-4 p-4 bg-slate-950 rounded-xl border border-slate-800 text-xs text-slate-300 space-y-4">
-                    <p class="text-slate-500 text-center py-4">Кликни „Генерирај Извештај“ за целосен приказ.</p>
+                <!-- VEHICLES CARDS CONTAINER -->
+                <div id="vehicleCardsContainer" class="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
+                    <p class="text-slate-500 text-center py-8 lg:col-span-2">Избери период и кликни „Прикажи Контролна Табла“ за да се вчитаат поединечните картички по возила.</p>
                 </div>
             </div>
         </div>
@@ -381,6 +368,10 @@
                 });
                 document.getElementById('tab' + tab.charAt(0).toUpperCase() + tab.slice(1)).classList.remove('hidden');
                 document.getElementById('tabBtn' + tab.charAt(0).toUpperCase() + tab.slice(1)).className = 'px-4 py-2 rounded-xl text-xs font-semibold bg-pink-600 text-white transition whitespace-nowrap';
+                
+                if(tab === 'reports') {
+                    this.generateDashboardReport();
+                }
             },
             openServiceModal() {
                 document.getElementById('serviceModal').classList.remove('hidden');
@@ -393,26 +384,22 @@
                 document.getElementById('modalSNextKm').value = '';
             },
             initData() {
-                // Fetch vehicles and populate all selects and tables immediately
                 db.ref('vehicles').on('value', (snapshot) => {
                     const data = snapshot.val();
                     const tbody = document.getElementById('vehiclesTableBody');
                     const fVehSelect = document.getElementById('fVehicle');
                     const tVehSelect = document.getElementById('tVehicle');
                     const modalSVSelect = document.getElementById('modalSVehicle');
-                    const cbContainer = document.getElementById('reportVehicleCheckboxes');
 
                     tbody.innerHTML = '';
                     fVehSelect.innerHTML = `<option value="">-- Избери возило --</option>`;
                     tVehSelect.innerHTML = `<option value="">-- Избери возило --</option>`;
                     modalSVSelect.innerHTML = `<option value="">-- Избери возило --</option>`;
-                    cbContainer.innerHTML = '';
 
                     const driversSet = new Set();
 
                     if (!data) {
                         tbody.innerHTML = `<tr><td colspan="7" class="text-center py-6 text-slate-500">Нема внесено возила.</td></tr>`;
-                        cbContainer.innerHTML = `<span class="text-slate-500">Нема возила.</span>`;
                         document.getElementById('statTotalVehicles').innerText = '0';
                         document.getElementById('statExpiring').innerText = '0';
                         return;
@@ -431,13 +418,6 @@
                         fVehSelect.innerHTML += optHtml;
                         tVehSelect.innerHTML += optHtml;
                         modalSVSelect.innerHTML += optHtml;
-
-                        cbContainer.innerHTML += `
-                            <label class="flex items-center gap-2 text-slate-300 cursor-pointer hover:text-white">
-                                <input type="checkbox" name="reportVehicleCb" value="${v.plate}" checked class="rounded bg-slate-800 border-slate-700 text-pink-600 focus:ring-0">
-                                <span>${v.model} (${v.plate})</span>
-                            </label>
-                        `;
 
                         let regBadge = v.regDate || 'Нема';
                         if(v.regDate) {
@@ -489,9 +469,11 @@
                     const data = snapshot.val();
                     const tbody = document.getElementById('fuelTableBody');
                     tbody.innerHTML = '';
-                    if (!data) { tbody.innerHTML = `<tr><td colspan="8" class="text-center py-6 text-slate-500">Нема точења.</td></tr>`; return; }
+                    let totalF = 0;
+                    if (!data) { tbody.innerHTML = `<tr><td colspan="8" class="text-center py-6 text-slate-500">Нема точења.</td>return; }`; return; }
                     Object.keys(data).forEach(key => {
                         const f = data[key];
+                        totalF += Number(f.cost) || 0;
                         tbody.innerHTML += `
                             <tr class="border-b border-slate-800/50 hover:bg-slate-800/30">
                                 <td class="py-3 px-3 text-slate-400">${f.date || '-'}</td>
@@ -566,11 +548,15 @@
                         `;
                     });
                     document.getElementById('statTotalTolls').innerText = totalTollsSum.toLocaleString() + ' ден.';
-                    document.getElementById('statTotalCosts').innerText = totalCostsSum.toLocaleString() + ' ден.';
+                    
+                    // Grand total of all costs
+                    Promise.all([db.ref('fuel').once('value'), db.ref('service').once('value')]).then(([fSnap, sSnap]) => {
+                        let fSum = 0, sSum = 0;
+                        if(fSnap.val()) Object.values(fSnap.val()).forEach(x => fSum += Number(x.cost) || 0);
+                        if(sSnap.val()) Object.values(sSnap.val()).forEach(x => sSum += Number(x.cost) || 0);
+                        document.getElementById('statTotalCosts').innerText = (fSum + sSum + totalTollsSum).toLocaleString() + ' ден.';
+                    });
                 });
-            },
-            selectAllVehicles(status) {
-                document.querySelectorAll('input[name="reportVehicleCb"]').forEach(cb => cb.checked = status);
             },
             addVehicle() {
                 const model = document.getElementById('vModel').value.trim();
@@ -631,116 +617,135 @@
                     db.ref(path + '/' + key).remove();
                 }
             },
-            generateReport() {
+            generateDashboardReport() {
                 const sDate = document.getElementById('repStartDate').value;
                 const eDate = document.getElementById('repEndDate').value;
-                
-                const selectedVehicles = [];
-                document.querySelectorAll('input[name="reportVehicleCb"]:checked').forEach(cb => {
-                    selectedVehicles.push(cb.value);
-                });
-
-                const resArea = document.getElementById('reportResultArea');
-
-                if(selectedVehicles.length === 0) {
-                    resArea.innerHTML = `<p class="text-amber-400 text-center py-4">Мора да избереш барем едно возило од листите погоре!</p>`;
-                    return;
-                }
+                const container = document.getElementById('vehicleCardsContainer');
 
                 Promise.all([
+                    db.ref('vehicles').once('value'),
                     db.ref('fuel').once('value'),
                     db.ref('service').once('value'),
                     db.ref('tolls').once('value')
-                ]).then(([fuelSnap, servSnap, tollSnap]) => {
-                    const fuels = fuelSnap.val() || {};
-                    const servs = servSnap.val() || {};
-                    const tolls = tollSnap.val() || {};
+                ]).then(([vehSnap, fuelSnap, servSnap, tollSnap]) => {
+                    const vehicles = vehSnap.val() || {};
+                    const fuels = fuelSnap.val() || fuelSnap.val() ? fuelSnap.val() : {};
+                    const fuelData = fuelSnap.val() || {};
+                    const servData = servSnap.val() || {};
+                    const tollData = tollSnap.val() || {};
 
-                    let fTotal = 0, sTotal = 0, tTotal = 0;
-                    let fRows = '', sRows = '', tRows = '';
+                    container.innerHTML = '';
 
-                    Object.values(fuels).forEach(f => {
-                        if(selectedVehicles.includes(f.vehicle)) {
-                            if((!sDate || f.date >= sDate) && (!eDate || f.date <= eDate)) {
-                                fTotal += Number(f.cost) || 0;
-                                fRows += `<tr class="border-b border-slate-800/40"><td class="py-2 px-2">${f.date}</td><td class="py-2 px-2 font-medium text-white">${f.vehicle}</td><td class="py-2 px-2">${f.type}</td><td class="py-2 px-2">${f.liters} L</td><td class="py-2 px-2">${f.cost} ден.</td><td class="py-2 px-2">${f.km || '-'} км</td><td class="py-2 px-2">${f.driver || '-'}</td></tr>`;
+                    if(Object.keys(vehicles).length === 0) {
+                        container.innerHTML = `<p class="text-slate-500 text-center py-8 lg:col-span-2">Нема внесено возила во системот.</p>`;
+                        return;
+                    }
+
+                    Object.keys(vehicles).forEach(vKey => {
+                        const v = vehicles[vKey];
+                        const plate = v.plate;
+
+                        // Filter fuel for this vehicle & date range
+                        let fRows = '';
+                        let vFuelTotal = 0;
+                        Object.values(fuelData).forEach(f => {
+                            if(f.vehicle === plate) {
+                                if((!sDate || f.date >= sDate) && (!eDate || f.date <= eDate)) {
+                                    vFuelTotal += Number(f.cost) || 0;
+                                    fRows += `<tr class="border-b border-slate-800/30"><td class="py-1 px-1">${f.date}</td><td class="py-1 px-1">${f.type} (${f.liters}L)</td><td class="py-1 px-1">${f.km || '-'} км</td><td class="py-1 px-1 text-right font-bold">${f.cost} ден.</td></tr>`;
+                                }
                             }
-                        }
-                    });
+                        });
 
-                    Object.values(servs).forEach(s => {
-                        if(selectedVehicles.includes(s.vehicle)) {
-                            if((!sDate || s.date >= sDate) && (!eDate || s.date <= eDate)) {
-                                sTotal += Number(s.cost) || 0;
-                                sRows += `<tr class="border-b border-slate-800/40"><td class="py-2 px-2">${s.date}</td><td class="py-2 px-2 font-medium text-white">${s.vehicle}</td><td class="py-2 px-2 font-bold text-pink-400">${s.desc}</td><td class="py-2 px-2">${s.cost} ден.</td><td class="py-2 px-2">${s.km || '-'} км</td><td class="py-2 px-2 text-amber-400">${s.nextKm || '-'} км</td></tr>`;
+                        // Filter services for this vehicle & date range
+                        let sRows = '';
+                        let vServTotal = 0;
+                        Object.values(servData).forEach(s => {
+                            if(s.vehicle === plate) {
+                                if((!sDate || s.date >= sDate) && (!eDate || s.date <= eDate)) {
+                                    vServTotal += Number(s.cost) || 0;
+                                    sRows += `<tr class="border-b border-slate-800/30"><td class="py-1 px-1">${s.date}</td><td class="py-1 px-1 text-pink-400 font-semibold">${s.desc}</td><td class="py-1 px-1">${s.km || '-'} км</td><td class="py-1 px-1 text-right font-bold">${s.cost} ден.</td></tr>`;
+                                }
                             }
-                        }
-                    });
+                        });
 
-                    Object.values(tolls).forEach(t => {
-                        if(selectedVehicles.includes(t.vehicle)) {
-                            if((!sDate || t.date >= sDate) && (!eDate || t.date <= eDate)) {
-                                tTotal += Number(t.cost) || 0;
-                                tRows += `<tr class="border-b border-slate-800/40"><td class="py-2 px-2">${t.date}</td><td class="py-2 px-2 font-medium text-white">${t.vehicle}</td><td class="py-2 px-2">${t.driver || '-'}</td><td class="py-2 px-2 font-semibold">${t.waybill || '-'}</td><td class="py-2 px-2">${t.route || '-'}</td><td class="py-2 px-2">${t.cost} ден.</td></tr>`;
+                        // Filter tolls for this vehicle & date range
+                        let tRows = '';
+                        let vTollTotal = 0;
+                        Object.values(tollData).forEach(t => {
+                            if(t.vehicle === plate) {
+                                if((!sDate || t.date >= sDate) && (!eDate || t.date <= eDate)) {
+                                    vTollTotal += Number(t.cost) || 0;
+                                    tRows += `<tr class="border-b border-slate-800/30"><td class="py-1 px-1">${t.date}</td><td class="py-1 px-1">${t.route || '-'}</td><td class="py-1 px-1">${t.waybill || '-'}</td><td class="py-1 px-1 text-right font-bold">${t.cost} ден.</td></tr>`;
+                                }
                             }
-                        }
+                        });
+
+                        const vehicleGrandTotal = vFuelTotal + vServTotal + vTollTotal;
+
+                        // Create professional card for each vehicle
+                        container.innerHTML += `
+                            <div class="bg-slate-950 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-4">
+                                <div class="flex justify-between items-start border-b border-slate-800 pb-3">
+                                    <div>
+                                        <h4 class="font-bold text-white text-base flex items-center gap-2"><i class="fa-solid fa-car text-pink-500"></i> ${v.model}</h4>
+                                        <p class="text-xs text-slate-400">Таблички: <b class="text-slate-200">${v.plate}</b> | Возач: <b class="text-slate-200">${v.driver || '-'}</b></p>
+                                    </div>
+                                    <div class="text-right bg-pink-950/40 border border-pink-900/50 px-3 py-1.5 rounded-xl">
+                                        <span class="text-[9px] text-pink-300 block">ВКУПНО ТРОШОК</span>
+                                        <span class="text-sm font-bold text-white">${vehicleGrandTotal.toLocaleString()} ден.</span>
+                                    </div>
+                                </div>
+
+                                <!-- Fuel Group -->
+                                <div>
+                                    <h5 class="text-xs font-bold text-slate-300 mb-1 flex justify-between">
+                                        <span><i class="fa-solid fa-gas-pump mr-1 text-pink-500"></i> Гориво</span>
+                                        <span class="text-pink-400">${vFuelTotal.toLocaleString()} ден.</span>
+                                    </h5>
+                                    <div class="bg-slate-900 rounded-xl p-2 max-h-28 overflow-y-auto border border-slate-800">
+                                        <table class="w-full text-left text-[11px]">
+                                            <tbody>${fRows || '<tr><td colspan="4" class="text-center text-slate-500 py-1">Нема записи за гориво во периодот</td></tr>'}</tbody>
+                                        </table>
+                                    </div>
+                                </div>
+
+                                <!-- Service Group -->
+                                <div>
+                                    <h5 class="text-xs font-bold text-slate-300 mb-1 flex justify-between">
+                                        <span><i class="fa-solid fa-screwdriver-wrench mr-1 text-pink-500"></i> Сервиси & Зафати</span>
+                                        <span class="text-pink-400">${vServTotal.toLocaleString()} ден.</span>
+                                    </h5>
+                                    <div class="bg-slate-900 rounded-xl p-2 max-h-28 overflow-y-auto border border-slate-800">
+                                        <table class="w-full text-left text-[11px]">
+                                            <tbody>${sRows || '<tr><td colspan="4" class="text-center text-slate-500 py-1">Нема сервиси во периодот</td></tr>'}</tbody>
+                                        </table>
+                                    </div>
+                                </div>
+
+                                <!-- Tolls Group -->
+                                <div>
+                                    <h5 class="text-xs font-bold text-slate-300 mb-1 flex justify-between">
+                                        <span><i class="fa-solid fa-road mr-1 text-pink-500"></i> Патарини & Релации</span>
+                                        <span class="text-pink-400">${vTollTotal.toLocaleString()} ден.</span>
+                                    </h5>
+                                    <div class="bg-slate-900 rounded-xl p-2 max-h-28 overflow-y-auto border border-slate-800">
+                                        <table class="w-full text-left text-[11px]">
+                                            <tbody>${tRows || '<tr><td colspan="4" class="text-center text-slate-500 py-1">Нема патарини во периодот</td></tr>'}</tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
                     });
-
-                    const grandTotal = fTotal + sTotal + tTotal;
-
-                    resArea.innerHTML = `
-                        <div class="border-b border-slate-800 pb-3 flex justify-between items-center flex-wrap gap-2">
-                            <div>
-                                <h4 class="font-bold text-white text-sm">Извештај (Период: ${sDate || 'Почеток'} до ${eDate || 'Денес'} | Избрани возила: ${selectedVehicles.join(', ')})</h4>
-                                <p class="text-xs text-slate-400 mt-0.5">Ги прикажува сите евидентирани трошоци, точења со километри, сервиси (ламела итн.), патарини и релации.</p>
-                            </div>
-                            <div class="bg-pink-950/60 border border-pink-900 px-4 py-2 rounded-xl text-right">
-                                <span class="text-[10px] text-pink-300 block">ВКУПНИ ТРОШОЦИ</span>
-                                <span class="text-sm font-bold text-white">${grandTotal.toLocaleString()} ден.</span>
-                            </div>
-                        </div>
-
-                        <!-- FUEL REPORT -->
-                        <div>
-                            <h5 class="font-bold text-white mb-2 flex items-center gap-2"><i class="fa-solid fa-gas-pump text-pink-500"></i> Точење Гориво (${fTotal.toLocaleString()} ден.)</h5>
-                            <div class="overflow-x-auto bg-slate-900 rounded-xl p-2 border border-slate-800">
-                                <table class="w-full text-left text-xs">
-                                    <thead><tr class="border-b border-slate-800 text-slate-400"><th class="py-2 px-2">Датум</th><th class="py-2 px-2">Возило</th><th class="py-2 px-2">Тип</th><th class="py-2 px-2">Литри</th><th class="py-2 px-2">Сума</th><th class="py-2 px-2">Км</th><th class="py-2 px-2">Возач</th></tr></thead>
-                                    <tbody>${fRows || '<tr><td colspan="7" class="text-center py-3 text-slate-500">Нема записи за гориво.</td></tr>'}</tbody>
-                                </table>
-                            </div>
-                        </div>
-
-                        <!-- SERVICE REPORT -->
-                        <div>
-                            <h5 class="font-bold text-white mb-2 flex items-center gap-2"><i class="fa-solid fa-screwdriver-wrench text-pink-500"></i> Сервиси & Зафати (${sTotal.toLocaleString()} ден.)</h5>
-                            <div class="overflow-x-auto bg-slate-900 rounded-xl p-2 border border-slate-800">
-                                <table class="w-full text-left text-xs">
-                                    <thead><tr class="border-b border-slate-800 text-slate-400"><th class="py-2 px-2">Датум</th><th class="py-2 px-2">Возило</th><th class="py-2 px-2">Зафат / Дел</th><th class="py-2 px-2">Цена</th><th class="py-2 px-2">Км при сервис</th><th class="py-2 px-2">Следен сервис (Км)</th></tr></thead>
-                                    <tbody>${sRows || '<tr><td colspan="6" class="text-center py-3 text-slate-500">Нема сервиси.</td></tr>'}</tbody>
-                                </table>
-                            </div>
-                        </div>
-
-                        <!-- TOLLS REPORT -->
-                        <div>
-                            <h5 class="font-bold text-white mb-2 flex items-center gap-2"><i class="fa-solid fa-road text-pink-500"></i> Патарини, Налози & Релации (${tTotal.toLocaleString()} ден.)</h5>
-                            <div class="overflow-x-auto bg-slate-900 rounded-xl p-2 border border-slate-800">
-                                <table class="w-full text-left text-xs">
-                                    <thead><tr class="border-b border-slate-800 text-slate-400"><th class="py-2 px-2">Датум</th><th class="py-2 px-2">Возило</th><th class="py-2 px-2">Возач</th><th class="py-2 px-2">Патен Налог</th><th class="py-2 px-2">Релација</th><th class="py-2 px-2">Патарина</th></tr></thead>
-                                    <tbody>${tRows || '<tr><td colspan="6" class="text-center py-3 text-slate-500">Нема патарини.</td></tr>'}</tbody>
-                                </table>
-                            </div>
-                        </div>
-                    `;
                 });
             },
             shareReport() {
-                const text = encodeURIComponent("Здраво! Еве линк од активната Сервисна Книга за Возен Парк - Сара Фешн: https://zoranstrojmanovski-byte.github.io/vozen-park/");
+                const text = encodeURIComponent("Здраво! Еве линк од активната Контролна Табла за Возен Парк - Сара Фешн: https://zoranstrojmanovski-byte.github.io/vozen-park/");
                 if(confirm("Дали сакаш да го споделиш линкот преку Viber?")) {
                     window.open("viber://forward?text=" + text, "_blank");
                 } else {
-                    window.open("mailto:?subject=Извештај Возен Парк Сара Фешн&body=" + text, "_blank");
+                    window.open("mailto:?subject=Контролна Табла Возен Парк Сара Фешн&body=" + text, "_blank");
                 }
             }
         };
