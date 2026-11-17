@@ -56,25 +56,29 @@
         </div>
     </div>
 
-    <!-- MULTI-ROW EXCEL-STYLE SERVICE MODAL -->
+    <!-- MULTI-ROW EXCEL-STYLE SERVICE MODAL WITH DATE & TOTAL INVOICE -->
     <div id="serviceModal" class="hidden fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4">
         <div class="bg-slate-900 border border-slate-800 w-full max-w-4xl rounded-2xl p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
             <div class="flex justify-between items-center border-b border-slate-800 pb-3">
-                <h3 class="text-sm font-bold text-white flex items-center gap-2"><i class="fa-solid fa-screwdriver-wrench text-pink-600"></i> Нов Сервис - Ексел Табела со повеќе делови</h3>
+                <h3 class="text-sm font-bold text-white flex items-center gap-2"><i class="fa-solid fa-screwdriver-wrench text-pink-600"></i> Нов Сервис со Фактура и Делови (Excel Табела)</h3>
                 <button onclick="app.closeServiceModal()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
             </div>
             
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs bg-slate-950 p-4 rounded-xl border border-slate-800">
+            <div class="grid grid-cols-1 sm:grid-cols-4 gap-3 text-xs bg-slate-950 p-4 rounded-xl border border-slate-800">
                 <div>
                     <label class="block text-slate-400 mb-1">Избери Возило:</label>
                     <select id="modalSVehicle" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white"><option value="">-- Избери возило --</option></select>
+                </div>
+                <div>
+                    <label class="block text-slate-400 mb-1">Датум на сервис:</label>
+                    <input type="date" id="modalSDate" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white">
                 </div>
                 <div>
                     <label class="block text-slate-400 mb-1">Километри при сервис:</label>
                     <input type="number" id="modalSKm" placeholder="на пр. 145000" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white">
                 </div>
                 <div>
-                    <label class="block text-slate-400 mb-1">Следен сервис на Км (Потсетник):</label>
+                    <label class="block text-slate-400 mb-1">Следен сервис (Км):</label>
                     <input type="number" id="modalSNextKm" placeholder="на пр. 155000" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white">
                 </div>
             </div>
@@ -82,7 +86,7 @@
             <!-- EXCEL ROWS CONTAINER -->
             <div>
                 <div class="flex justify-between items-center mb-2">
-                    <label class="text-xs font-bold text-slate-300">Сменети делови и зафати (Ексел редови):</label>
+                    <label class="text-xs font-bold text-slate-300">Сменети делови и поединечни цени (Ексел редови):</label>
                     <button onclick="app.addServiceRow()" class="bg-slate-800 hover:bg-slate-700 text-pink-400 border border-slate-700 px-3 py-1 rounded-lg text-xs flex items-center gap-1.5"><i class="fa-solid fa-plus"></i> Додај нов ред</button>
                 </div>
                 <div class="overflow-x-auto border border-slate-800 rounded-xl bg-slate-950 p-2">
@@ -101,9 +105,14 @@
                 </div>
             </div>
 
-            <div class="flex justify-end gap-2 pt-2 border-t border-slate-800">
-                <button onclick="app.closeServiceModal()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 rounded-xl text-xs text-slate-300">Откажи</button>
-                <button onclick="app.saveModalServices()" class="px-4 py-2 bg-pink-600 hover:bg-pink-500 rounded-xl text-xs font-semibold text-white shadow-md">Зачувај ги сите редови</button>
+            <div class="flex justify-between items-center pt-2 border-t border-slate-800">
+                <div class="text-xs text-slate-300">
+                    Вкупна Сума на Фактура: <span id="modalInvoiceTotal" class="text-pink-400 font-bold text-sm">0 ден.</span>
+                </div>
+                <div class="flex gap-2">
+                    <button onclick="app.closeServiceModal()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 rounded-xl text-xs text-slate-300">Откажи</button>
+                    <button onclick="app.saveModalServices()" class="px-4 py-2 bg-pink-600 hover:bg-pink-500 rounded-xl text-xs font-semibold text-white shadow-md">Зачувај Сервис</button>
+                </div>
             </div>
         </div>
     </div>
@@ -252,22 +261,22 @@
             <div id="adminPanelService" class="hidden bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl flex justify-between items-center">
                 <div>
                     <h3 class="text-sm font-bold text-white mb-1"><i class="fa-solid fa-screwdriver-wrench text-pink-600"></i> Управување со Сервиси</h3>
-                    <p class="text-xs text-slate-400">Внеси нов сервис преку професионален Ексел-лик прозорец со повеќе редови за делови.</p>
+                    <p class="text-xs text-slate-400">Внеси нов сервис со датум, вкупна фактура и поединечни делови во Ексел табела.</p>
                 </div>
                 <button onclick="app.openServiceModal()" class="bg-pink-600 hover:bg-pink-500 text-white font-semibold px-4 py-2.5 rounded-xl transition shadow-md text-xs flex items-center gap-2">
                     <i class="fa-solid fa-plus"></i> <span>Внеси Нов Сервис (Excel Табела)</span>
                 </button>
             </div>
             <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl">
-                <h3 class="text-sm font-bold text-white mb-4 flex items-center gap-2"><i class="fa-solid fa-screwdriver-wrench text-pink-600"></i> Историја на Сервиси и Километри</h3>
+                <h3 class="text-sm font-bold text-white mb-4 flex items-center gap-2"><i class="fa-solid fa-screwdriver-wrench text-pink-600"></i> Историја на Сервиси, Датуми и Фактури</h3>
                 <div class="overflow-x-auto">
                     <table class="w-full text-left text-xs">
                         <thead>
                             <tr class="border-b border-slate-800 text-slate-400">
                                 <th class="pb-3 px-3">Датум</th>
                                 <th class="pb-3 px-3">Возило</th>
-                                <th class="pb-3 px-3">Зафат / Дел</th>
-                                <th class="pb-3 px-3">Цена</th>
+                                <th class="pb-3 px-3">Сменети Делови / Зафати</th>
+                                <th class="pb-3 px-3">Вкупна Фактура</th>
                                 <th class="pb-3 px-3">Км при сервис</th>
                                 <th class="pb-3 px-3">Следен сервис (Км)</th>
                                 <th class="pb-3 px-3 text-right">Акција</th>
@@ -325,7 +334,7 @@
         <div id="tabReports" class="hidden space-y-6">
             <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-4">
                 <h3 class="text-sm font-bold text-white flex items-center gap-2"><i class="fa-solid fa-chart-pie text-pink-600"></i> Професионална Контролна Табла & Извештаи по Период</h3>
-                <p class="text-xs text-slate-400">Внеси сакан временски период (Од - До) и добиј посебна професионална картичка за секое возило со сите негови трошоци по групи.</p>
+                <p class="text-xs text-slate-400">Внеси сакан временски период (Од - До) и добиј поединечна картичка за секое возило со датуми, фактури и поединечни делови.</p>
                 
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs bg-slate-950 p-4 rounded-xl border border-slate-800">
                     <div>
@@ -343,7 +352,7 @@
 
                 <!-- VEHICLES CARDS CONTAINER -->
                 <div id="vehicleCardsContainer" class="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
-                    <p class="text-slate-500 text-center py-8 lg:col-span-2">Избери период и кликни „Прикажи Контролна Табла“ за да се вчитаат поединечните картички по возила.</p>
+                    <p class="text-slate-500 text-center py-8 lg:col-span-2">Избери период и кликни „Прикажи Контролна Табла“ за да се вчитаат картичките по возила.</p>
                 </div>
             </div>
         </div>
@@ -392,11 +401,12 @@
             },
             openServiceModal() {
                 document.getElementById('serviceModal').classList.remove('hidden');
+                document.getElementById('modalSDate').value = new Date().toISOString().split('T')[0];
                 const tbody = document.getElementById('serviceRowsBody');
                 tbody.innerHTML = '';
                 this.addServiceRow();
                 this.addServiceRow();
-                this.addServiceRow();
+                this.updateInvoiceTotal();
             },
             closeServiceModal() {
                 document.getElementById('serviceModal').classList.add('hidden');
@@ -410,40 +420,49 @@
                 tr.id = rowId;
                 tr.className = 'border-b border-slate-900 hover:bg-slate-900/50';
                 tr.innerHTML = `
-                    <td class="py-2 px-2"><input type="text" placeholder="на пр. Ламела, Филтер за воздух..." class="service-desc w-full bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1.5 text-white text-xs"></td>
-                    <td class="py-2 px-2"><input type="number" placeholder="0" class="service-cost w-full bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1.5 text-white text-xs"></td>
-                    <td class="py-2 px-2 text-right"><button onclick="document.getElementById('${rowId}').remove()" class="text-red-400 hover:text-red-300 px-2 py-1"><i class="fa-solid fa-trash"></i></button></td>
+                    <td class="py-2 px-2"><input type="text" placeholder="на пр. Ламела, Масло, Филтер..." class="service-desc w-full bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1.5 text-white text-xs"></td>
+                    <td class="py-2 px-2"><input type="number" placeholder="0" oninput="app.updateInvoiceTotal()" class="service-cost w-full bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1.5 text-white text-xs"></td>
+                    <td class="py-2 px-2 text-right"><button onclick="document.getElementById('${rowId}').remove(); app.updateInvoiceTotal();" class="text-red-400 hover:text-red-300 px-2 py-1"><i class="fa-solid fa-trash"></i></button></td>
                 `;
                 tbody.appendChild(tr);
+            },
+            updateInvoiceTotal() {
+                let total = 0;
+                document.querySelectorAll('.service-cost').forEach(input => {
+                    total += Number(input.value) || 0;
+                });
+                document.getElementById('modalInvoiceTotal').innerText = total.toLocaleString() + ' ден.';
             },
             saveModalServices() {
                 if(!this.isAdmin) { alert('Немате администраторски права за внесување!'); return; }
                 const vehicle = document.getElementById('modalSVehicle').value;
+                const date = document.getElementById('modalSDate').value;
                 const km = document.getElementById('modalSKm').value.trim();
                 const nextKm = document.getElementById('modalSNextKm').value.trim();
                 
-                if(!vehicle) { alert('Избери возило!'); return; }
+                if(!vehicle || !date) { alert('Избери возило и датум!'); return; }
 
                 const rows = document.querySelectorAll('#serviceRowsBody tr');
-                let savedCount = 0;
-                const date = new Date().toISOString().split('T')[0];
+                let items = [];
+                let totalInvoice = 0;
 
                 rows.forEach(tr => {
                     const desc = tr.querySelector('.service-desc').value.trim();
-                    const cost = tr.querySelector('.service-cost').value.trim();
-                    if(desc && cost) {
-                        db.ref('service').push({ vehicle, desc, cost, km, nextKm, date });
-                        savedCount++;
+                    const cost = Number(tr.querySelector('.service-cost').value) || 0;
+                    if(desc && cost > 0) {
+                        items.push({ desc, cost });
+                        totalInvoice += cost;
                     }
                 });
 
-                if(savedCount === 0) {
-                    alert('Внеси барем еден зафат и цена во табелата!');
+                if(items.length === 0) {
+                    alert('Внеси барем еден дел и цена во табелата!');
                     return;
                 }
 
+                db.ref('service').push({ vehicle, date, km, nextKm, items, totalInvoice });
                 this.closeServiceModal();
-                alert(`Успешно зачувани ${savedCount} сервисни зафати!`);
+                alert(`Успешно зачуван сервис со вкупна фактура од ${totalInvoice.toLocaleString()} ден.!`);
             },
             initData() {
                 db.ref('vehicles').on('value', (snapshot) => {
@@ -558,12 +577,20 @@
                     if (!data) { tbody.innerHTML = `<tr><td colspan="7" class="text-center py-6 text-slate-500">Нема сервиси.</td></tr>`; return; }
                     Object.keys(data).forEach(key => {
                         const s = data[key];
+                        let itemsHtml = '';
+                        if (s.items && Array.isArray(s.items)) {
+                            itemsHtml = s.items.map(i => `<span class="bg-slate-800 px-2 py-0.5 rounded mr-1 text-[11px]">${i.desc}: <b class="text-pink-400">${i.cost}д.</b></span>`).join('');
+                        } else {
+                            itemsHtml = s.desc || '-';
+                        }
+                        const totalInv = s.totalInvoice || s.cost || 0;
+
                         tbody.innerHTML += `
                             <tr class="border-b border-slate-800/50 hover:bg-slate-800/30">
                                 <td class="py-3 px-3 text-slate-400">${s.date || '-'}</td>
                                 <td class="py-3 px-3 font-medium text-white">${s.vehicle}</td>
-                                <td class="py-3 px-3 text-slate-300 font-semibold text-pink-400">${s.desc}</td>
-                                <td class="py-3 px-3 text-slate-300">${s.cost} ден.</td>
+                                <td class="py-3 px-3 text-slate-300">${itemsHtml}</td>
+                                <td class="py-3 px-3 text-pink-400 font-bold">${Number(totalInv).toLocaleString()} ден.</td>
                                 <td class="py-3 px-3 text-slate-300">${s.km ? s.km + ' км' : '-'}</td>
                                 <td class="py-3 px-3 text-amber-400 font-semibold">${s.nextKm ? s.nextKm + ' км' : '-'}</td>
                                 <td class="py-3 px-3 text-right">
@@ -609,7 +636,9 @@
                     Promise.all([db.ref('fuel').once('value'), db.ref('service').once('value')]).then(([fSnap, sSnap]) => {
                         let fSum = 0, sSum = 0;
                         if(fSnap.val()) Object.values(fSnap.val()).forEach(x => fSum += Number(x.cost) || 0);
-                        if(sSnap.val()) Object.values(sSnap.val()).forEach(x => sSum += Number(x.cost) || 0);
+                        if(sSnap.val()) Object.values(sSnap.val()).forEach(x => {
+                            sSum += Number(x.totalInvoice || x.cost) || 0;
+                        });
                         document.getElementById('statTotalCosts').innerText = (fSum + sSum + totalTollsSum).toLocaleString() + ' ден.';
                     });
                 });
@@ -709,8 +738,15 @@
                         Object.values(servData).forEach(s => {
                             if(s.vehicle === plate) {
                                 if((!sDate || s.date >= sDate) && (!eDate || s.date <= eDate)) {
-                                    vServTotal += Number(s.cost) || 0;
-                                    sRows += `<tr class="border-b border-slate-800/30"><td class="py-1 px-1">${s.date}</td><td class="py-1 px-1 text-pink-400 font-semibold">${s.desc}</td><td class="py-1 px-1">${s.km || '-'} км</td><td class="py-1 px-1 text-right font-bold">${s.cost} ден.</td></tr>`;
+                                    const totalInv = Number(s.totalInvoice || s.cost) || 0;
+                                    vServTotal += totalInv;
+                                    let itemsSummary = '';
+                                    if(s.items && Array.isArray(s.items)) {
+                                        itemsSummary = s.items.map(i => `${i.desc} (${i.cost}д.)`).join(', ');
+                                    } else {
+                                        itemsSummary = s.desc || '-';
+                                    }
+                                    sRows += `<tr class="border-b border-slate-800/30"><td class="py-1 px-1">${s.date}</td><td class="py-1 px-1 text-pink-400 font-semibold">${itemsSummary}</td><td class="py-1 px-1">${s.km || '-'} км</td><td class="py-1 px-1 text-right font-bold">${totalInv.toLocaleString()} ден.</td></tr>`;
                                 }
                             }
                         });
@@ -757,7 +793,7 @@
                                 <!-- Service Group -->
                                 <div>
                                     <h5 class="text-xs font-bold text-slate-300 mb-1 flex justify-between">
-                                        <span><i class="fa-solid fa-screwdriver-wrench mr-1 text-pink-500"></i> Сервиси & Зафати</span>
+                                        <span><i class="fa-solid fa-screwdriver-wrench mr-1 text-pink-500"></i> Сервиси & Фактури</span>
                                         <span class="text-pink-400">${vServTotal.toLocaleString()} ден.</span>
                                     </h5>
                                     <div class="bg-slate-900 rounded-xl p-2 max-h-28 overflow-y-auto border border-slate-800">
