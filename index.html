@@ -31,29 +31,6 @@
     </script>
 </head>
 <body class="min-h-screen flex flex-col bg-slate-950 text-slate-100 custom-scrollbar">
-    <!-- LOGIN SCREEN -->
-    <div id="loginScreen" class="fixed inset-0 bg-slate-950 z-50 flex items-center justify-center p-4">
-        <div class="bg-slate-900 border border-slate-800 w-full max-w-sm rounded-2xl p-6 shadow-2xl text-center">
-            <div class="bg-pink-600 text-white w-12 h-12 rounded-2xl mx-auto flex items-center justify-center shadow-lg mb-4">
-                <i class="fa-solid fa-lock text-xl"></i>
-            </div>
-            <h2 class="text-lg font-bold text-white">Администраторски Пристап</h2>
-            <p class="text-xs text-slate-400 mt-1">Сервисна Книга - Возен Парк (Сара Фешн)</p>
-            <div class="space-y-3 text-xs text-left mt-4">
-                <div>
-                    <label class="block text-slate-300 font-medium mb-1">Администраторска лозинка</label>
-                    <input type="password" id="loginPassword" placeholder="Внеси лозинка..." class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-pink-600">
-                </div>
-                <button onclick="app.loginAdmin()" class="w-full bg-pink-600 hover:bg-pink-500 text-white font-semibold py-2.5 rounded-xl transition shadow-lg flex items-center justify-center gap-2">
-                    <span>Најава како Админ</span>
-                </button>
-                <button onclick="app.loginAsViewer()" class="w-full bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold py-2 rounded-xl transition border border-slate-700">
-                    <span>Влези во View-Only режим (Само преглед)</span>
-                </button>
-            </div>
-            <p class="text-[10px] text-slate-500 mt-4">Почетна админ лозинка: <b class="text-slate-400">admin123</b></p>
-        </div>
-    </div>
 
     <!-- MULTI-ROW EXCEL-STYLE SERVICE MODAL -->
     <div id="serviceModal" class="hidden fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4">
@@ -88,7 +65,7 @@
                     <table class="w-full text-left text-xs">
                         <thead>
                             <tr class="border-b border-slate-800 text-slate-400">
-                                <th class="pb-2 px-2">Зафат / Дел (напр. Ламела, Мал сервис, Масло)</th>
+                                <th class="pb-2 px-2">Зафат / Дел (на пр. Ламела, Мал сервис, Масло)</th>
                                 <th class="pb-2 px-2 w-32">Цена (МКД)</th>
                                 <th class="pb-2 px-2 w-12 text-right">Акција</th>
                             </tr>
@@ -115,9 +92,8 @@
                 <p class="text-xs text-slate-400">Професионална контролна табла со поединечни картички по возила и извештаи по период</p>
             </div>
             <div class="flex items-center gap-3 flex-wrap">
-                <div id="userRoleBadge" class="text-xs bg-slate-900 border border-slate-800 px-3 py-1.5 rounded-xl text-slate-300">Режим: Преглед</div>
+                <div class="text-xs bg-slate-900 border border-slate-800 px-3 py-1.5 rounded-xl text-emerald-400 font-semibold"><i class="fa-solid fa-circle-check mr-1"></i> Режим: Админ (Целосен пристап)</div>
                 <button onclick="app.shareReport()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-3 py-1.5 rounded-xl text-xs transition flex items-center gap-1.5"><i class="fa-solid fa-share-nodes"></i> Сподели (Viber/Gmail)</button>
-                <button onclick="location.reload()" class="bg-slate-900 border border-slate-800 hover:bg-slate-800 text-slate-300 px-3 py-1.5 rounded-xl text-xs transition"><i class="fa-solid fa-right-from-bracket"></i> Излез</button>
             </div>
         </div>
 
@@ -164,7 +140,7 @@
 
         <!-- TAB 1: VEHICLES -->
         <div id="tabVehicles" class="space-y-6">
-            <div id="adminPanelVehicles" class="hidden bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl">
+            <div id="adminPanelVehicles" class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl">
                 <h3 class="text-sm font-bold text-white mb-3 flex items-center gap-2"><i class="fa-solid fa-plus-circle text-pink-600"></i> Внеси Ново Возило / Документи</h3>
                 <div class="grid grid-cols-1 sm:grid-cols-7 gap-3 text-xs">
                     <input type="text" id="vModel" placeholder="Модел (Ford Transit)" class="bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white">
@@ -201,7 +177,7 @@
 
         <!-- TAB 2: FUEL -->
         <div id="tabFuel" class="hidden space-y-6">
-            <div id="adminPanelFuel" class="hidden bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl">
+            <div id="adminPanelFuel" class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl">
                 <h3 class="text-sm font-bold text-white mb-3 flex items-center gap-2"><i class="fa-solid fa-plus-circle text-pink-600"></i> Евиденција на Точење Гориво (со Км и менија)</h3>
                 <div class="grid grid-cols-1 sm:grid-cols-7 gap-3 text-xs">
                     <select id="fVehicle" class="bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white">
@@ -248,7 +224,7 @@
 
         <!-- TAB 3: SERVICE -->
         <div id="tabService" class="hidden space-y-6">
-            <div id="adminPanelService" class="hidden bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl flex justify-between items-center">
+            <div id="adminPanelService" class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl flex justify-between items-center">
                 <div>
                     <h3 class="text-sm font-bold text-white mb-1"><i class="fa-solid fa-screwdriver-wrench text-pink-600"></i> Управување со Сервиси</h3>
                     <p class="text-xs text-slate-400">Внеси нов сервис преку професионален Ексел-лик прозорец со повеќе редови за делови.</p>
@@ -282,7 +258,7 @@
 
         <!-- TAB 4: TOLLS & WAYBILLS -->
         <div id="tabTolls" class="hidden space-y-6">
-            <div id="adminPanelTolls" class="hidden bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl">
+            <div id="adminPanelTolls" class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl">
                 <h3 class="text-sm font-bold text-white mb-3 flex items-center gap-2"><i class="fa-solid fa-plus-circle text-pink-600"></i> Патарина, Возач, Патен Налог & Релација</h3>
                 <div class="grid grid-cols-1 sm:grid-cols-6 gap-3 text-xs">
                     <select id="tVehicle" class="bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white">
@@ -351,32 +327,6 @@
     <!-- APP LOGIC -->
     <script>
         const app = {
-            isAdmin: false,
-            loginAdmin() {
-                const pass = document.getElementById('loginPassword').value;
-                if(pass === 'admin123') {
-                    this.isAdmin = true;
-                    document.getElementById('loginScreen').style.display = 'none';
-                    document.getElementById('userRoleBadge').innerText = 'Режим: Администратор';
-                    document.getElementById('adminPanelVehicles').classList.remove('hidden');
-                    document.getElementById('adminPanelFuel').classList.remove('hidden');
-                    document.getElementById('adminPanelService').classList.remove('hidden');
-                    document.getElementById('adminPanelTolls').classList.remove('hidden');
-                    this.initData();
-                } else {
-                    alert('Погрешна лозинка!');
-                }
-            },
-            loginAsViewer() {
-                this.isAdmin = false;
-                document.getElementById('loginScreen').style.display = 'none';
-                document.getElementById('userRoleBadge').innerText = 'Режим: Само Преглед (View-Only)';
-                document.getElementById('adminPanelVehicles').classList.add('hidden');
-                document.getElementById('adminPanelFuel').classList.add('hidden');
-                document.getElementById('adminPanelService').classList.add('hidden');
-                document.getElementById('adminPanelTolls').classList.add('hidden');
-                this.initData();
-            },
             switchTab(tab) {
                 ['vehicles', 'fuel', 'service', 'tolls', 'reports'].forEach(t => {
                     document.getElementById('tab' + t.charAt(0).toUpperCase() + t.slice(1)).classList.add('hidden');
@@ -393,7 +343,6 @@
                 document.getElementById('serviceModal').classList.remove('hidden');
                 const tbody = document.getElementById('serviceRowsBody');
                 tbody.innerHTML = '';
-                // Add 3 default empty rows for quick excel-like input
                 this.addServiceRow();
                 this.addServiceRow();
                 this.addServiceRow();
@@ -405,7 +354,7 @@
             },
             addServiceRow() {
                 const tbody = document.getElementById('serviceRowsBody');
-                const rowId = 'srow_' + Date.now() + Math.random().toString(36.substring(2, 5));
+                const rowId = 'srow_' + Date.now() + Math.random().toString(36).substring(2, 5);
                 const tr = document.createElement('tr');
                 tr.id = rowId;
                 tr.className = 'border-b border-slate-900 hover:bg-slate-900/50';
@@ -505,7 +454,7 @@
                                 <td class="py-3 px-3 text-slate-300">${regBadge}</td>
                                 <td class="py-3 px-3 text-slate-300">${docBadge}</td>
                                 <td class="py-3 px-3 text-right">
-                                    ${this.isAdmin ? `<button onclick="app.removeRecord('vehicles', '${key}')" class="text-red-400 hover:text-red-300 bg-red-950/40 border border-red-900/50 px-2.5 py-1 rounded-lg"><i class="fa-solid fa-trash"></i></button>` : '<span class="text-slate-600">-</span>'}
+                                    <button onclick="app.removeRecord('vehicles', '${key}')" class="text-red-400 hover:text-red-300 bg-red-950/40 border border-red-900/50 px-2.5 py-1 rounded-lg"><i class="fa-solid fa-trash"></i></button>
                                 </td>
                             </tr>
                         `;
@@ -542,7 +491,7 @@
                                 <td class="py-3 px-3 text-slate-300">${f.km ? f.km + ' км' : '-'}</td>
                                 <td class="py-3 px-3 text-slate-300">${f.driver || '-'}</td>
                                 <td class="py-3 px-3 text-right">
-                                    ${this.isAdmin ? `<button onclick="app.removeRecord('fuel', '${key}')" class="text-red-400 hover:text-red-300 bg-red-950/40 border border-red-900/50 px-2.5 py-1 rounded-lg"><i class="fa-solid fa-trash"></i></button>` : '<span class="text-slate-600">-</span>'}
+                                    <button onclick="app.removeRecord('fuel', '${key}')" class="text-red-400 hover:text-red-300 bg-red-950/40 border border-red-900/50 px-2.5 py-1 rounded-lg"><i class="fa-solid fa-trash"></i></button>
                                 </td>
                             </tr>
                         `;
@@ -566,7 +515,7 @@
                                 <td class="py-3 px-3 text-slate-300">${s.km ? s.km + ' км' : '-'}</td>
                                 <td class="py-3 px-3 text-amber-400 font-semibold">${s.nextKm ? s.nextKm + ' км' : '-'}</td>
                                 <td class="py-3 px-3 text-right">
-                                    ${this.isAdmin ? `<button onclick="app.removeRecord('service', '${key}')" class="text-red-400 hover:text-red-300 bg-red-950/40 border border-red-900/50 px-2.5 py-1 rounded-lg"><i class="fa-solid fa-trash"></i></button>` : '<span class="text-slate-600">-</span>'}
+                                    <button onclick="app.removeRecord('service', '${key}')" class="text-red-400 hover:text-red-300 bg-red-950/40 border border-red-900/50 px-2.5 py-1 rounded-lg"><i class="fa-solid fa-trash"></i></button>
                                 </td>
                             </tr>
                         `;
@@ -598,7 +547,7 @@
                                 <td class="py-3 px-3 text-slate-300">${t.route || '-'}</td>
                                 <td class="py-3 px-3 text-slate-300">${t.cost} ден.</td>
                                 <td class="py-3 px-3 text-right">
-                                    ${this.isAdmin ? `<button onclick="app.removeRecord('tolls', '${key}')" class="text-red-400 hover:text-red-300 bg-red-950/40 border border-red-900/50 px-2.5 py-1 rounded-lg"><i class="fa-solid fa-trash"></i></button>` : '<span class="text-slate-600">-</span>'}
+                                    <button onclick="app.removeRecord('tolls', '${key}')" class="text-red-400 hover:text-red-300 bg-red-950/40 border border-red-900/50 px-2.5 py-1 rounded-lg"><i class="fa-solid fa-trash"></i></button>
                                 </td>
                             </tr>
                         `;
@@ -788,6 +737,11 @@
                 }
             }
         };
+
+        // Initialize data immediately on load
+        window.addEventListener('DOMContentLoaded', () => {
+            app.initData();
+        });
     </script>
 </body>
 </html>
