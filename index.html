@@ -394,7 +394,7 @@
         <div id="tabReports" class="hidden space-y-6">
             <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-4">
                 <h3 class="text-sm font-bold text-white flex items-center gap-2"><i class="fa-solid fa-chart-pie text-pink-600"></i> Професионална Контролна Табла & Извештаи по Период</h3>
-                <p class="text-xs text-slate-400">Внеси сакан временски период (Од - До) и добиј поединечна картичка за секое возило со сите трошоци (гориво, сервиси, регистрации, патарини).</p>
+                <p class="text-xs text-slate-400">Внеси сакан временски период (Од - До) и штиклирај ги возилата или поединечните ставки што сакаш да ги собереш.</p>
                 
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs bg-slate-950 p-4 rounded-xl border border-slate-800">
                     <div>
@@ -407,6 +407,26 @@
                     </div>
                     <div class="flex items-end">
                         <button onclick="app.generateDashboardReport()" class="w-full bg-pink-600 hover:bg-pink-500 text-white font-semibold py-2 rounded-xl transition shadow-md"><i class="fa-solid fa-magnifying-glass mr-1"></i> Прикажи Контролна Табла</button>
+                    </div>
+                </div>
+
+                <!-- SELECTED TOTAL SUMMARY BOX -->
+                <div id="selectedSummaryPanel" class="hidden bg-pink-950/30 border border-pink-600/40 rounded-2xl p-4 flex flex-col sm:flex-row justify-between items-center gap-4 shadow-lg">
+                    <div class="flex items-center gap-3">
+                        <div class="bg-pink-600 text-white p-2.5 rounded-xl"><i class="fa-solid fa-calculator text-base"></i></div>
+                        <div>
+                            <span class="text-[11px] text-pink-300 font-semibold uppercase tracking-wider block">Вкупен Трошок за Избраните Возила и Ставки</span>
+                            <span id="selectedItemsCount" class="text-xs text-slate-400">Избрани ставки: 0</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-4">
+                        <div class="flex gap-1.5">
+                            <button onclick="app.toggleAllSelections(true)" class="bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 px-3 py-1.5 rounded-xl text-xs transition">Избери сè</button>
+                            <button onclick="app.toggleAllSelections(false)" class="bg-slate-800 hover:bg-slate-700 text-slate-400 border border-slate-700 px-3 py-1.5 rounded-xl text-xs transition">Исчисти сè</button>
+                        </div>
+                        <div class="bg-slate-950 border border-pink-600/50 px-4 py-2 rounded-xl text-right">
+                            <span id="selectedGrandTotal" class="text-lg font-bold text-white">0 ден.</span>
+                        </div>
                     </div>
                 </div>
 
@@ -964,10 +984,46 @@
                     db.ref(path + '/' + key).remove();
                 }
             },
+
+            // SELECTION CHECKBOX LOGIC FOR DASHBOARD
+            toggleVehicleCard(vKey, isChecked) {
+                const itemCheckboxes = document.querySelectorAll(`.item-select-${vKey}`);
+                itemCheckboxes.forEach(cb => {
+                    cb.checked = isChecked;
+                });
+                this.calculateSelectedTotal();
+            },
+            onItemCheckboxChange(vKey) {
+                const itemCheckboxes = document.querySelectorAll(`.item-select-${vKey}`);
+                const masterCb = document.getElementById(`card-select-${vKey}`);
+                if(masterCb) {
+                    const allChecked = Array.from(itemCheckboxes).every(cb => cb.checked);
+                    masterCb.checked = allChecked;
+                }
+                this.calculateSelectedTotal();
+            },
+            toggleAllSelections(state) {
+                document.querySelectorAll('.dash-card-cb, .dash-item-cb').forEach(cb => {
+                    cb.checked = state;
+                });
+                this.calculateSelectedTotal();
+            },
+            calculateSelectedTotal() {
+                let sum = 0;
+                let count = 0;
+                document.querySelectorAll('.dash-item-cb:checked').forEach(cb => {
+                    sum += Number(cb.dataset.amount) || 0;
+                    count++;
+                });
+                document.getElementById('selectedGrandTotal').innerText = sum.toLocaleString() + ' ден.';
+                document.getElementById('selectedItemsCount').innerText = `Избрани ставки: ${count}`;
+            },
+
             generateDashboardReport() {
                 const sDate = document.getElementById('repStartDate').value;
                 const eDate = document.getElementById('repEndDate').value;
                 const container = document.getElementById('vehicleCardsContainer');
+                const summaryPanel = document.getElementById('selectedSummaryPanel');
 
                 Promise.all([
                     db.ref('vehicles').once('value'),
@@ -985,9 +1041,12 @@
                     container.innerHTML = '';
 
                     if(Object.keys(vehicles).length === 0) {
+                        summaryPanel.classList.add('hidden');
                         container.innerHTML = `<p class="text-slate-500 text-center py-8 lg:col-span-2">Нема внесено возила во системот.</p>`;
                         return;
                     }
+
+                    summaryPanel.classList.remove('hidden');
 
                     Object.keys(vehicles).forEach(vKey => {
                         const v = vehicles[vKey];
@@ -1049,9 +1108,14 @@
                         container.innerHTML += `
                             <div class="bg-slate-950 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-4">
                                 <div class="flex justify-between items-start border-b border-slate-800 pb-3">
-                                    <div>
-                                        <h4 class="font-bold text-white text-base flex items-center gap-2"><i class="fa-solid fa-car text-pink-500"></i> ${v.model}</h4>
-                                        <p class="text-xs text-slate-400">Таблички: <b class="text-slate-200">${v.plate}</b> | Возач: <b class="text-slate-200">${v.driver || '-'}</b></p>
+                                    <div class="flex items-start gap-2.5">
+                                        <input type="checkbox" id="card-select-${vKey}" onchange="app.toggleVehicleCard('${vKey}', this.checked)" class="dash-card-cb mt-1 w-4 h-4 accent-pink-600 rounded cursor-pointer" title="Избери цела картичка">
+                                        <div>
+                                            <label for="card-select-${vKey}" class="font-bold text-white text-base flex items-center gap-2 cursor-pointer">
+                                                <i class="fa-solid fa-car text-pink-500"></i> ${v.model}
+                                            </label>
+                                            <p class="text-xs text-slate-400">Таблички: <b class="text-slate-200">${v.plate}</b> | Возач: <b class="text-slate-200">${v.driver || '-'}</b></p>
+                                        </div>
                                     </div>
                                     <div class="text-right bg-pink-950/40 border border-pink-900/50 px-3 py-1.5 rounded-xl">
                                         <span class="text-[9px] text-pink-300 block">ВКУПНО ТРОШОК</span>
@@ -1061,8 +1125,11 @@
 
                                 <!-- Fuel Group -->
                                 <div>
-                                    <h5 class="text-xs font-bold text-slate-300 mb-1 flex justify-between">
-                                        <span><i class="fa-solid fa-gas-pump mr-1 text-pink-500"></i> Гориво</span>
+                                    <h5 class="text-xs font-bold text-slate-300 mb-1 flex justify-between items-center">
+                                        <label class="flex items-center gap-2 cursor-pointer">
+                                            <input type="checkbox" data-amount="${vFuelTotal}" onchange="app.onItemCheckboxChange('${vKey}')" class="dash-item-cb item-select-${vKey} w-3.5 h-3.5 accent-pink-600 rounded cursor-pointer">
+                                            <span><i class="fa-solid fa-gas-pump mr-1 text-pink-500"></i> Гориво</span>
+                                        </label>
                                         <span class="text-pink-400">${vFuelTotal.toLocaleString()} ден.</span>
                                     </h5>
                                     <div class="bg-slate-900 rounded-xl p-2 max-h-28 overflow-y-auto border border-slate-800">
@@ -1074,8 +1141,11 @@
 
                                 <!-- Service Group -->
                                 <div>
-                                    <h5 class="text-xs font-bold text-slate-300 mb-1 flex justify-between">
-                                        <span><i class="fa-solid fa-screwdriver-wrench mr-1 text-pink-500"></i> Сервиси & Фактури</span>
+                                    <h5 class="text-xs font-bold text-slate-300 mb-1 flex justify-between items-center">
+                                        <label class="flex items-center gap-2 cursor-pointer">
+                                            <input type="checkbox" data-amount="${vServTotal}" onchange="app.onItemCheckboxChange('${vKey}')" class="dash-item-cb item-select-${vKey} w-3.5 h-3.5 accent-pink-600 rounded cursor-pointer">
+                                            <span><i class="fa-solid fa-screwdriver-wrench mr-1 text-pink-500"></i> Сервиси & Фактури</span>
+                                        </label>
                                         <span class="text-pink-400">${vServTotal.toLocaleString()} ден.</span>
                                     </h5>
                                     <div class="bg-slate-900 rounded-xl p-2 max-h-28 overflow-y-auto border border-slate-800">
@@ -1087,8 +1157,11 @@
 
                                 <!-- Registrations & Other Group -->
                                 <div>
-                                    <h5 class="text-xs font-bold text-slate-300 mb-1 flex justify-between">
-                                        <span><i class="fa-solid fa-file-shield mr-1 text-pink-500"></i> Регистрации, Каско & Други</span>
+                                    <h5 class="text-xs font-bold text-slate-300 mb-1 flex justify-between items-center">
+                                        <label class="flex items-center gap-2 cursor-pointer">
+                                            <input type="checkbox" data-amount="${vRegTotal}" onchange="app.onItemCheckboxChange('${vKey}')" class="dash-item-cb item-select-${vKey} w-3.5 h-3.5 accent-pink-600 rounded cursor-pointer">
+                                            <span><i class="fa-solid fa-file-shield mr-1 text-pink-500"></i> Регистрации, Каско & Други</span>
+                                        </label>
                                         <span class="text-pink-400">${vRegTotal.toLocaleString()} ден.</span>
                                     </h5>
                                     <div class="bg-slate-900 rounded-xl p-2 max-h-28 overflow-y-auto border border-slate-800">
@@ -1100,8 +1173,11 @@
 
                                 <!-- Tolls Group -->
                                 <div>
-                                    <h5 class="text-xs font-bold text-slate-300 mb-1 flex justify-between">
-                                        <span><i class="fa-solid fa-road mr-1 text-pink-500"></i> Патарини & Релации</span>
+                                    <h5 class="text-xs font-bold text-slate-300 mb-1 flex justify-between items-center">
+                                        <label class="flex items-center gap-2 cursor-pointer">
+                                            <input type="checkbox" data-amount="${vTollTotal}" onchange="app.onItemCheckboxChange('${vKey}')" class="dash-item-cb item-select-${vKey} w-3.5 h-3.5 accent-pink-600 rounded cursor-pointer">
+                                            <span><i class="fa-solid fa-road mr-1 text-pink-500"></i> Патарини & Релации</span>
+                                        </label>
                                         <span class="text-pink-400">${vTollTotal.toLocaleString()} ден.</span>
                                     </h5>
                                     <div class="bg-slate-900 rounded-xl p-2 max-h-28 overflow-y-auto border border-slate-800">
@@ -1113,6 +1189,8 @@
                             </div>
                         `;
                     });
+
+                    this.calculateSelectedTotal();
                 });
             },
             shareReport() {
