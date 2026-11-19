@@ -1194,11 +1194,25 @@
                 });
             },
             shareReport() {
-                const text = encodeURIComponent("Здраво! Еве линк од активната Контролна Табла за Возен Парк - Сара Фешн: https://zoranstrojmanovski-byte.github.io/vozen-park/");
-                if(confirm("Дали сакаш да го споделиш линкот преку Viber?")) {
-                    window.open("viber://forward?text=" + text, "_blank");
-                } else {
-                    window.open("mailto:?subject=Контролна Табла Возен Парк Сара Фешн&body=" + text, "_blank");
+                const url = "https://zoranstrojmanovski-byte.github.io/vozen-park/";
+                const subject = encodeURIComponent("Контролна Табла Возен Парк Сара Фешн");
+                const body = encodeURIComponent("Здраво! Еве линк од активната Контролна Табла за Возен Парк - Сара Фешн:\n" + url);
+
+                const choice = prompt(
+                    "Избери начин на споделување (внеси број 1, 2 или 3):\n\n" +
+                    "1 - Преку Gmail (директно во прелистувач)\n" +
+                    "2 - Преку Viber\n" +
+                    "3 - Копирај го линкот (па залепи го каде сакаш)"
+                );
+
+                if (choice === "1") {
+                    window.open(`https://mail.google.com/mail/?view=cm&fs=1&su=${subject}&body=${body}`, "_blank");
+                } else if (choice === "2") {
+                    window.open(`viber://forward?text=${body}`, "_blank");
+                } else if (choice === "3") {
+                    navigator.clipboard.writeText(url).then(() => {
+                        alert("Линкот е копиран! Сега можеш да го залепиш (Paste) во било кој меил или порака.");
+                    });
                 }
             }
         };
