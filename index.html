@@ -13,9 +13,10 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
     <style>
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        html { font-size: 18px; }
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
         ::-webkit-scrollbar-track { background: #1e293b; }
-        ::-webkit-scrollbar-thumb { background: #db2777; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb { background: #db2777; border-radius: 4px; }
     </style>
     <!-- Firebase Configuration -->
     <script>
@@ -33,44 +34,44 @@
         const db = firebase.database();
     </script>
 </head>
-<body class="min-h-screen flex flex-col bg-slate-950 text-slate-100 custom-scrollbar">
+<body class="min-h-screen flex flex-col bg-slate-950 text-slate-100 custom-scrollbar text-base">
 
     <!-- LOGIN SCREEN -->
     <div id="loginScreen" class="fixed inset-0 bg-slate-950 z-50 flex items-center justify-center p-4">
-        <div class="bg-slate-900 border border-slate-800 w-full max-w-sm rounded-2xl p-6 shadow-2xl text-center">
-            <div class="bg-pink-600 text-white w-12 h-12 rounded-2xl mx-auto flex items-center justify-center shadow-lg mb-4">
-                <i class="fa-solid fa-lock text-xl"></i>
+        <div class="bg-slate-900 border border-slate-800 w-full max-w-md rounded-2xl p-7 shadow-2xl text-center">
+            <div class="bg-pink-600 text-white w-14 h-14 rounded-2xl mx-auto flex items-center justify-center shadow-lg mb-4">
+                <i class="fa-solid fa-lock text-2xl"></i>
             </div>
-            <h2 class="text-lg font-bold text-white">Администраторски Пристап</h2>
-            <p class="text-xs text-slate-400 mt-1">Сервисна Книга - Возен Парк (Сара Фешн)</p>
-            <div class="space-y-3 text-xs text-left mt-4">
+            <h2 class="text-xl font-bold text-white">Администраторски Пристап</h2>
+            <p class="text-sm text-slate-300 mt-1">Сервисна Книга - Возен Парк (Сара Фешн)</p>
+            <div class="space-y-4 text-sm text-left mt-5">
                 <div>
-                    <label class="block text-slate-300 font-medium mb-1">Администраторска лозинка</label>
-                    <input type="password" id="loginPassword" placeholder="Внеси лозинка..." class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-pink-600">
+                    <label class="block text-slate-200 font-semibold mb-1.5">Администраторска лозинка</label>
+                    <input type="password" id="loginPassword" placeholder="Внеси лозинка..." class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-base text-white focus:outline-none focus:border-pink-600">
                 </div>
-                <button type="button" onclick="app.loginAdmin()" class="w-full bg-pink-600 hover:bg-pink-500 text-white font-semibold py-2.5 rounded-xl transition shadow-lg flex items-center justify-center gap-2">
+                <button type="button" onclick="app.loginAdmin()" class="w-full bg-pink-600 hover:bg-pink-500 text-white font-semibold py-3 rounded-xl transition shadow-lg flex items-center justify-center gap-2 text-base">
                     <span>Најава како Админ</span>
                 </button>
-                <button type="button" onclick="app.loginAsViewer()" class="w-full bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold py-2 rounded-xl transition border border-slate-700">
+                <button type="button" onclick="app.loginAsViewer()" class="w-full bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold py-2.5 rounded-xl transition border border-slate-700 text-sm">
                     <span>Влези во View-Only режим (Само преглед)</span>
                 </button>
             </div>
-            <p class="text-[10px] text-slate-500 mt-4">Почетна админ лозинка: <b class="text-slate-400">admin123</b></p>
+            <p class="text-xs text-slate-400 mt-4">Почетна админ лозинка: <b class="text-slate-200">admin123</b></p>
         </div>
     </div>
 
     <!-- SERVICE FILTER REPORT MODAL -->
     <div id="serviceFilterModal" class="hidden fixed inset-0 bg-black/75 z-50 flex items-center justify-center p-4">
-        <div class="bg-slate-900 border border-slate-800 w-full max-w-2xl rounded-2xl p-6 shadow-2xl space-y-4 max-h-[85vh] overflow-y-auto">
+        <div class="bg-slate-900 border border-slate-800 w-full max-w-3xl rounded-2xl p-6 shadow-2xl space-y-4 max-h-[88vh] overflow-y-auto">
             <div class="flex justify-between items-center border-b border-slate-800 pb-3">
-                <h3 id="serviceFilterModalTitle" class="text-sm font-bold text-white flex items-center gap-2"><i class="fa-solid fa-list-check text-pink-600"></i> Издвоен Преглед на Сервиси и Делови</h3>
-                <button type="button" onclick="app.closeServiceFilterModal()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+                <h3 id="serviceFilterModalTitle" class="text-base font-bold text-white flex items-center gap-2"><i class="fa-solid fa-list-check text-pink-600"></i> Издвоен Преглед на Сервиси и Делови</h3>
+                <button type="button" onclick="app.closeServiceFilterModal()" class="text-slate-300 hover:text-white"><i class="fa-solid fa-xmark text-xl"></i></button>
             </div>
-            <div id="serviceFilterModalSubtitle" class="text-xs text-slate-400"></div>
-            <div id="serviceFilterModalSummary" class="bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-pink-400 font-semibold"></div>
-            <div id="serviceFilterModalBody" class="space-y-2.5 text-xs"></div>
+            <div id="serviceFilterModalSubtitle" class="text-sm text-slate-300"></div>
+            <div id="serviceFilterModalSummary" class="bg-slate-950 border border-slate-800 rounded-xl p-3.5 text-sm text-pink-400 font-bold"></div>
+            <div id="serviceFilterModalBody" class="space-y-3 text-sm"></div>
             <div class="flex justify-end pt-2 border-t border-slate-800">
-                <button type="button" onclick="app.closeServiceFilterModal()" class="px-4 py-2 bg-pink-600 hover:bg-pink-500 rounded-xl text-xs font-semibold text-white">Затвори</button>
+                <button type="button" onclick="app.closeServiceFilterModal()" class="px-5 py-2.5 bg-pink-600 hover:bg-pink-500 rounded-xl text-sm font-semibold text-white">Затвори</button>
             </div>
         </div>
     </div>
@@ -79,31 +80,31 @@
     <div id="serviceModal" class="hidden fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4">
         <div class="bg-slate-900 border border-slate-800 w-full max-w-4xl rounded-2xl p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
             <div class="flex justify-between items-center border-b border-slate-800 pb-3">
-                <h3 id="serviceModalTitle" class="text-sm font-bold text-white flex items-center gap-2"><i class="fa-solid fa-screwdriver-wrench text-pink-600"></i> Нов Сервис - Внеси Фактура и Делови</h3>
-                <button type="button" onclick="app.closeServiceModal()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+                <h3 id="serviceModalTitle" class="text-base font-bold text-white flex items-center gap-2"><i class="fa-solid fa-screwdriver-wrench text-pink-600"></i> Нов Сервис - Внеси Фактура и Делови</h3>
+                <button type="button" onclick="app.closeServiceModal()" class="text-slate-300 hover:text-white"><i class="fa-solid fa-xmark text-xl"></i></button>
             </div>
             
             <input type="hidden" id="modalEditServiceKey" value="">
 
-            <div class="grid grid-cols-1 sm:grid-cols-5 gap-3 text-xs bg-slate-950 p-4 rounded-xl border border-slate-800">
+            <div class="grid grid-cols-1 sm:grid-cols-5 gap-3 text-sm bg-slate-950 p-4 rounded-xl border border-slate-800">
                 <div>
-                    <label class="block text-slate-400 mb-1">Избери Возило:</label>
+                    <label class="block text-slate-300 mb-1">Избери Возило:</label>
                     <select id="modalSVehicle" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white"><option value="">-- Избери --</option></select>
                 </div>
                 <div>
-                    <label class="block text-slate-400 mb-1">Датум:</label>
+                    <label class="block text-slate-300 mb-1">Датум:</label>
                     <input type="date" id="modalSDate" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white">
                 </div>
                 <div>
-                    <label class="block text-slate-400 mb-1">Вкупна Сума (МКД):</label>
+                    <label class="block text-slate-300 mb-1">Вкупна Сума (МКД):</label>
                     <input type="number" id="modalTotalInvoice" placeholder="на пр. 12400" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white font-bold text-pink-400">
                 </div>
                 <div>
-                    <label class="block text-slate-400 mb-1">Км при сервис:</label>
+                    <label class="block text-slate-300 mb-1">Км при сервис:</label>
                     <input type="number" id="modalSKm" placeholder="на пр. 145000" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white">
                 </div>
                 <div>
-                    <label class="block text-slate-400 mb-1">Следен (Км):</label>
+                    <label class="block text-slate-300 mb-1">Следен (Км):</label>
                     <input type="number" id="modalSNextKm" placeholder="на пр. 155000" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white">
                 </div>
             </div>
@@ -111,16 +112,16 @@
             <!-- EXCEL ROWS CONTAINER -->
             <div>
                 <div class="flex justify-between items-center mb-2">
-                    <label class="text-xs font-bold text-slate-300">Поединечни делови / зафати за архива (по желба):</label>
-                    <button type="button" onclick="app.addServiceRow()" class="bg-slate-800 hover:bg-slate-700 text-pink-400 border border-slate-700 px-3 py-1 rounded-lg text-xs flex items-center gap-1.5"><i class="fa-solid fa-plus"></i> Додај ред за дел</button>
+                    <label class="text-sm font-bold text-slate-200">Поединечни делови / зафати за архива (по желба):</label>
+                    <button type="button" onclick="app.addServiceRow()" class="bg-slate-800 hover:bg-slate-700 text-pink-400 border border-slate-700 px-3.5 py-1.5 rounded-lg text-sm flex items-center gap-1.5"><i class="fa-solid fa-plus"></i> Додај ред за дел</button>
                 </div>
                 <div class="overflow-x-auto border border-slate-800 rounded-xl bg-slate-950 p-2">
-                    <table class="w-full text-left text-xs">
+                    <table class="w-full text-left text-sm">
                         <thead>
-                            <tr class="border-b border-slate-800 text-slate-400">
+                            <tr class="border-b border-slate-800 text-slate-300">
                                 <th class="pb-2 px-2">Зафат / Дел (на пр. Ламела, Масло, Филтер)</th>
-                                <th class="pb-2 px-2 w-32">Цена на дел (МКД)</th>
-                                <th class="pb-2 px-2 w-12 text-right">Акција</th>
+                                <th class="pb-2 px-2 w-36">Цена на дел (МКД)</th>
+                                <th class="pb-2 px-2 w-14 text-right">Акција</th>
                             </tr>
                         </thead>
                         <tbody id="serviceRowsBody">
@@ -131,8 +132,8 @@
             </div>
 
             <div class="flex justify-end gap-2 pt-2 border-t border-slate-800">
-                <button type="button" onclick="app.closeServiceModal()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 rounded-xl text-xs text-slate-300">Откажи</button>
-                <button type="button" onclick="app.saveModalServices()" class="px-4 py-2 bg-pink-600 hover:bg-pink-500 rounded-xl text-xs font-semibold text-white shadow-md">Зачувај Сервис</button>
+                <button type="button" onclick="app.closeServiceModal()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 rounded-xl text-sm text-slate-200">Откажи</button>
+                <button type="button" onclick="app.saveModalServices()" class="px-4 py-2 bg-pink-600 hover:bg-pink-500 rounded-xl text-sm font-semibold text-white shadow-md">Зачувај Сервис</button>
             </div>
         </div>
     </div>
@@ -141,64 +142,64 @@
     <div class="p-6 max-w-7xl mx-auto w-full flex-1 flex flex-col">
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 border-b border-slate-800 pb-4 gap-4">
             <div>
-                <h1 class="text-xl font-bold text-white flex items-center gap-2"><i class="fa-solid fa-truck text-pink-600"></i> Сара Фешн - Возен Парк & Сервисна Книга</h1>
-                <p class="text-xs text-slate-400">Професионална контролна табла со поединечни картички по возила и извештаи по период</p>
+                <h1 class="text-2xl font-bold text-white flex items-center gap-2"><i class="fa-solid fa-truck text-pink-600"></i> Сара Фешн - Возен Парк & Сервисна Книга</h1>
+                <p class="text-sm text-slate-300">Професионална контролна табла со поединечни картички по возила и извештаи по период</p>
             </div>
             <div class="flex items-center gap-3 flex-wrap">
-                <div id="userRoleBadge" class="text-xs bg-slate-900 border border-slate-800 px-3 py-1.5 rounded-xl text-slate-300">Режим: Преглед</div>
-                <button type="button" onclick="app.shareReport()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-3 py-1.5 rounded-xl text-xs transition flex items-center gap-1.5"><i class="fa-solid fa-share-nodes"></i> Сподели (Viber/Gmail)</button>
-                <button type="button" onclick="location.reload()" class="bg-slate-900 border border-slate-800 hover:bg-slate-800 text-slate-300 px-3 py-1.5 rounded-xl text-xs transition"><i class="fa-solid fa-right-from-bracket"></i> Излез</button>
+                <div id="userRoleBadge" class="text-sm bg-slate-900 border border-slate-800 px-3.5 py-2 rounded-xl text-slate-200">Режим: Преглед</div>
+                <button type="button" onclick="app.shareReport()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-3.5 py-2 rounded-xl text-sm transition flex items-center gap-1.5"><i class="fa-solid fa-share-nodes"></i> Сподели (Viber/Gmail)</button>
+                <button type="button" onclick="location.reload()" class="bg-slate-900 border border-slate-800 hover:bg-slate-800 text-slate-200 px-3.5 py-2 rounded-xl text-sm transition"><i class="fa-solid fa-right-from-bracket"></i> Излез</button>
             </div>
         </div>
 
         <!-- STATS / ALERTS BAR -->
         <div class="grid grid-cols-1 sm:grid-cols-4 gap-4 mb-6">
             <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl flex items-center gap-4 shadow-lg">
-                <div class="bg-pink-600/20 text-pink-500 p-3 rounded-xl"><i class="fa-solid fa-car text-lg"></i></div>
+                <div class="bg-pink-600/20 text-pink-500 p-3 rounded-xl"><i class="fa-solid fa-car text-xl"></i></div>
                 <div>
-                    <p class="text-xs text-slate-400">Вкупно Возила</p>
-                    <h3 id="statTotalVehicles" class="text-lg font-bold text-white">0</h3>
+                    <p class="text-sm text-slate-300">Вкупно Возила</p>
+                    <h3 id="statTotalVehicles" class="text-xl font-bold text-white">0</h3>
                 </div>
             </div>
             <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl flex items-center gap-4 shadow-lg">
-                <div class="bg-amber-600/20 text-amber-500 p-3 rounded-xl"><i class="fa-solid fa-triangle-exclamation text-lg"></i></div>
+                <div class="bg-amber-600/20 text-amber-500 p-3 rounded-xl"><i class="fa-solid fa-triangle-exclamation text-xl"></i></div>
                 <div>
-                    <p class="text-xs text-slate-400">Истекуваат Регистрации (30 д.)</p>
-                    <h3 id="statExpiring" class="text-lg font-bold text-white">0</h3>
+                    <p class="text-sm text-slate-300">Истекуваат Регистрации (30 д.)</p>
+                    <h3 id="statExpiring" class="text-xl font-bold text-white">0</h3>
                 </div>
             </div>
             <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl flex items-center gap-4 shadow-lg">
-                <div class="bg-blue-600/20 text-blue-500 p-3 rounded-xl"><i class="fa-solid fa-road text-lg"></i></div>
+                <div class="bg-blue-600/20 text-blue-500 p-3 rounded-xl"><i class="fa-solid fa-road text-xl"></i></div>
                 <div>
-                    <p class="text-xs text-slate-400">Вкупно Патарини (МКД)</p>
-                    <h3 id="statTotalTolls" class="text-lg font-bold text-white">0 ден.</h3>
+                    <p class="text-sm text-slate-300">Вкупно Патарини (МКД)</p>
+                    <h3 id="statTotalTolls" class="text-xl font-bold text-white">0 ден.</h3>
                 </div>
             </div>
             <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl flex items-center gap-4 shadow-lg">
-                <div class="bg-emerald-600/20 text-emerald-500 p-3 rounded-xl"><i class="fa-solid fa-receipt text-lg"></i></div>
+                <div class="bg-emerald-600/20 text-emerald-500 p-3 rounded-xl"><i class="fa-solid fa-receipt text-xl"></i></div>
                 <div>
-                    <p class="text-xs text-slate-400">Вкупно Трошоци (МКД)</p>
-                    <h3 id="statTotalCosts" class="text-lg font-bold text-white">0 ден.</h3>
+                    <p class="text-sm text-slate-300">Вкупно Трошоци (МКД)</p>
+                    <h3 id="statTotalCosts" class="text-xl font-bold text-white">0 ден.</h3>
                 </div>
             </div>
         </div>
 
         <!-- TABS -->
         <div class="flex gap-2 mb-6 overflow-x-auto pb-2">
-            <button type="button" onclick="app.switchTab('vehicles')" id="tabBtnVehicles" class="px-4 py-2 rounded-xl text-xs font-semibold bg-pink-600 text-white transition whitespace-nowrap"><i class="fa-solid fa-truck mr-1.5"></i> Возила & Регистрации</button>
-            <button type="button" onclick="app.switchTab('fuel')" id="tabBtnFuel" class="px-4 py-2 rounded-xl text-xs font-semibold bg-slate-900 border border-slate-800 text-slate-300 hover:bg-slate-800 transition whitespace-nowrap"><i class="fa-solid fa-gas-pump mr-1.5"></i> Точење Гориво</button>
-            <button type="button" onclick="app.switchTab('service')" id="tabBtnService" class="px-4 py-2 rounded-xl text-xs font-semibold bg-slate-900 border border-slate-800 text-slate-300 hover:bg-slate-800 transition whitespace-nowrap"><i class="fa-solid fa-screwdriver-wrench mr-1.5"></i> Сервиси & Километри</button>
-            <button type="button" onclick="app.switchTab('regs')" id="tabBtnRegs" class="px-4 py-2 rounded-xl text-xs font-semibold bg-slate-900 border border-slate-800 text-slate-300 hover:bg-slate-800 transition whitespace-nowrap"><i class="fa-solid fa-file-shield mr-1.5"></i> Регистрации & Други</button>
-            <button type="button" onclick="app.switchTab('tolls')" id="tabBtnTolls" class="px-4 py-2 rounded-xl text-xs font-semibold bg-slate-900 border border-slate-800 text-slate-300 hover:bg-slate-800 transition whitespace-nowrap"><i class="fa-solid fa-road mr-1.5"></i> Патарини & Налози</button>
-            <button type="button" onclick="app.switchTab('reports')" id="tabBtnReports" class="px-4 py-2 rounded-xl text-xs font-semibold bg-slate-900 border border-slate-800 text-slate-300 hover:bg-slate-800 transition whitespace-nowrap"><i class="fa-solid fa-chart-pie mr-1.5"></i> Контролна Табла & Извештаи</button>
+            <button type="button" onclick="app.switchTab('vehicles')" id="tabBtnVehicles" class="px-4 py-2.5 rounded-xl text-sm font-semibold bg-pink-600 text-white transition whitespace-nowrap"><i class="fa-solid fa-truck mr-1.5"></i> Возила & Регистрации</button>
+            <button type="button" onclick="app.switchTab('fuel')" id="tabBtnFuel" class="px-4 py-2.5 rounded-xl text-sm font-semibold bg-slate-900 border border-slate-800 text-slate-200 hover:bg-slate-800 transition whitespace-nowrap"><i class="fa-solid fa-gas-pump mr-1.5"></i> Точење Гориво</button>
+            <button type="button" onclick="app.switchTab('service')" id="tabBtnService" class="px-4 py-2.5 rounded-xl text-sm font-semibold bg-slate-900 border border-slate-800 text-slate-200 hover:bg-slate-800 transition whitespace-nowrap"><i class="fa-solid fa-screwdriver-wrench mr-1.5"></i> Сервиси & Километри</button>
+            <button type="button" onclick="app.switchTab('regs')" id="tabBtnRegs" class="px-4 py-2.5 rounded-xl text-sm font-semibold bg-slate-900 border border-slate-800 text-slate-200 hover:bg-slate-800 transition whitespace-nowrap"><i class="fa-solid fa-file-shield mr-1.5"></i> Регистрации & Други</button>
+            <button type="button" onclick="app.switchTab('tolls')" id="tabBtnTolls" class="px-4 py-2.5 rounded-xl text-sm font-semibold bg-slate-900 border border-slate-800 text-slate-200 hover:bg-slate-800 transition whitespace-nowrap"><i class="fa-solid fa-road mr-1.5"></i> Патарини & Налози</button>
+            <button type="button" onclick="app.switchTab('reports')" id="tabBtnReports" class="px-4 py-2.5 rounded-xl text-sm font-semibold bg-slate-900 border border-slate-800 text-slate-200 hover:bg-slate-800 transition whitespace-nowrap"><i class="fa-solid fa-chart-pie mr-1.5"></i> Контролна Табла & Извештаи</button>
         </div>
 
         <!-- TAB 1: VEHICLES -->
         <div id="tabVehicles" class="space-y-6">
             <div id="adminPanelVehicles" class="hidden bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl">
-                <h3 id="vehicleFormTitle" class="text-sm font-bold text-white mb-3 flex items-center gap-2"><i class="fa-solid fa-plus-circle text-pink-600"></i> Внеси Ново Возило / Документи</h3>
+                <h3 id="vehicleFormTitle" class="text-base font-bold text-white mb-3 flex items-center gap-2"><i class="fa-solid fa-plus-circle text-pink-600"></i> Внеси Ново Возило / Документи</h3>
                 <input type="hidden" id="editVehicleKey" value="">
-                <div class="grid grid-cols-1 sm:grid-cols-7 gap-3 text-xs">
+                <div class="grid grid-cols-1 sm:grid-cols-7 gap-3 text-sm">
                     <input type="text" id="vModel" placeholder="Модел (Ford Transit)" class="bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white">
                     <input type="text" id="vPlate" placeholder="Таблички (SK-0000)" class="bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white">
                     <input type="text" id="vDriver" placeholder="Задолжен возач" class="bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white">
@@ -207,16 +208,16 @@
                     <input type="date" id="vDocDate" class="bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white" title="Прва помош / Апарат истекува">
                     <div class="flex gap-1">
                         <button type="button" onclick="app.saveVehicle()" class="flex-1 bg-pink-600 hover:bg-pink-500 text-white font-semibold py-2 rounded-xl transition shadow-md">Зачувај</button>
-                        <button type="button" id="cancelVehicleEditBtn" onclick="app.cancelVehicleEdit()" class="hidden bg-slate-800 hover:bg-slate-750 text-slate-300 px-3 py-2 rounded-xl">Откажи</button>
+                        <button type="button" id="cancelVehicleEditBtn" onclick="app.cancelVehicleEdit()" class="hidden bg-slate-800 hover:bg-slate-750 text-slate-200 px-3 py-2 rounded-xl">Откажи</button>
                     </div>
                 </div>
             </div>
             <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl">
-                <h3 class="text-sm font-bold text-white mb-4 flex items-center gap-2"><i class="fa-solid fa-list text-pink-600"></i> Список на Возила, Километража и Статус на Регистрации & Документи</h3>
+                <h3 class="text-base font-bold text-white mb-4 flex items-center gap-2"><i class="fa-solid fa-list text-pink-600"></i> Список на Возила, Километража и Статус на Регистрации & Документи</h3>
                 <div class="overflow-x-auto">
-                    <table class="w-full text-left text-xs">
+                    <table class="w-full text-left text-sm">
                         <thead>
-                            <tr class="border-b border-slate-800 text-slate-400">
+                            <tr class="border-b border-slate-800 text-slate-300">
                                 <th class="pb-3 px-3">Модел</th>
                                 <th class="pb-3 px-3">Таблички</th>
                                 <th class="pb-3 px-3">Возач</th>
@@ -227,7 +228,7 @@
                             </tr>
                         </thead>
                         <tbody id="vehiclesTableBody">
-                            <tr><td colspan="7" class="text-center py-6 text-slate-500">Вчитување...</td></tr>
+                            <tr><td colspan="7" class="text-center py-6 text-slate-400">Вчитување...</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -237,9 +238,9 @@
         <!-- TAB 2: FUEL -->
         <div id="tabFuel" class="hidden space-y-6">
             <div id="adminPanelFuel" class="hidden bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl">
-                <h3 id="fuelFormTitle" class="text-sm font-bold text-white mb-3 flex items-center gap-2"><i class="fa-solid fa-plus-circle text-pink-600"></i> Евиденција на Точење Гориво</h3>
+                <h3 id="fuelFormTitle" class="text-base font-bold text-white mb-3 flex items-center gap-2"><i class="fa-solid fa-plus-circle text-pink-600"></i> Евиденција на Точење Гориво</h3>
                 <input type="hidden" id="editFuelKey" value="">
-                <div class="grid grid-cols-1 sm:grid-cols-7 gap-3 text-xs">
+                <div class="grid grid-cols-1 sm:grid-cols-7 gap-3 text-sm">
                     <select id="fVehicle" class="bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white">
                         <option value="">-- Избери возило --</option>
                     </select>
@@ -257,16 +258,16 @@
                     </select>
                     <div class="flex gap-1">
                         <button type="button" onclick="app.saveFuel()" class="flex-1 bg-pink-600 hover:bg-pink-500 text-white font-semibold py-2 rounded-xl transition shadow-md">Зачувај</button>
-                        <button type="button" id="cancelFuelEditBtn" onclick="app.cancelFuelEdit()" class="hidden bg-slate-800 hover:bg-slate-750 text-slate-300 px-3 py-2 rounded-xl">Откажи</button>
+                        <button type="button" id="cancelFuelEditBtn" onclick="app.cancelFuelEdit()" class="hidden bg-slate-800 hover:bg-slate-750 text-slate-200 px-3 py-2 rounded-xl">Откажи</button>
                     </div>
                 </div>
             </div>
             <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl">
-                <h3 class="text-sm font-bold text-white mb-4 flex items-center gap-2"><i class="fa-solid fa-gas-pump text-pink-600"></i> Историја на Точења по Вид на Гориво</h3>
+                <h3 class="text-base font-bold text-white mb-4 flex items-center gap-2"><i class="fa-solid fa-gas-pump text-pink-600"></i> Историја на Точења по Вид на Гориво</h3>
                 <div class="overflow-x-auto">
-                    <table class="w-full text-left text-xs">
+                    <table class="w-full text-left text-sm">
                         <thead>
-                            <tr class="border-b border-slate-800 text-slate-400">
+                            <tr class="border-b border-slate-800 text-slate-300">
                                 <th class="pb-3 px-3">Датум</th>
                                 <th class="pb-3 px-3">Возило</th>
                                 <th class="pb-3 px-3">Гориво</th>
@@ -278,7 +279,7 @@
                             </tr>
                         </thead>
                         <tbody id="fuelTableBody">
-                            <tr><td colspan="8" class="text-center py-6 text-slate-500">Вчитување...</td></tr>
+                            <tr><td colspan="8" class="text-center py-6 text-slate-400">Вчитување...</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -287,53 +288,53 @@
 
         <!-- TAB 3: SERVICE -->
         <div id="tabService" class="hidden space-y-6">
-            <div id="adminPanelService" class="hidden bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl flex justify-between items-center">
+            <div id="adminPanelService" class="hidden bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
                 <div>
-                    <h3 class="text-sm font-bold text-white mb-1"><i class="fa-solid fa-screwdriver-wrench text-pink-600"></i> Управување со Сервиси</h3>
-                    <p class="text-xs text-slate-400">Внеси нов сервис со фактура, датум и опционални делови.</p>
+                    <h3 class="text-base font-bold text-white mb-1"><i class="fa-solid fa-screwdriver-wrench text-pink-600"></i> Управување со Сервиси</h3>
+                    <p class="text-sm text-slate-300">Внеси нов сервис со фактура, датум и опционални делови.</p>
                 </div>
-                <button type="button" onclick="app.openServiceModal()" class="bg-pink-600 hover:bg-pink-500 text-white font-semibold px-4 py-2.5 rounded-xl transition shadow-md text-xs flex items-center gap-2">
+                <button type="button" onclick="app.openServiceModal()" class="bg-pink-600 hover:bg-pink-500 text-white font-semibold px-4 py-2.5 rounded-xl transition shadow-md text-sm flex items-center gap-2">
                     <i class="fa-solid fa-plus"></i> <span>Внеси Нов Сервис (Фактура)</span>
                 </button>
             </div>
             <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-4">
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
-                    <h3 class="text-sm font-bold text-white flex items-center gap-2"><i class="fa-solid fa-screwdriver-wrench text-pink-600"></i> Историја на Сервиси, Фактури и Делови</h3>
-                    <div id="serviceFilterSummary" class="text-xs text-pink-400 font-semibold"></div>
+                    <h3 class="text-base font-bold text-white flex items-center gap-2"><i class="fa-solid fa-screwdriver-wrench text-pink-600"></i> Историја на Сервиси, Фактури и Делови</h3>
+                    <div id="serviceFilterSummary" class="text-sm text-pink-400 font-bold"></div>
                 </div>
 
                 <!-- FILTER BAR FOR SERVICES -->
-                <div class="grid grid-cols-1 sm:grid-cols-6 gap-2.5 text-xs bg-slate-950 p-3 rounded-xl border border-slate-800">
+                <div class="grid grid-cols-1 sm:grid-cols-6 gap-2.5 text-sm bg-slate-950 p-3.5 rounded-xl border border-slate-800">
                     <div>
-                        <label class="block text-slate-400 mb-1">Возило:</label>
+                        <label class="block text-slate-300 mb-1">Возило:</label>
                         <select id="filterSVehicle" onchange="app.renderServicesTable()" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white">
                             <option value="">-- Сите возила --</option>
                         </select>
                     </div>
                     <div>
-                        <label class="block text-slate-400 mb-1">Дел / Зафат (на пр. плочки):</label>
+                        <label class="block text-slate-300 mb-1">Дел / Зафат (на пр. плочки):</label>
                         <input type="text" id="filterSPart" oninput="app.renderServicesTable()" placeholder="Барај дел или зафат..." class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white">
                     </div>
                     <div>
-                        <label class="block text-slate-400 mb-1">Од датум:</label>
+                        <label class="block text-slate-300 mb-1">Од датум:</label>
                         <input type="date" id="filterSStartDate" onchange="app.renderServicesTable()" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white">
                     </div>
                     <div>
-                        <label class="block text-slate-400 mb-1">До датум:</label>
+                        <label class="block text-slate-300 mb-1">До датум:</label>
                         <input type="date" id="filterSEndDate" onchange="app.renderServicesTable()" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white">
                     </div>
                     <div class="flex items-end">
                         <button type="button" onclick="app.openServiceFilterModal()" class="w-full bg-pink-600 hover:bg-pink-500 text-white font-semibold py-2 rounded-xl transition shadow-md">Издвоен прозорец</button>
                     </div>
                     <div class="flex items-end">
-                        <button type="button" onclick="app.resetServiceFilter()" class="w-full bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 py-2 rounded-xl transition">Исчисти филтер</button>
+                        <button type="button" onclick="app.resetServiceFilter()" class="w-full bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 py-2 rounded-xl transition">Исчисти филтер</button>
                     </div>
                 </div>
 
                 <div class="overflow-x-auto">
-                    <table class="w-full text-left text-xs">
+                    <table class="w-full text-left text-sm">
                         <thead>
-                            <tr class="border-b border-slate-800 text-slate-400">
+                            <tr class="border-b border-slate-800 text-slate-300">
                                 <th class="pb-3 px-3">Датум</th>
                                 <th class="pb-3 px-3">Возило</th>
                                 <th class="pb-3 px-3">Делови / Зафати</th>
@@ -344,7 +345,7 @@
                             </tr>
                         </thead>
                         <tbody id="serviceTableBody">
-                            <tr><td colspan="7" class="text-center py-6 text-slate-500">Вчитување...</td></tr>
+                            <tr><td colspan="7" class="text-center py-6 text-slate-400">Вчитување...</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -354,9 +355,9 @@
         <!-- TAB 3.5: REGISTRATIONS & OTHER COSTS -->
         <div id="tabRegs" class="hidden space-y-6">
             <div id="adminPanelRegs" class="hidden bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl">
-                <h3 id="regFormTitle" class="text-sm font-bold text-white mb-3 flex items-center gap-2"><i class="fa-solid fa-file-shield text-pink-600"></i> Евиденција на Регистрации, Осигурувања, Каско & Други Трошоци</h3>
+                <h3 id="regFormTitle" class="text-base font-bold text-white mb-3 flex items-center gap-2"><i class="fa-solid fa-file-shield text-pink-600"></i> Евиденција на Регистрации, Осигурувања, Каско & Други Трошоци</h3>
                 <input type="hidden" id="editRegKey" value="">
-                <div class="grid grid-cols-1 sm:grid-cols-6 gap-3 text-xs">
+                <div class="grid grid-cols-1 sm:grid-cols-6 gap-3 text-sm">
                     <select id="regVehicle" class="bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white">
                         <option value="">-- Избери возило --</option>
                     </select>
@@ -371,16 +372,16 @@
                     <input type="date" id="regDate" class="bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white">
                     <div class="flex gap-1">
                         <button type="button" onclick="app.saveRegCost()" class="flex-1 bg-pink-600 hover:bg-pink-500 text-white font-semibold py-2 rounded-xl transition shadow-md">Зачувај</button>
-                        <button type="button" id="cancelRegEditBtn" onclick="app.cancelRegEdit()" class="hidden bg-slate-800 hover:bg-slate-750 text-slate-300 px-3 py-2 rounded-xl">Откажи</button>
+                        <button type="button" id="cancelRegEditBtn" onclick="app.cancelRegEdit()" class="hidden bg-slate-800 hover:bg-slate-750 text-slate-200 px-3 py-2 rounded-xl">Откажи</button>
                     </div>
                 </div>
             </div>
             <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl">
-                <h3 class="text-sm font-bold text-white mb-4 flex items-center gap-2"><i class="fa-solid fa-file-shield text-pink-600"></i> Историја на Регистрации, Осигурувања и Други Административни Трошоци</h3>
+                <h3 class="text-base font-bold text-white mb-4 flex items-center gap-2"><i class="fa-solid fa-file-shield text-pink-600"></i> Историја на Регистрации, Осигурувања и Други Административни Трошоци</h3>
                 <div class="overflow-x-auto">
-                    <table class="w-full text-left text-xs">
+                    <table class="w-full text-left text-sm">
                         <thead>
-                            <tr class="border-b border-slate-800 text-slate-400">
+                            <tr class="border-b border-slate-800 text-slate-300">
                                 <th class="pb-3 px-3">Датум</th>
                                 <th class="pb-3 px-3">Возило</th>
                                 <th class="pb-3 px-3">Тип</th>
@@ -390,7 +391,7 @@
                             </tr>
                         </thead>
                         <tbody id="regsTableBody">
-                            <tr><td colspan="6" class="text-center py-6 text-slate-500">Вчитување...</td></tr>
+                            <tr><td colspan="6" class="text-center py-6 text-slate-400">Вчитување...</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -400,9 +401,9 @@
         <!-- TAB 4: TOLLS & WAYBILLS -->
         <div id="tabTolls" class="hidden space-y-6">
             <div id="adminPanelTolls" class="hidden bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl">
-                <h3 id="tollFormTitle" class="text-sm font-bold text-white mb-3 flex items-center gap-2"><i class="fa-solid fa-plus-circle text-pink-600"></i> Патарина, Возач, Патен Налог & Релација</h3>
+                <h3 id="tollFormTitle" class="text-base font-bold text-white mb-3 flex items-center gap-2"><i class="fa-solid fa-plus-circle text-pink-600"></i> Патарина, Возач, Патен Налог & Релација</h3>
                 <input type="hidden" id="editTollKey" value="">
-                <div class="grid grid-cols-1 sm:grid-cols-6 gap-3 text-xs">
+                <div class="grid grid-cols-1 sm:grid-cols-6 gap-3 text-sm">
                     <select id="tVehicle" class="bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white">
                         <option value="">-- Избери возило --</option>
                     </select>
@@ -414,16 +415,16 @@
                     <input type="number" id="tCost" placeholder="Сума за патарина (МКД)" class="bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white">
                     <div class="flex gap-1">
                         <button type="button" onclick="app.saveToll()" class="flex-1 bg-pink-600 hover:bg-pink-500 text-white font-semibold py-2 rounded-xl transition shadow-md">Зачувај</button>
-                        <button type="button" id="cancelTollEditBtn" onclick="app.cancelTollEdit()" class="hidden bg-slate-800 hover:bg-slate-750 text-slate-300 px-3 py-2 rounded-xl">Откажи</button>
+                        <button type="button" id="cancelTollEditBtn" onclick="app.cancelTollEdit()" class="hidden bg-slate-800 hover:bg-slate-750 text-slate-200 px-3 py-2 rounded-xl">Откажи</button>
                     </div>
                 </div>
             </div>
             <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl">
-                <h3 class="text-sm font-bold text-white mb-4 flex items-center gap-2"><i class="fa-solid fa-road text-pink-600"></i> Евиденција на Патни Налози, Релации и Патарини</h3>
+                <h3 class="text-base font-bold text-white mb-4 flex items-center gap-2"><i class="fa-solid fa-road text-pink-600"></i> Евиденција на Патни Налози, Релации и Патарини</h3>
                 <div class="overflow-x-auto">
-                    <table class="w-full text-left text-xs">
+                    <table class="w-full text-left text-sm">
                         <thead>
-                            <tr class="border-b border-slate-800 text-slate-400">
+                            <tr class="border-b border-slate-800 text-slate-300">
                                 <th class="pb-3 px-3">Датум</th>
                                 <th class="pb-3 px-3">Возило</th>
                                 <th class="pb-3 px-3">Возач</th>
@@ -434,7 +435,7 @@
                             </tr>
                         </thead>
                         <tbody id="tollsTableBody">
-                            <tr><td colspan="7" class="text-center py-6 text-slate-500">Нема патни налози.</td></tr>
+                            <tr><td colspan="7" class="text-center py-6 text-slate-400">Нема патни налози.</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -444,46 +445,46 @@
         <!-- TAB 5: REPORTS & VEHICLE CARDS DASHBOARD -->
         <div id="tabReports" class="hidden space-y-6">
             <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-4">
-                <h3 class="text-sm font-bold text-white flex items-center gap-2"><i class="fa-solid fa-chart-pie text-pink-600"></i> Професионална Контролна Табла & Извештаи по Период</h3>
-                <p class="text-xs text-slate-400">Внеси сакан временски период (Од - До) и штиклирај ги возилата или поединечните ставки што сакаш да ги собереш.</p>
+                <h3 class="text-base font-bold text-white flex items-center gap-2"><i class="fa-solid fa-chart-pie text-pink-600"></i> Професионална Контролна Табла & Извештаи по Период</h3>
+                <p class="text-sm text-slate-300">Внеси сакан временски период (Од - До) и штиклирај ги возилата или поединечните ставки што сакаш да ги собереш.</p>
                 
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs bg-slate-950 p-4 rounded-xl border border-slate-800">
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-sm bg-slate-950 p-4 rounded-xl border border-slate-800">
                     <div>
-                        <label class="block text-slate-400 mb-1">Од датум:</label>
+                        <label class="block text-slate-300 mb-1">Од датум:</label>
                         <input type="date" id="repStartDate" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white">
                     </div>
                     <div>
-                        <label class="block text-slate-400 mb-1">До датум:</label>
+                        <label class="block text-slate-300 mb-1">До датум:</label>
                         <input type="date" id="repEndDate" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white">
                     </div>
                     <div class="flex items-end">
-                        <button type="button" onclick="app.generateDashboardReport()" class="w-full bg-pink-600 hover:bg-pink-500 text-white font-semibold py-2 rounded-xl transition shadow-md"><i class="fa-solid fa-magnifying-glass mr-1"></i> Прикажи Контролна Табла</button>
+                        <button type="button" onclick="app.generateDashboardReport()" class="w-full bg-pink-600 hover:bg-pink-500 text-white font-semibold py-2.5 rounded-xl transition shadow-md"><i class="fa-solid fa-magnifying-glass mr-1"></i> Прикажи Контролна Табла</button>
                     </div>
                 </div>
 
                 <!-- SELECTED TOTAL SUMMARY BOX -->
                 <div id="selectedSummaryPanel" class="hidden bg-pink-950/30 border border-pink-600/40 rounded-2xl p-4 flex flex-col sm:flex-row justify-between items-center gap-4 shadow-lg">
                     <div class="flex items-center gap-3">
-                        <div class="bg-pink-600 text-white p-2.5 rounded-xl"><i class="fa-solid fa-calculator text-base"></i></div>
+                        <div class="bg-pink-600 text-white p-3 rounded-xl"><i class="fa-solid fa-calculator text-lg"></i></div>
                         <div>
-                            <span class="text-[11px] text-pink-300 font-semibold uppercase tracking-wider block">Вкупен Трошок за Избраните Возила и Ставки</span>
-                            <span id="selectedItemsCount" class="text-xs text-slate-400">Избрани ставки: 0</span>
+                            <span class="text-xs text-pink-300 font-semibold uppercase tracking-wider block">Вкупен Трошок за Избраните Возила и Ставки</span>
+                            <span id="selectedItemsCount" class="text-sm text-slate-300">Избрани ставки: 0</span>
                         </div>
                     </div>
-                    <div class="flex items-center gap-4">
-                        <div class="flex gap-1.5">
-                            <button type="button" onclick="app.toggleAllSelections(true)" class="bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 px-3 py-1.5 rounded-xl text-xs transition">Избери сè</button>
-                            <button type="button" onclick="app.toggleAllSelections(false)" class="bg-slate-800 hover:bg-slate-700 text-slate-400 border border-slate-700 px-3 py-1.5 rounded-xl text-xs transition">Исчисти сè</button>
+                    <div class="flex items-center gap-4 flex-wrap">
+                        <div class="flex gap-2">
+                            <button type="button" onclick="app.toggleAllSelections(true)" class="bg-slate-800 hover:bg-slate-700 text-slate-100 border border-slate-700 px-3.5 py-2 rounded-xl text-sm transition">Избери сè</button>
+                            <button type="button" onclick="app.toggleAllSelections(false)" class="bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 px-3.5 py-2 rounded-xl text-sm transition">Исчисти сè</button>
                         </div>
                         <div class="bg-slate-950 border border-pink-600/50 px-4 py-2 rounded-xl text-right">
-                            <span id="selectedGrandTotal" class="text-lg font-bold text-white">0 ден.</span>
+                            <span id="selectedGrandTotal" class="text-xl font-bold text-white">0 ден.</span>
                         </div>
                     </div>
                 </div>
 
                 <!-- VEHICLES CARDS CONTAINER -->
                 <div id="vehicleCardsContainer" class="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
-                    <p class="text-slate-500 text-center py-8 lg:col-span-2">Избери период и кликни „Прикажи Контролна Табла“ за да се вчитаат картичките по возила.</p>
+                    <p class="text-slate-400 text-center py-8 lg:col-span-2 text-sm">Избери период и кликни „Прикажи Контролна Табла“ за да се вчитаат картичките по возила.</p>
                 </div>
             </div>
         </div>
@@ -527,12 +528,12 @@
                     const el = document.getElementById('tab' + t.charAt(0).toUpperCase() + t.slice(1));
                     const btn = document.getElementById('tabBtn' + t.charAt(0).toUpperCase() + t.slice(1));
                     if(el) el.classList.add('hidden');
-                    if(btn) btn.className = 'px-4 py-2 rounded-xl text-xs font-semibold bg-slate-900 border border-slate-800 text-slate-300 hover:bg-slate-800 transition whitespace-nowrap';
+                    if(btn) btn.className = 'px-4 py-2.5 rounded-xl text-sm font-semibold bg-slate-900 border border-slate-800 text-slate-200 hover:bg-slate-800 transition whitespace-nowrap';
                 });
                 const activeEl = document.getElementById('tab' + tab.charAt(0).toUpperCase() + tab.slice(1));
                 const activeBtn = document.getElementById('tabBtn' + tab.charAt(0).toUpperCase() + tab.slice(1));
                 if(activeEl) activeEl.classList.remove('hidden');
-                if(activeBtn) activeBtn.className = 'px-4 py-2 rounded-xl text-xs font-semibold bg-pink-600 text-white transition whitespace-nowrap';
+                if(activeBtn) activeBtn.className = 'px-4 py-2.5 rounded-xl text-sm font-semibold bg-pink-600 text-white transition whitespace-nowrap';
                 
                 if(tab === 'reports') {
                     this.generateDashboardReport();
@@ -582,8 +583,8 @@
                 tr.id = rowId;
                 tr.className = 'border-b border-slate-900 hover:bg-slate-900/50';
                 tr.innerHTML = `
-                    <td class="py-2 px-2"><input type="text" placeholder="на пр. Ламела, Масло, Филтер..." value="${descVal}" class="service-desc w-full bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1.5 text-white text-xs"></td>
-                    <td class="py-2 px-2"><input type="number" placeholder="0" value="${costVal}" class="service-cost w-full bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1.5 text-white text-xs"></td>
+                    <td class="py-2 px-2"><input type="text" placeholder="на пр. Ламела, Масло, Филтер..." value="${descVal}" class="service-desc w-full bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-2 text-white text-sm"></td>
+                    <td class="py-2 px-2"><input type="number" placeholder="0" value="${costVal}" class="service-cost w-full bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-2 text-white text-sm"></td>
                     <td class="py-2 px-2 text-right"><button type="button" onclick="document.getElementById('${rowId}').remove()" class="text-red-400 hover:text-red-300 px-2 py-1"><i class="fa-solid fa-trash"></i></button></td>
                 `;
                 tbody.appendChild(tr);
@@ -705,7 +706,7 @@
 
                 if (info.entries.length === 0) {
                     sumEl.innerText = 'Нема пронајдено записи за избраните услови.';
-                    bodyEl.innerHTML = `<p class="text-slate-500 text-center py-6">Нема резултати за прикажување.</p>`;
+                    bodyEl.innerHTML = `<p class="text-slate-400 text-center py-6">Нема резултати за прикажување.</p>`;
                     document.getElementById('serviceFilterModal').classList.remove('hidden');
                     return;
                 }
@@ -720,15 +721,15 @@
                         : `Фактура: ${totalInv.toLocaleString()} ден.`;
 
                     return `
-                        <div class="bg-slate-950 border border-slate-800 rounded-xl p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                        <div class="bg-slate-950 border border-slate-800 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                             <div class="space-y-1">
-                                <div class="font-bold text-white">${vehicleLabel}</div>
-                                <div class="text-pink-400 font-semibold">${partsText}</div>
-                                <div class="text-[11px] text-slate-400">Датум: <b class="text-slate-200">${s.date || '-'}</b> | Километража: <b class="text-slate-200">${s.km ? Number(s.km).toLocaleString() + ' км' : '-'}</b></div>
+                                <div class="font-bold text-white text-base">${vehicleLabel}</div>
+                                <div class="text-pink-400 font-semibold text-sm">${partsText}</div>
+                                <div class="text-xs text-slate-300">Датум: <b class="text-white">${s.date || '-'}</b> | Километража: <b class="text-white">${s.km ? Number(s.km).toLocaleString() + ' км' : '-'}</b></div>
                             </div>
                             <div class="text-right shrink-0">
-                                <span class="text-[10px] text-slate-400 block">Фактура</span>
-                                <span class="text-sm font-bold text-white">${totalInv.toLocaleString()} ден.</span>
+                                <span class="text-xs text-slate-300 block">Фактура</span>
+                                <span class="text-base font-bold text-white">${totalInv.toLocaleString()} ден.</span>
                             </div>
                         </div>
                     `;
@@ -748,13 +749,13 @@
                 tbody.innerHTML = '';
 
                 if (!this.allServicesData || Object.keys(this.allServicesData).length === 0) {
-                    tbody.innerHTML = `<tr><td colspan="7" class="text-center py-6 text-slate-500">Нема сервиси.</td></tr>`;
+                    tbody.innerHTML = `<tr><td colspan="7" class="text-center py-6 text-slate-400">Нема сервиси.</td></tr>`;
                     if (summaryEl) summaryEl.innerText = '';
                     return;
                 }
 
                 if (info.entries.length === 0) {
-                    tbody.innerHTML = `<tr><td colspan="7" class="text-center py-6 text-slate-500">Нема пронајдено сервиси за избраниот филтер.</td></tr>`;
+                    tbody.innerHTML = `<tr><td colspan="7" class="text-center py-6 text-slate-400">Нема пронајдено сервиси за избраниот филтер.</td></tr>`;
                 } else {
                     info.entries.forEach(({ key, s, totalInv }) => {
                         let itemsHtml = '';
@@ -762,27 +763,27 @@
                             itemsHtml = s.items.map(i => {
                                 const isMatch = info.fPart && (i.desc || '').toLowerCase().includes(info.fPart);
                                 const badgeClass = isMatch
-                                    ? 'bg-pink-950/70 border border-pink-500 px-2 py-0.5 rounded mr-1 text-[11px] text-white'
-                                    : 'bg-slate-800 px-2 py-0.5 rounded mr-1 text-[11px]';
+                                    ? 'bg-pink-950/70 border border-pink-500 px-2.5 py-1 rounded mr-1 text-xs text-white inline-block mb-1'
+                                    : 'bg-slate-800 px-2.5 py-1 rounded mr-1 text-xs inline-block mb-1';
                                 return `<span class="${badgeClass}">${i.desc}: <b class="text-pink-400">${i.cost}д.</b></span>`;
                             }).join('');
                         } else {
-                            itemsHtml = '<span class="text-slate-500">Само фактура (без поединечни делови)</span>';
+                            itemsHtml = '<span class="text-slate-400">Само фактура (без поединечни делови)</span>';
                         }
 
                         tbody.innerHTML += `
                             <tr class="border-b border-slate-800/50 hover:bg-slate-800/30">
-                                <td class="py-3 px-3 text-slate-400">${s.date || '-'}</td>
+                                <td class="py-3 px-3 text-slate-300">${s.date || '-'}</td>
                                 <td class="py-3 px-3 font-medium text-white">${s.vehicle}</td>
-                                <td class="py-3 px-3 text-slate-300">${itemsHtml}</td>
+                                <td class="py-3 px-3 text-slate-200">${itemsHtml}</td>
                                 <td class="py-3 px-3 text-pink-400 font-bold">${totalInv.toLocaleString()} ден.</td>
-                                <td class="py-3 px-3 text-slate-300">${s.km ? s.km + ' км' : '-'}</td>
+                                <td class="py-3 px-3 text-slate-200">${s.km ? s.km + ' км' : '-'}</td>
                                 <td class="py-3 px-3 text-amber-400 font-semibold">${s.nextKm ? s.nextKm + ' км' : '-'}</td>
                                 <td class="py-3 px-3 text-right space-x-1">
                                     ${this.isAdmin ? `
-                                        <button type="button" onclick="app.openServiceModal('${key}')" class="text-amber-400 hover:text-amber-300 bg-amber-950/40 border border-amber-900/50 px-2 py-1 rounded-lg" title="Измени"><i class="fa-solid fa-pen"></i></button>
-                                        <button type="button" onclick="app.removeRecord('service', '${key}')" class="text-red-400 hover:text-red-300 bg-red-950/40 border border-red-900/50 px-2 py-1 rounded-lg" title="Избриши"><i class="fa-solid fa-trash"></i></button>
-                                    ` : '<span class="text-slate-600">-</span>'}
+                                        <button type="button" onclick="app.openServiceModal('${key}')" class="text-amber-400 hover:text-amber-300 bg-amber-950/40 border border-amber-900/50 px-2.5 py-1.5 rounded-lg" title="Измени"><i class="fa-solid fa-pen"></i></button>
+                                        <button type="button" onclick="app.removeRecord('service', '${key}')" class="text-red-400 hover:text-red-300 bg-red-950/40 border border-red-900/50 px-2.5 py-1.5 rounded-lg" title="Избриши"><i class="fa-solid fa-trash"></i></button>
+                                    ` : '<span class="text-slate-500">-</span>'}
                                 </td>
                             </tr>
                         `;
@@ -1009,7 +1010,7 @@
                     const driversSet = new Set();
 
                     if (!data) {
-                        tbody.innerHTML = `<tr><td colspan="7" class="text-center py-6 text-slate-500">Нема внесено возила.</td></tr>`;
+                        tbody.innerHTML = `<tr><td colspan="7" class="text-center py-6 text-slate-400">Нема внесено возила.</td></tr>`;
                         document.getElementById('statTotalVehicles').innerText = '0';
                         document.getElementById('statExpiring').innerText = '0';
                         this.renderServicesTable();
@@ -1052,16 +1053,16 @@
                         tbody.innerHTML += `
                             <tr class="border-b border-slate-800/50 hover:bg-slate-800/30">
                                 <td class="py-3 px-3 font-medium text-white">${v.model}</td>
-                                <td class="py-3 px-3 text-slate-300">${v.plate}</td>
-                                <td class="py-3 px-3 text-slate-300">${v.driver || '-'}</td>
-                                <td class="py-3 px-3 text-slate-300">${v.km ? v.km + ' км' : '-'}</td>
-                                <td class="py-3 px-3 text-slate-300">${regBadge}</td>
-                                <td class="py-3 px-3 text-slate-300">${docBadge}</td>
+                                <td class="py-3 px-3 text-slate-200">${v.plate}</td>
+                                <td class="py-3 px-3 text-slate-200">${v.driver || '-'}</td>
+                                <td class="py-3 px-3 text-slate-200">${v.km ? v.km + ' км' : '-'}</td>
+                                <td class="py-3 px-3 text-slate-200">${regBadge}</td>
+                                <td class="py-3 px-3 text-slate-200">${docBadge}</td>
                                 <td class="py-3 px-3 text-right space-x-1">
                                     ${this.isAdmin ? `
-                                        <button type="button" onclick="app.editVehicle('${key}', '${v.model}', '${v.plate}', '${v.driver || ''}', '${v.km || ''}', '${v.regDate || ''}', '${v.docDate || ''}')" class="text-amber-400 hover:text-amber-300 bg-amber-950/40 border border-amber-900/50 px-2 py-1 rounded-lg" title="Измени"><i class="fa-solid fa-pen"></i></button>
-                                        <button type="button" onclick="app.removeRecord('vehicles', '${key}')" class="text-red-400 hover:text-red-300 bg-red-950/40 border border-red-900/50 px-2 py-1 rounded-lg" title="Избриши"><i class="fa-solid fa-trash"></i></button>
-                                    ` : '<span class="text-slate-600">-</span>'}
+                                        <button type="button" onclick="app.editVehicle('${key}', '${v.model}', '${v.plate}', '${v.driver || ''}', '${v.km || ''}', '${v.regDate || ''}', '${v.docDate || ''}')" class="text-amber-400 hover:text-amber-300 bg-amber-950/40 border border-amber-900/50 px-2.5 py-1.5 rounded-lg" title="Измени"><i class="fa-solid fa-pen"></i></button>
+                                        <button type="button" onclick="app.removeRecord('vehicles', '${key}')" class="text-red-400 hover:text-red-300 bg-red-950/40 border border-red-900/50 px-2.5 py-1.5 rounded-lg" title="Избриши"><i class="fa-solid fa-trash"></i></button>
+                                    ` : '<span class="text-slate-500">-</span>'}
                                 </td>
                             </tr>
                         `;
@@ -1086,23 +1087,23 @@
                     const data = snapshot.val();
                     const tbody = document.getElementById('fuelTableBody');
                     tbody.innerHTML = '';
-                    if (!data) { tbody.innerHTML = `<tr><td colspan="8" class="text-center py-6 text-slate-500">Нема точења.</td></tr>`; return; }
+                    if (!data) { tbody.innerHTML = `<tr><td colspan="8" class="text-center py-6 text-slate-400">Нема точења.</td></tr>`; return; }
                     Object.keys(data).forEach(key => {
                         const f = data[key];
                         tbody.innerHTML += `
                             <tr class="border-b border-slate-800/50 hover:bg-slate-800/30">
-                                <td class="py-3 px-3 text-slate-400">${f.date || '-'}</td>
+                                <td class="py-3 px-3 text-slate-300">${f.date || '-'}</td>
                                 <td class="py-3 px-3 font-medium text-white">${f.vehicle}</td>
-                                <td class="py-3 px-3 text-slate-300"><span class="bg-slate-800 px-2 py-0.5 rounded">${f.type || 'Дизел'}</span></td>
-                                <td class="py-3 px-3 text-slate-300">${f.liters} L</td>
-                                <td class="py-3 px-3 text-slate-300">${f.cost} ден.</td>
-                                <td class="py-3 px-3 text-slate-300">${f.km ? f.km + ' км' : '-'}</td>
-                                <td class="py-3 px-3 text-slate-300">${f.driver || '-'}</td>
+                                <td class="py-3 px-3 text-slate-200"><span class="bg-slate-800 px-2.5 py-1 rounded">${f.type || 'Дизел'}</span></td>
+                                <td class="py-3 px-3 text-slate-200">${f.liters} L</td>
+                                <td class="py-3 px-3 text-slate-200">${f.cost} ден.</td>
+                                <td class="py-3 px-3 text-slate-200">${f.km ? f.km + ' км' : '-'}</td>
+                                <td class="py-3 px-3 text-slate-200">${f.driver || '-'}</td>
                                 <td class="py-3 px-3 text-right space-x-1">
                                     ${this.isAdmin ? `
-                                        <button type="button" onclick="app.editFuel('${key}', '${f.vehicle}', '${f.type || 'Дизел'}', '${f.liters}', '${f.cost}', '${f.km || ''}', '${f.driver || ''}')" class="text-amber-400 hover:text-amber-300 bg-amber-950/40 border border-amber-900/50 px-2 py-1 rounded-lg" title="Измени"><i class="fa-solid fa-pen"></i></button>
-                                        <button type="button" onclick="app.removeRecord('fuel', '${key}')" class="text-red-400 hover:text-red-300 bg-red-950/40 border border-red-900/50 px-2 py-1 rounded-lg" title="Избриши"><i class="fa-solid fa-trash"></i></button>
-                                    ` : '<span class="text-slate-600">-</span>'}
+                                        <button type="button" onclick="app.editFuel('${key}', '${f.vehicle}', '${f.type || 'Дизел'}', '${f.liters}', '${f.cost}', '${f.km || ''}', '${f.driver || ''}')" class="text-amber-400 hover:text-amber-300 bg-amber-950/40 border border-amber-900/50 px-2.5 py-1.5 rounded-lg" title="Измени"><i class="fa-solid fa-pen"></i></button>
+                                        <button type="button" onclick="app.removeRecord('fuel', '${key}')" class="text-red-400 hover:text-red-300 bg-red-950/40 border border-red-900/50 px-2.5 py-1.5 rounded-lg" title="Избриши"><i class="fa-solid fa-trash"></i></button>
+                                    ` : '<span class="text-slate-500">-</span>'}
                                 </td>
                             </tr>
                         `;
@@ -1120,21 +1121,21 @@
                     const data = snapshot.val();
                     const tbody = document.getElementById('regsTableBody');
                     tbody.innerHTML = '';
-                    if (!data) { tbody.innerHTML = `<tr><td colspan="6" class="text-center py-6 text-slate-500">Нема внесено регистрации или други трошоци.</td></tr>`; return; }
+                    if (!data) { tbody.innerHTML = `<tr><td colspan="6" class="text-center py-6 text-slate-400">Нема внесено регистрации или други трошоци.</td></tr>`; return; }
                     Object.keys(data).forEach(key => {
                         const r = data[key];
                         tbody.innerHTML += `
                             <tr class="border-b border-slate-800/50 hover:bg-slate-800/30">
-                                <td class="py-3 px-3 text-slate-400">${r.date || '-'}</td>
+                                <td class="py-3 px-3 text-slate-300">${r.date || '-'}</td>
                                 <td class="py-3 px-3 font-medium text-white">${r.vehicle}</td>
                                 <td class="py-3 px-3 text-amber-400">${r.type}</td>
-                                <td class="py-3 px-3 text-slate-300">${r.desc || '-'}</td>
+                                <td class="py-3 px-3 text-slate-200">${r.desc || '-'}</td>
                                 <td class="py-3 px-3 text-pink-400 font-bold">${Number(r.cost).toLocaleString()} ден.</td>
                                 <td class="py-3 px-3 text-right space-x-1">
                                     ${this.isAdmin ? `
-                                        <button type="button" onclick="app.editRegCost('${key}', '${r.vehicle}', '${r.type}', '${r.desc || ''}', '${r.cost}', '${r.date || ''}')" class="text-amber-400 hover:text-amber-300 bg-amber-950/40 border border-amber-900/50 px-2 py-1 rounded-lg" title="Измени"><i class="fa-solid fa-pen"></i></button>
-                                        <button type="button" onclick="app.removeRecord('registrations', '${key}')" class="text-red-400 hover:text-red-300 bg-red-950/40 border border-red-900/50 px-2 py-1 rounded-lg" title="Избриши"><i class="fa-solid fa-trash"></i></button>
-                                    ` : '<span class="text-slate-600">-</span>'}
+                                        <button type="button" onclick="app.editRegCost('${key}', '${r.vehicle}', '${r.type}', '${r.desc || ''}', '${r.cost}', '${r.date || ''}')" class="text-amber-400 hover:text-amber-300 bg-amber-950/40 border border-amber-900/50 px-2.5 py-1.5 rounded-lg" title="Измени"><i class="fa-solid fa-pen"></i></button>
+                                        <button type="button" onclick="app.removeRecord('registrations', '${key}')" class="text-red-400 hover:text-red-300 bg-red-950/40 border border-red-900/50 px-2.5 py-1.5 rounded-lg" title="Избриши"><i class="fa-solid fa-trash"></i></button>
+                                    ` : '<span class="text-slate-500">-</span>'}
                                 </td>
                             </tr>
                         `;
@@ -1148,7 +1149,7 @@
                     tbody.innerHTML = '';
                     let totalTollsSum = 0;
                     if (!data) {
-                        tbody.innerHTML = `<tr><td colspan="7" class="text-center py-6 text-slate-500">Нема патни налози.</td></tr>`;
+                        tbody.innerHTML = `<tr><td colspan="7" class="text-center py-6 text-slate-400">Нема патни налози.</td></tr>`;
                         document.getElementById('statTotalTolls').innerText = '0 ден.';
                         document.getElementById('statTotalCosts').innerText = '0 ден.';
                         return;
@@ -1159,17 +1160,17 @@
                         totalTollsSum += cNum;
                         tbody.innerHTML += `
                             <tr class="border-b border-slate-800/50 hover:bg-slate-800/30">
-                                <td class="py-3 px-3 text-slate-400">${t.date || '-'}</td>
+                                <td class="py-3 px-3 text-slate-300">${t.date || '-'}</td>
                                 <td class="py-3 px-3 font-medium text-white">${t.vehicle}</td>
-                                <td class="py-3 px-3 text-slate-300">${t.driver || '-'}</td>
-                                <td class="py-3 px-3 text-slate-300 font-semibold">${t.waybill || '-'}</td>
-                                <td class="py-3 px-3 text-slate-300">${t.route || '-'}</td>
-                                <td class="py-3 px-3 text-slate-300">${t.cost} ден.</td>
+                                <td class="py-3 px-3 text-slate-200">${t.driver || '-'}</td>
+                                <td class="py-3 px-3 text-slate-200 font-semibold">${t.waybill || '-'}</td>
+                                <td class="py-3 px-3 text-slate-200">${t.route || '-'}</td>
+                                <td class="py-3 px-3 text-slate-200">${t.cost} ден.</td>
                                 <td class="py-3 px-3 text-right space-x-1">
                                     ${this.isAdmin ? `
-                                        <button type="button" onclick="app.editToll('${key}', '${t.vehicle}', '${t.driver || ''}', '${t.waybill || ''}', '${t.route || ''}', '${t.cost}')" class="text-amber-400 hover:text-amber-300 bg-amber-950/40 border border-amber-900/50 px-2 py-1 rounded-lg" title="Измени"><i class="fa-solid fa-pen"></i></button>
-                                        <button type="button" onclick="app.removeRecord('tolls', '${key}')" class="text-red-400 hover:text-red-300 bg-red-950/40 border border-red-900/50 px-2 py-1 rounded-lg" title="Избриши"><i class="fa-solid fa-trash"></i></button>
-                                    ` : '<span class="text-slate-600">-</span>'}
+                                        <button type="button" onclick="app.editToll('${key}', '${t.vehicle}', '${t.driver || ''}', '${t.waybill || ''}', '${t.route || ''}', '${t.cost}')" class="text-amber-400 hover:text-amber-300 bg-amber-950/40 border border-amber-900/50 px-2.5 py-1.5 rounded-lg" title="Измени"><i class="fa-solid fa-pen"></i></button>
+                                        <button type="button" onclick="app.removeRecord('tolls', '${key}')" class="text-red-400 hover:text-red-300 bg-red-950/40 border border-red-900/50 px-2.5 py-1.5 rounded-lg" title="Избриши"><i class="fa-solid fa-trash"></i></button>
+                                    ` : '<span class="text-slate-500">-</span>'}
                                 </td>
                             </tr>
                         `;
@@ -1253,7 +1254,7 @@
 
                     if(Object.keys(vehicles).length === 0) {
                         summaryPanel.classList.add('hidden');
-                        container.innerHTML = `<p class="text-slate-500 text-center py-8 lg:col-span-2">Нема внесено возила во системот.</p>`;
+                        container.innerHTML = `<p class="text-slate-400 text-center py-8 lg:col-span-2 text-sm">Нема внесено возила во системот.</p>`;
                         return;
                     }
 
@@ -1269,7 +1270,7 @@
                             if(f.vehicle === plate) {
                                 if((!sDate || f.date >= sDate) && (!eDate || f.date <= eDate)) {
                                     vFuelTotal += Number(f.cost) || 0;
-                                    fRows += `<tr class="border-b border-slate-800/30"><td class="py-1 px-1">${f.date}</td><td class="py-1 px-1">${f.type} (${f.liters}L)</td><td class="py-1 px-1">${f.km || '-'} км</td><td class="py-1 px-1 text-right font-bold">${f.cost} ден.</td></tr>`;
+                                    fRows += `<tr class="border-b border-slate-800/30"><td class="py-1.5 px-1.5">${f.date}</td><td class="py-1.5 px-1.5">${f.type} (${f.liters}L)</td><td class="py-1.5 px-1.5">${f.km || '-'} км</td><td class="py-1.5 px-1.5 text-right font-bold">${f.cost} ден.</td></tr>`;
                                 }
                             }
                         });
@@ -1287,7 +1288,7 @@
                                     } else {
                                         itemsSummary = 'Фактура (без поединечни делови)';
                                     }
-                                    sRows += `<tr class="border-b border-slate-800/30"><td class="py-1 px-1">${s.date}</td><td class="py-1 px-1 text-pink-400 font-semibold">${itemsSummary}</td><td class="py-1 px-1">${s.km || '-'} км</td><td class="py-1 px-1 text-right font-bold">${totalInv.toLocaleString()} ден.</td></tr>`;
+                                    sRows += `<tr class="border-b border-slate-800/30"><td class="py-1.5 px-1.5">${s.date}</td><td class="py-1.5 px-1.5 text-pink-400 font-semibold">${itemsSummary}</td><td class="py-1.5 px-1.5">${s.km || '-'} км</td><td class="py-1.5 px-1.5 text-right font-bold">${totalInv.toLocaleString()} ден.</td></tr>`;
                                 }
                             }
                         });
@@ -1298,7 +1299,7 @@
                             if(r.vehicle === plate) {
                                 if((!sDate || r.date >= sDate) && (!eDate || r.date <= eDate)) {
                                     vRegTotal += Number(r.cost) || 0;
-                                    rRows += `<tr class="border-b border-slate-800/30"><td class="py-1 px-1">${r.date}</td><td class="py-1 px-1 text-amber-400">${r.type}</td><td class="py-1 px-1">${r.desc || '-'}</td><td class="py-1 px-1 text-right font-bold">${r.cost} ден.</td></tr>`;
+                                    rRows += `<tr class="border-b border-slate-800/30"><td class="py-1.5 px-1.5">${r.date}</td><td class="py-1.5 px-1.5 text-amber-400">${r.type}</td><td class="py-1.5 px-1.5">${r.desc || '-'}</td><td class="py-1.5 px-1.5 text-right font-bold">${r.cost} ден.</td></tr>`;
                                 }
                             }
                         });
@@ -1309,7 +1310,7 @@
                             if(t.vehicle === plate) {
                                 if((!sDate || t.date >= sDate) && (!eDate || t.date <= eDate)) {
                                     vTollTotal += Number(t.cost) || 0;
-                                    tRows += `<tr class="border-b border-slate-800/30"><td class="py-1 px-1">${t.date}</td><td class="py-1 px-1">${t.route || '-'}</td><td class="py-1 px-1">${t.waybill || '-'}</td><td class="py-1 px-1 text-right font-bold">${t.cost} ден.</td></tr>`;
+                                    tRows += `<tr class="border-b border-slate-800/30"><td class="py-1.5 px-1.5">${t.date}</td><td class="py-1.5 px-1.5">${t.route || '-'}</td><td class="py-1.5 px-1.5">${t.waybill || '-'}</td><td class="py-1.5 px-1.5 text-right font-bold">${t.cost} ден.</td></tr>`;
                                 }
                             }
                         });
@@ -1320,80 +1321,80 @@
                             <div class="bg-slate-950 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-4">
                                 <div class="flex justify-between items-start border-b border-slate-800 pb-3">
                                     <div class="flex items-start gap-2.5">
-                                        <input type="checkbox" id="card-select-${vKey}" onchange="app.toggleVehicleCard('${vKey}', this.checked)" class="dash-card-cb mt-1 w-4 h-4 accent-pink-600 rounded cursor-pointer" title="Избери цела картичка">
+                                        <input type="checkbox" id="card-select-${vKey}" onchange="app.toggleVehicleCard('${vKey}', this.checked)" class="dash-card-cb mt-1.5 w-4 h-4 accent-pink-600 rounded cursor-pointer" title="Избери цела картичка">
                                         <div>
-                                            <label for="card-select-${vKey}" class="font-bold text-white text-base flex items-center gap-2 cursor-pointer">
+                                            <label for="card-select-${vKey}" class="font-bold text-white text-lg flex items-center gap-2 cursor-pointer">
                                                 <i class="fa-solid fa-car text-pink-500"></i> ${v.model}
                                             </label>
-                                            <p class="text-xs text-slate-400">Таблички: <b class="text-slate-200">${v.plate}</b> | Возач: <b class="text-slate-200">${v.driver || '-'}</b></p>
+                                            <p class="text-sm text-slate-300">Таблички: <b class="text-white">${v.plate}</b> | Возач: <b class="text-white">${v.driver || '-'}</b></p>
                                         </div>
                                     </div>
-                                    <div class="text-right bg-pink-950/40 border border-pink-900/50 px-3 py-1.5 rounded-xl">
-                                        <span class="text-[9px] text-pink-300 block">ВКУПНО ТРОШОК</span>
-                                        <span class="text-sm font-bold text-white">${vehicleGrandTotal.toLocaleString()} ден.</span>
+                                    <div class="text-right bg-pink-950/40 border border-pink-900/50 px-3.5 py-2 rounded-xl">
+                                        <span class="text-xs text-pink-300 block">ВКУПНО ТРОШОК</span>
+                                        <span class="text-base font-bold text-white">${vehicleGrandTotal.toLocaleString()} ден.</span>
                                     </div>
                                 </div>
 
                                 <!-- Fuel Group -->
                                 <div>
-                                    <h5 class="text-xs font-bold text-slate-300 mb-1 flex justify-between items-center">
+                                    <h5 class="text-sm font-bold text-slate-200 mb-1.5 flex justify-between items-center">
                                         <label class="flex items-center gap-2 cursor-pointer">
-                                            <input type="checkbox" data-amount="${vFuelTotal}" onchange="app.onItemCheckboxChange('${vKey}')" class="dash-item-cb item-select-${vKey} w-3.5 h-3.5 accent-pink-600 rounded cursor-pointer">
+                                            <input type="checkbox" data-amount="${vFuelTotal}" onchange="app.onItemCheckboxChange('${vKey}')" class="dash-item-cb item-select-${vKey} w-4 h-4 accent-pink-600 rounded cursor-pointer">
                                             <span><i class="fa-solid fa-gas-pump mr-1 text-pink-500"></i> Гориво</span>
                                         </label>
                                         <span class="text-pink-400">${vFuelTotal.toLocaleString()} ден.</span>
                                     </h5>
-                                    <div class="bg-slate-900 rounded-xl p-2 max-h-28 overflow-y-auto border border-slate-800">
-                                        <table class="w-full text-left text-[11px]">
-                                            <tbody>${fRows || '<tr><td colspan="4" class="text-center text-slate-500 py-1">Нема записи за гориво во периодот</td></tr>'}</tbody>
+                                    <div class="bg-slate-900 rounded-xl p-2.5 max-h-36 overflow-y-auto border border-slate-800">
+                                        <table class="w-full text-left text-xs">
+                                            <tbody>${fRows || '<tr><td colspan="4" class="text-center text-slate-400 py-1.5">Нема записи за гориво во периодот</td></tr>'}</tbody>
                                         </table>
                                     </div>
                                 </div>
 
                                 <!-- Service Group -->
                                 <div>
-                                    <h5 class="text-xs font-bold text-slate-300 mb-1 flex justify-between items-center">
+                                    <h5 class="text-sm font-bold text-slate-200 mb-1.5 flex justify-between items-center">
                                         <label class="flex items-center gap-2 cursor-pointer">
-                                            <input type="checkbox" data-amount="${vServTotal}" onchange="app.onItemCheckboxChange('${vKey}')" class="dash-item-cb item-select-${vKey} w-3.5 h-3.5 accent-pink-600 rounded cursor-pointer">
+                                            <input type="checkbox" data-amount="${vServTotal}" onchange="app.onItemCheckboxChange('${vKey}')" class="dash-item-cb item-select-${vKey} w-4 h-4 accent-pink-600 rounded cursor-pointer">
                                             <span><i class="fa-solid fa-screwdriver-wrench mr-1 text-pink-500"></i> Сервиси & Фактури</span>
                                         </label>
                                         <span class="text-pink-400">${vServTotal.toLocaleString()} ден.</span>
                                     </h5>
-                                    <div class="bg-slate-900 rounded-xl p-2 max-h-28 overflow-y-auto border border-slate-800">
-                                        <table class="w-full text-left text-[11px]">
-                                            <tbody>${sRows || '<tr><td colspan="4" class="text-center text-slate-500 py-1">Нема сервиси во периодот</td></tr>'}</tbody>
+                                    <div class="bg-slate-900 rounded-xl p-2.5 max-h-36 overflow-y-auto border border-slate-800">
+                                        <table class="w-full text-left text-xs">
+                                            <tbody>${sRows || '<tr><td colspan="4" class="text-center text-slate-400 py-1.5">Нема сервиси во периодот</td></tr>'}</tbody>
                                         </table>
                                     </div>
                                 </div>
 
                                 <!-- Registrations & Other Group -->
                                 <div>
-                                    <h5 class="text-xs font-bold text-slate-300 mb-1 flex justify-between items-center">
+                                    <h5 class="text-sm font-bold text-slate-200 mb-1.5 flex justify-between items-center">
                                         <label class="flex items-center gap-2 cursor-pointer">
-                                            <input type="checkbox" data-amount="${vRegTotal}" onchange="app.onItemCheckboxChange('${vKey}')" class="dash-item-cb item-select-${vKey} w-3.5 h-3.5 accent-pink-600 rounded cursor-pointer">
+                                            <input type="checkbox" data-amount="${vRegTotal}" onchange="app.onItemCheckboxChange('${vKey}')" class="dash-item-cb item-select-${vKey} w-4 h-4 accent-pink-600 rounded cursor-pointer">
                                             <span><i class="fa-solid fa-file-shield mr-1 text-pink-500"></i> Регистрации, Каско & Други</span>
                                         </label>
                                         <span class="text-pink-400">${vRegTotal.toLocaleString()} ден.</span>
                                     </h5>
-                                    <div class="bg-slate-900 rounded-xl p-2 max-h-28 overflow-y-auto border border-slate-800">
-                                        <table class="w-full text-left text-[11px]">
-                                            <tbody>${rRows || '<tr><td colspan="4" class="text-center text-slate-500 py-1">Нема записи за регистрации во периодот</td></tr>'}</tbody>
+                                    <div class="bg-slate-900 rounded-xl p-2.5 max-h-36 overflow-y-auto border border-slate-800">
+                                        <table class="w-full text-left text-xs">
+                                            <tbody>${rRows || '<tr><td colspan="4" class="text-center text-slate-400 py-1.5">Нема записи за регистрации во периодот</td></tr>'}</tbody>
                                         </table>
                                     </div>
                                 </div>
 
                                 <!-- Tolls Group -->
                                 <div>
-                                    <h5 class="text-xs font-bold text-slate-300 mb-1 flex justify-between items-center">
+                                    <h5 class="text-sm font-bold text-slate-200 mb-1.5 flex justify-between items-center">
                                         <label class="flex items-center gap-2 cursor-pointer">
-                                            <input type="checkbox" data-amount="${vTollTotal}" onchange="app.onItemCheckboxChange('${vKey}')" class="dash-item-cb item-select-${vKey} w-3.5 h-3.5 accent-pink-600 rounded cursor-pointer">
+                                            <input type="checkbox" data-amount="${vTollTotal}" onchange="app.onItemCheckboxChange('${vKey}')" class="dash-item-cb item-select-${vKey} w-4 h-4 accent-pink-600 rounded cursor-pointer">
                                             <span><i class="fa-solid fa-road mr-1 text-pink-500"></i> Патарини & Релации</span>
                                         </label>
                                         <span class="text-pink-400">${vTollTotal.toLocaleString()} ден.</span>
                                     </h5>
-                                    <div class="bg-slate-900 rounded-xl p-2 max-h-28 overflow-y-auto border border-slate-800">
-                                        <table class="w-full text-left text-[11px]">
-                                            <tbody>${tRows || '<tr><td colspan="4" class="text-center text-slate-500 py-1">Нема патарини во периодот</td></tr>'}</tbody>
+                                    <div class="bg-slate-900 rounded-xl p-2.5 max-h-36 overflow-y-auto border border-slate-800">
+                                        <table class="w-full text-left text-xs">
+                                            <tbody>${tRows || '<tr><td colspan="4" class="text-center text-slate-400 py-1.5">Нема патарини во периодот</td></tr>'}</tbody>
                                         </table>
                                     </div>
                                 </div>
