@@ -280,8 +280,37 @@
                     <i class="fa-solid fa-plus"></i> <span>Внеси Нов Сервис (Фактура)</span>
                 </button>
             </div>
-            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl">
-                <h3 class="text-sm font-bold text-white mb-4 flex items-center gap-2"><i class="fa-solid fa-screwdriver-wrench text-pink-600"></i> Историја на Сервиси, Фактури и Делови</h3>
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-4">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
+                    <h3 class="text-sm font-bold text-white flex items-center gap-2"><i class="fa-solid fa-screwdriver-wrench text-pink-600"></i> Историја на Сервиси, Фактури и Делови</h3>
+                    <div id="serviceFilterSummary" class="text-xs text-pink-400 font-semibold"></div>
+                </div>
+
+                <!-- FILTER BAR FOR SERVICES -->
+                <div class="grid grid-cols-1 sm:grid-cols-5 gap-2.5 text-xs bg-slate-950 p-3 rounded-xl border border-slate-800">
+                    <div>
+                        <label class="block text-slate-400 mb-1">Возило:</label>
+                        <select id="filterSVehicle" onchange="app.renderServicesTable()" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white">
+                            <option value="">-- Сите возила --</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-slate-400 mb-1">Дел / Зафат (на пр. плочки):</label>
+                        <input type="text" id="filterSPart" oninput="app.renderServicesTable()" placeholder="Барај дел или зафат..." class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white">
+                    </div>
+                    <div>
+                        <label class="block text-slate-400 mb-1">Од датум:</label>
+                        <input type="date" id="filterSStartDate" onchange="app.renderServicesTable()" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white">
+                    </div>
+                    <div>
+                        <label class="block text-slate-400 mb-1">До датум:</label>
+                        <input type="date" id="filterSEndDate" onchange="app.renderServicesTable()" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white">
+                    </div>
+                    <div class="flex items-end">
+                        <button type="button" onclick="app.resetServiceFilter()" class="w-full bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 py-2 rounded-xl transition">Исчисти филтер</button>
+                    </div>
+                </div>
+
                 <div class="overflow-x-auto">
                     <table class="w-full text-left text-xs">
                         <thead>
@@ -445,6 +474,7 @@
     <script>
         const app = {
             isAdmin: false,
+            allServicesData: {},
             loginAdmin() {
                 const pass = document.getElementById('loginPassword').value;
                 if(pass === 'admin123') {
@@ -568,6 +598,105 @@
                     alert(`Успешно зачуван сервис со фактура од ${totalInvoice.toLocaleString()} ден.!`);
                 }
                 this.closeServiceModal();
+            },
+
+            resetServiceFilter() {
+                document.getElementById('filterSVehicle').value = '';
+                document.getElementById('filterSPart').value = '';
+                document.getElementById('filterSStartDate').value = '';
+                document.getElementById('filterSEndDate').value = '';
+                this.renderServicesTable();
+            },
+
+            renderServicesTable() {
+                const data = this.allServicesData;
+                const tbody = document.getElementById('serviceTableBody');
+                const summaryEl = document.getElementById('serviceFilterSummary');
+                tbody.innerHTML = '';
+
+                if (!data || Object.keys(data).length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="7" class="text-center py-6 text-slate-500">Нема сервиси.</td></tr>`;
+                    if (summaryEl) summaryEl.innerText = '';
+                    return;
+                }
+
+                const fVeh = (document.getElementById('filterSVehicle')?.value || '').trim();
+                const fPart = (document.getElementById('filterSPart')?.value || '').trim().toLowerCase();
+                const fStart = document.getElementById('filterSStartDate')?.value || '';
+                const fEnd = document.getElementById('filterSEndDate')?.value || '';
+                const isFiltering = Boolean(fVeh || fPart || fStart || fEnd);
+
+                let matchCount = 0;
+                let matchedPartsCost = 0;
+                let matchedInvoicesCost = 0;
+
+                Object.keys(data).forEach(key => {
+                    const s = data[key];
+                    if (fVeh && s.vehicle !== fVeh) return;
+                    if (fStart && (!s.date || s.date < fStart)) return;
+                    if (fEnd && (!s.date || s.date > fEnd)) return;
+
+                    let matchingItems = [];
+                    if (s.items && Array.isArray(s.items) && s.items.length > 0) {
+                        if (fPart) {
+                            matchingItems = s.items.filter(i => (i.desc || '').toLowerCase().includes(fPart));
+                            if (matchingItems.length === 0) return;
+                        } else {
+                            matchingItems = s.items;
+                        }
+                    } else if (fPart) {
+                        return;
+                    }
+
+                    matchCount++;
+                    const totalInv = Number(s.totalInvoice || s.cost) || 0;
+                    matchedInvoicesCost += totalInv;
+                    matchingItems.forEach(i => { matchedPartsCost += Number(i.cost) || 0; });
+
+                    let itemsHtml = '';
+                    if (s.items && Array.isArray(s.items) && s.items.length > 0) {
+                        itemsHtml = s.items.map(i => {
+                            const isMatch = fPart && (i.desc || '').toLowerCase().includes(fPart);
+                            const badgeClass = isMatch
+                                ? 'bg-pink-950/70 border border-pink-500 px-2 py-0.5 rounded mr-1 text-[11px] text-white'
+                                : 'bg-slate-800 px-2 py-0.5 rounded mr-1 text-[11px]';
+                            return `<span class="${badgeClass}">${i.desc}: <b class="text-pink-400">${i.cost}д.</b></span>`;
+                        }).join('');
+                    } else {
+                        itemsHtml = '<span class="text-slate-500">Само фактура (без поединечни делови)</span>';
+                    }
+
+                    tbody.innerHTML += `
+                        <tr class="border-b border-slate-800/50 hover:bg-slate-800/30">
+                            <td class="py-3 px-3 text-slate-400">${s.date || '-'}</td>
+                            <td class="py-3 px-3 font-medium text-white">${s.vehicle}</td>
+                            <td class="py-3 px-3 text-slate-300">${itemsHtml}</td>
+                            <td class="py-3 px-3 text-pink-400 font-bold">${totalInv.toLocaleString()} ден.</td>
+                            <td class="py-3 px-3 text-slate-300">${s.km ? s.km + ' км' : '-'}</td>
+                            <td class="py-3 px-3 text-amber-400 font-semibold">${s.nextKm ? s.nextKm + ' км' : '-'}</td>
+                            <td class="py-3 px-3 text-right space-x-1">
+                                ${this.isAdmin ? `
+                                    <button type="button" onclick="app.openServiceModal('${key}')" class="text-amber-400 hover:text-amber-300 bg-amber-950/40 border border-amber-900/50 px-2 py-1 rounded-lg" title="Измени"><i class="fa-solid fa-pen"></i></button>
+                                    <button type="button" onclick="app.removeRecord('service', '${key}')" class="text-red-400 hover:text-red-300 bg-red-950/40 border border-red-900/50 px-2 py-1 rounded-lg" title="Избриши"><i class="fa-solid fa-trash"></i></button>
+                                ` : '<span class="text-slate-600">-</span>'}
+                            </td>
+                        </tr>
+                    `;
+                });
+
+                if (matchCount === 0) {
+                    tbody.innerHTML = `<tr><td colspan="7" class="text-center py-6 text-slate-500">Нема пронајдено сервиси за избраниот филтер.</td></tr>`;
+                }
+
+                if (summaryEl) {
+                    if (isFiltering) {
+                        summaryEl.innerText = fPart
+                            ? `Пронајдено: ${matchCount} пати | Делови: ${matchedPartsCost.toLocaleString()} ден. (Фактури: ${matchedInvoicesCost.toLocaleString()} ден.)`
+                            : `Пронајдено: ${matchCount} сервиси | Вкупно фактури: ${matchedInvoicesCost.toLocaleString()} ден.`;
+                    } else {
+                        summaryEl.innerText = '';
+                    }
+                }
             },
 
             // VEHICLE EDIT
@@ -766,12 +895,14 @@
                     const tVehSelect = document.getElementById('tVehicle');
                     const regVehSelect = document.getElementById('regVehicle');
                     const modalSVSelect = document.getElementById('modalSVehicle');
+                    const filterSVSelect = document.getElementById('filterSVehicle');
 
                     tbody.innerHTML = '';
                     fVehSelect.innerHTML = `<option value="">-- Избери возило --</option>`;
                     tVehSelect.innerHTML = `<option value="">-- Избери возило --</option>`;
                     regVehSelect.innerHTML = `<option value="">-- Избери возило --</option>`;
                     modalSVSelect.innerHTML = `<option value="">-- Избери возило --</option>`;
+                    if (filterSVSelect) filterSVSelect.innerHTML = `<option value="">-- Сите возила --</option>`;
 
                     const driversSet = new Set();
 
@@ -796,6 +927,7 @@
                         tVehSelect.innerHTML += optHtml;
                         regVehSelect.innerHTML += optHtml;
                         modalSVSelect.innerHTML += optHtml;
+                        if (filterSVSelect) filterSVSelect.innerHTML += optHtml;
 
                         let regBadge = v.regDate || 'Нема';
                         if(v.regDate) {
@@ -874,37 +1006,8 @@
 
                 // Service listener
                 db.ref('service').on('value', (snapshot) => {
-                    const data = snapshot.val();
-                    const tbody = document.getElementById('serviceTableBody');
-                    tbody.innerHTML = '';
-                    if (!data) { tbody.innerHTML = `<tr><td colspan="7" class="text-center py-6 text-slate-500">Нема сервиси.</td></tr>`; return; }
-                    Object.keys(data).forEach(key => {
-                        const s = data[key];
-                        let itemsHtml = '';
-                        if (s.items && Array.isArray(s.items) && s.items.length > 0) {
-                            itemsHtml = s.items.map(i => `<span class="bg-slate-800 px-2 py-0.5 rounded mr-1 text-[11px]">${i.desc}: <b class="text-pink-400">${i.cost}д.</b></span>`).join('');
-                        } else {
-                            itemsHtml = '<span class="text-slate-500">Само фактура (без поединечни делови)</span>';
-                        }
-                        const totalInv = s.totalInvoice || s.cost || 0;
-
-                        tbody.innerHTML += `
-                            <tr class="border-b border-slate-800/50 hover:bg-slate-800/30">
-                                <td class="py-3 px-3 text-slate-400">${s.date || '-'}</td>
-                                <td class="py-3 px-3 font-medium text-white">${s.vehicle}</td>
-                                <td class="py-3 px-3 text-slate-300">${itemsHtml}</td>
-                                <td class="py-3 px-3 text-pink-400 font-bold">${Number(totalInv).toLocaleString()} ден.</td>
-                                <td class="py-3 px-3 text-slate-300">${s.km ? s.km + ' км' : '-'}</td>
-                                <td class="py-3 px-3 text-amber-400 font-semibold">${s.nextKm ? s.nextKm + ' км' : '-'}</td>
-                                <td class="py-3 px-3 text-right space-x-1">
-                                    ${this.isAdmin ? `
-                                        <button type="button" onclick="app.openServiceModal('${key}')" class="text-amber-400 hover:text-amber-300 bg-amber-950/40 border border-amber-900/50 px-2 py-1 rounded-lg" title="Измени"><i class="fa-solid fa-pen"></i></button>
-                                        <button type="button" onclick="app.removeRecord('service', '${key}')" class="text-red-400 hover:text-red-300 bg-red-950/40 border border-red-900/50 px-2 py-1 rounded-lg" title="Избриши"><i class="fa-solid fa-trash"></i></button>
-                                    ` : '<span class="text-slate-600">-</span>'}
-                                </td>
-                            </tr>
-                        `;
-                    });
+                    this.allServicesData = snapshot.val() || {};
+                    this.renderServicesTable();
                 });
 
                 // Registrations & Other Costs listener
