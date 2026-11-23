@@ -59,6 +59,22 @@
         </div>
     </div>
 
+    <!-- SERVICE FILTER REPORT MODAL -->
+    <div id="serviceFilterModal" class="hidden fixed inset-0 bg-black/75 z-50 flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-800 w-full max-w-2xl rounded-2xl p-6 shadow-2xl space-y-4 max-h-[85vh] overflow-y-auto">
+            <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+                <h3 id="serviceFilterModalTitle" class="text-sm font-bold text-white flex items-center gap-2"><i class="fa-solid fa-list-check text-pink-600"></i> Издвоен Преглед на Сервиси и Делови</h3>
+                <button type="button" onclick="app.closeServiceFilterModal()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            <div id="serviceFilterModalSubtitle" class="text-xs text-slate-400"></div>
+            <div id="serviceFilterModalSummary" class="bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-pink-400 font-semibold"></div>
+            <div id="serviceFilterModalBody" class="space-y-2.5 text-xs"></div>
+            <div class="flex justify-end pt-2 border-t border-slate-800">
+                <button type="button" onclick="app.closeServiceFilterModal()" class="px-4 py-2 bg-pink-600 hover:bg-pink-500 rounded-xl text-xs font-semibold text-white">Затвори</button>
+            </div>
+        </div>
+    </div>
+
     <!-- SERVICE MODAL -->
     <div id="serviceModal" class="hidden fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4">
         <div class="bg-slate-900 border border-slate-800 w-full max-w-4xl rounded-2xl p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
@@ -287,7 +303,7 @@
                 </div>
 
                 <!-- FILTER BAR FOR SERVICES -->
-                <div class="grid grid-cols-1 sm:grid-cols-5 gap-2.5 text-xs bg-slate-950 p-3 rounded-xl border border-slate-800">
+                <div class="grid grid-cols-1 sm:grid-cols-6 gap-2.5 text-xs bg-slate-950 p-3 rounded-xl border border-slate-800">
                     <div>
                         <label class="block text-slate-400 mb-1">Возило:</label>
                         <select id="filterSVehicle" onchange="app.renderServicesTable()" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white">
@@ -305,6 +321,9 @@
                     <div>
                         <label class="block text-slate-400 mb-1">До датум:</label>
                         <input type="date" id="filterSEndDate" onchange="app.renderServicesTable()" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white">
+                    </div>
+                    <div class="flex items-end">
+                        <button type="button" onclick="app.openServiceFilterModal()" class="w-full bg-pink-600 hover:bg-pink-500 text-white font-semibold py-2 rounded-xl transition shadow-md">Издвоен прозорец</button>
                     </div>
                     <div class="flex items-end">
                         <button type="button" onclick="app.resetServiceFilter()" class="w-full bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 py-2 rounded-xl transition">Исчисти филтер</button>
@@ -475,6 +494,7 @@
         const app = {
             isAdmin: false,
             allServicesData: {},
+            vehiclesMap: {},
             loginAdmin() {
                 const pass = document.getElementById('loginPassword').value;
                 if(pass === 'admin123') {
@@ -608,27 +628,18 @@
                 this.renderServicesTable();
             },
 
-            renderServicesTable() {
-                const data = this.allServicesData;
-                const tbody = document.getElementById('serviceTableBody');
-                const summaryEl = document.getElementById('serviceFilterSummary');
-                tbody.innerHTML = '';
-
-                if (!data || Object.keys(data).length === 0) {
-                    tbody.innerHTML = `<tr><td colspan="7" class="text-center py-6 text-slate-500">Нема сервиси.</td></tr>`;
-                    if (summaryEl) summaryEl.innerText = '';
-                    return;
-                }
-
+            getFilteredServiceEntries() {
+                const data = this.allServicesData || {};
                 const fVeh = (document.getElementById('filterSVehicle')?.value || '').trim();
                 const fPart = (document.getElementById('filterSPart')?.value || '').trim().toLowerCase();
                 const fStart = document.getElementById('filterSStartDate')?.value || '';
                 const fEnd = document.getElementById('filterSEndDate')?.value || '';
                 const isFiltering = Boolean(fVeh || fPart || fStart || fEnd);
 
-                let matchCount = 0;
+                const entries = [];
                 let matchedPartsCost = 0;
                 let matchedInvoicesCost = 0;
+                let partOccurrences = 0;
 
                 Object.keys(data).forEach(key => {
                     const s = data[key];
@@ -648,51 +659,141 @@
                         return;
                     }
 
-                    matchCount++;
                     const totalInv = Number(s.totalInvoice || s.cost) || 0;
                     matchedInvoicesCost += totalInv;
-                    matchingItems.forEach(i => { matchedPartsCost += Number(i.cost) || 0; });
+                    const itemsSum = matchingItems.reduce((acc, i) => acc + (Number(i.cost) || 0), 0);
+                    matchedPartsCost += itemsSum;
+                    partOccurrences += fPart ? matchingItems.length : 1;
 
-                    let itemsHtml = '';
-                    if (s.items && Array.isArray(s.items) && s.items.length > 0) {
-                        itemsHtml = s.items.map(i => {
-                            const isMatch = fPart && (i.desc || '').toLowerCase().includes(fPart);
-                            const badgeClass = isMatch
-                                ? 'bg-pink-950/70 border border-pink-500 px-2 py-0.5 rounded mr-1 text-[11px] text-white'
-                                : 'bg-slate-800 px-2 py-0.5 rounded mr-1 text-[11px]';
-                            return `<span class="${badgeClass}">${i.desc}: <b class="text-pink-400">${i.cost}д.</b></span>`;
-                        }).join('');
-                    } else {
-                        itemsHtml = '<span class="text-slate-500">Само фактура (без поединечни делови)</span>';
-                    }
+                    const vInfo = this.vehiclesMap[s.vehicle];
+                    const vehicleLabel = vInfo ? `${vInfo.model} (${vInfo.plate})` : (s.vehicle || '-');
 
-                    tbody.innerHTML += `
-                        <tr class="border-b border-slate-800/50 hover:bg-slate-800/30">
-                            <td class="py-3 px-3 text-slate-400">${s.date || '-'}</td>
-                            <td class="py-3 px-3 font-medium text-white">${s.vehicle}</td>
-                            <td class="py-3 px-3 text-slate-300">${itemsHtml}</td>
-                            <td class="py-3 px-3 text-pink-400 font-bold">${totalInv.toLocaleString()} ден.</td>
-                            <td class="py-3 px-3 text-slate-300">${s.km ? s.km + ' км' : '-'}</td>
-                            <td class="py-3 px-3 text-amber-400 font-semibold">${s.nextKm ? s.nextKm + ' км' : '-'}</td>
-                            <td class="py-3 px-3 text-right space-x-1">
-                                ${this.isAdmin ? `
-                                    <button type="button" onclick="app.openServiceModal('${key}')" class="text-amber-400 hover:text-amber-300 bg-amber-950/40 border border-amber-900/50 px-2 py-1 rounded-lg" title="Измени"><i class="fa-solid fa-pen"></i></button>
-                                    <button type="button" onclick="app.removeRecord('service', '${key}')" class="text-red-400 hover:text-red-300 bg-red-950/40 border border-red-900/50 px-2 py-1 rounded-lg" title="Избриши"><i class="fa-solid fa-trash"></i></button>
-                                ` : '<span class="text-slate-600">-</span>'}
-                            </td>
-                        </tr>
-                    `;
+                    entries.push({ key, s, matchingItems, itemsSum, totalInv, vehicleLabel });
                 });
 
-                if (matchCount === 0) {
+                entries.sort((a, b) => (b.s.date || '').localeCompare(a.s.date || ''));
+
+                return {
+                    entries,
+                    isFiltering,
+                    fVeh,
+                    fPart,
+                    fStart,
+                    fEnd,
+                    matchedPartsCost,
+                    matchedInvoicesCost,
+                    partOccurrences
+                };
+            },
+
+            openServiceFilterModal() {
+                const info = this.getFilteredServiceEntries();
+                const titleEl = document.getElementById('serviceFilterModalTitle');
+                const subEl = document.getElementById('serviceFilterModalSubtitle');
+                const sumEl = document.getElementById('serviceFilterModalSummary');
+                const bodyEl = document.getElementById('serviceFilterModalBody');
+
+                titleEl.innerHTML = info.fPart
+                    ? `<i class="fa-solid fa-list-check text-pink-600"></i> Извештај за дел/зафат: „${info.fPart}“`
+                    : `<i class="fa-solid fa-list-check text-pink-600"></i> Издвоен Преглед на Сервиси`;
+
+                const periodText = (info.fStart || info.fEnd)
+                    ? `Период: ${info.fStart || 'почеток'} – ${info.fEnd || 'денес'}`
+                    : 'Сите датуми';
+                const vehText = info.fVeh ? `Возило: ${info.fVeh}` : 'Сите возила';
+                subEl.innerText = `${vehText} | ${periodText}`;
+
+                if (info.entries.length === 0) {
+                    sumEl.innerText = 'Нема пронајдено записи за избраните услови.';
+                    bodyEl.innerHTML = `<p class="text-slate-500 text-center py-6">Нема резултати за прикажување.</p>`;
+                    document.getElementById('serviceFilterModal').classList.remove('hidden');
+                    return;
+                }
+
+                sumEl.innerText = info.fPart
+                    ? `Вкупно замени: ${info.partOccurrences} (во ${info.entries.length} сервиси) | Сума за делови: ${info.matchedPartsCost.toLocaleString()} ден. | Фактури: ${info.matchedInvoicesCost.toLocaleString()} ден.`
+                    : `Пронајдени сервиси: ${info.entries.length} | Вкупно фактури: ${info.matchedInvoicesCost.toLocaleString()} ден.`;
+
+                bodyEl.innerHTML = info.entries.map(({ s, matchingItems, totalInv, vehicleLabel }) => {
+                    const partsText = matchingItems.length > 0
+                        ? matchingItems.map(i => `${i.desc}${Number(i.cost) ? ` (${Number(i.cost).toLocaleString()} ден.)` : ''}`).join(', ')
+                        : `Фактура: ${totalInv.toLocaleString()} ден.`;
+
+                    return `
+                        <div class="bg-slate-950 border border-slate-800 rounded-xl p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                            <div class="space-y-1">
+                                <div class="font-bold text-white">${vehicleLabel}</div>
+                                <div class="text-pink-400 font-semibold">${partsText}</div>
+                                <div class="text-[11px] text-slate-400">Датум: <b class="text-slate-200">${s.date || '-'}</b> | Километража: <b class="text-slate-200">${s.km ? Number(s.km).toLocaleString() + ' км' : '-'}</b></div>
+                            </div>
+                            <div class="text-right shrink-0">
+                                <span class="text-[10px] text-slate-400 block">Фактура</span>
+                                <span class="text-sm font-bold text-white">${totalInv.toLocaleString()} ден.</span>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+
+                document.getElementById('serviceFilterModal').classList.remove('hidden');
+            },
+
+            closeServiceFilterModal() {
+                document.getElementById('serviceFilterModal').classList.add('hidden');
+            },
+
+            renderServicesTable() {
+                const info = this.getFilteredServiceEntries();
+                const tbody = document.getElementById('serviceTableBody');
+                const summaryEl = document.getElementById('serviceFilterSummary');
+                tbody.innerHTML = '';
+
+                if (!this.allServicesData || Object.keys(this.allServicesData).length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="7" class="text-center py-6 text-slate-500">Нема сервиси.</td></tr>`;
+                    if (summaryEl) summaryEl.innerText = '';
+                    return;
+                }
+
+                if (info.entries.length === 0) {
                     tbody.innerHTML = `<tr><td colspan="7" class="text-center py-6 text-slate-500">Нема пронајдено сервиси за избраниот филтер.</td></tr>`;
+                } else {
+                    info.entries.forEach(({ key, s, totalInv }) => {
+                        let itemsHtml = '';
+                        if (s.items && Array.isArray(s.items) && s.items.length > 0) {
+                            itemsHtml = s.items.map(i => {
+                                const isMatch = info.fPart && (i.desc || '').toLowerCase().includes(info.fPart);
+                                const badgeClass = isMatch
+                                    ? 'bg-pink-950/70 border border-pink-500 px-2 py-0.5 rounded mr-1 text-[11px] text-white'
+                                    : 'bg-slate-800 px-2 py-0.5 rounded mr-1 text-[11px]';
+                                return `<span class="${badgeClass}">${i.desc}: <b class="text-pink-400">${i.cost}д.</b></span>`;
+                            }).join('');
+                        } else {
+                            itemsHtml = '<span class="text-slate-500">Само фактура (без поединечни делови)</span>';
+                        }
+
+                        tbody.innerHTML += `
+                            <tr class="border-b border-slate-800/50 hover:bg-slate-800/30">
+                                <td class="py-3 px-3 text-slate-400">${s.date || '-'}</td>
+                                <td class="py-3 px-3 font-medium text-white">${s.vehicle}</td>
+                                <td class="py-3 px-3 text-slate-300">${itemsHtml}</td>
+                                <td class="py-3 px-3 text-pink-400 font-bold">${totalInv.toLocaleString()} ден.</td>
+                                <td class="py-3 px-3 text-slate-300">${s.km ? s.km + ' км' : '-'}</td>
+                                <td class="py-3 px-3 text-amber-400 font-semibold">${s.nextKm ? s.nextKm + ' км' : '-'}</td>
+                                <td class="py-3 px-3 text-right space-x-1">
+                                    ${this.isAdmin ? `
+                                        <button type="button" onclick="app.openServiceModal('${key}')" class="text-amber-400 hover:text-amber-300 bg-amber-950/40 border border-amber-900/50 px-2 py-1 rounded-lg" title="Измени"><i class="fa-solid fa-pen"></i></button>
+                                        <button type="button" onclick="app.removeRecord('service', '${key}')" class="text-red-400 hover:text-red-300 bg-red-950/40 border border-red-900/50 px-2 py-1 rounded-lg" title="Избриши"><i class="fa-solid fa-trash"></i></button>
+                                    ` : '<span class="text-slate-600">-</span>'}
+                                </td>
+                            </tr>
+                        `;
+                    });
                 }
 
                 if (summaryEl) {
-                    if (isFiltering) {
-                        summaryEl.innerText = fPart
-                            ? `Пронајдено: ${matchCount} пати | Делови: ${matchedPartsCost.toLocaleString()} ден. (Фактури: ${matchedInvoicesCost.toLocaleString()} ден.)`
-                            : `Пронајдено: ${matchCount} сервиси | Вкупно фактури: ${matchedInvoicesCost.toLocaleString()} ден.`;
+                    if (info.isFiltering) {
+                        summaryEl.innerText = info.fPart
+                            ? `Пронајдено: ${info.partOccurrences} пати | Делови: ${info.matchedPartsCost.toLocaleString()} ден. (Фактури: ${info.matchedInvoicesCost.toLocaleString()} ден.)`
+                            : `Пронајдено: ${info.entries.length} сервиси | Вкупно фактури: ${info.matchedInvoicesCost.toLocaleString()} ден.`;
                     } else {
                         summaryEl.innerText = '';
                     }
@@ -890,6 +991,7 @@
             initData() {
                 db.ref('vehicles').on('value', (snapshot) => {
                     const data = snapshot.val();
+                    this.vehiclesMap = {};
                     const tbody = document.getElementById('vehiclesTableBody');
                     const fVehSelect = document.getElementById('fVehicle');
                     const tVehSelect = document.getElementById('tVehicle');
@@ -910,6 +1012,7 @@
                         tbody.innerHTML = `<tr><td colspan="7" class="text-center py-6 text-slate-500">Нема внесено возила.</td></tr>`;
                         document.getElementById('statTotalVehicles').innerText = '0';
                         document.getElementById('statExpiring').innerText = '0';
+                        this.renderServicesTable();
                         return;
                     }
 
@@ -920,6 +1023,7 @@
                     Object.keys(data).forEach(key => {
                         totalCount++;
                         const v = data[key];
+                        if (v.plate) this.vehiclesMap[v.plate] = v;
                         if(v.driver) driversSet.add(v.driver);
 
                         const optHtml = `<option value="${v.plate}">${v.model} (${v.plate})</option>`;
@@ -974,6 +1078,7 @@
 
                     document.getElementById('statTotalVehicles').innerText = totalCount;
                     document.getElementById('statExpiring').innerText = expiringCount;
+                    this.renderServicesTable();
                 });
 
                 // Fuel listener
