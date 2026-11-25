@@ -240,25 +240,53 @@
             <div id="adminPanelFuel" class="hidden bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl">
                 <h3 id="fuelFormTitle" class="text-base font-bold text-white mb-3 flex items-center gap-2"><i class="fa-solid fa-plus-circle text-pink-600"></i> Евиденција на Точење Гориво</h3>
                 <input type="hidden" id="editFuelKey" value="">
-                <div class="grid grid-cols-1 sm:grid-cols-7 gap-3 text-sm">
-                    <select id="fVehicle" class="bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white">
-                        <option value="">-- Избери возило --</option>
-                    </select>
-                    <select id="fType" class="bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white">
-                        <option value="Дизел">Дизел</option>
-                        <option value="Бензин">Бензин</option>
-                        <option value="Плин / ЛПГ">Плин / ЛПГ</option>
-                        <option value="Метан">Метан</option>
-                    </select>
-                    <input type="number" id="fLiters" placeholder="Литри" class="bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white">
-                    <input type="number" id="fCost" placeholder="Сума (МКД)" class="bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white">
-                    <input type="number" id="fKm" placeholder="Километри при точење" class="bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white">
-                    <select id="fDriver" class="bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white">
-                        <option value="">-- Избери возач --</option>
-                    </select>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-sm mb-3">
+                    <div>
+                        <label class="block text-slate-300 mb-1">Датум на точење:</label>
+                        <input type="date" id="fDate" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white">
+                    </div>
+                    <div>
+                        <label class="block text-slate-300 mb-1">Возило:</label>
+                        <select id="fVehicle" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white">
+                            <option value="">-- Избери возило --</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-slate-300 mb-1">Вид гориво:</label>
+                        <select id="fType" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white">
+                            <option value="Дизел">Дизел</option>
+                            <option value="Бензин">Бензин</option>
+                            <option value="Плин / ЛПГ">Плин / ЛПГ</option>
+                            <option value="Метан">Метан</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-slate-300 mb-1">Возач:</label>
+                        <select id="fDriver" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white">
+                            <option value="">-- Избери возач --</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 text-sm items-end">
+                    <div>
+                        <label class="block text-slate-300 mb-1">Литри:</label>
+                        <input type="number" step="0.01" id="fLiters" oninput="app.calculateFuelCost()" placeholder="на пр. 50" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white">
+                    </div>
+                    <div>
+                        <label class="block text-slate-300 mb-1">Цена за литар (МКД):</label>
+                        <input type="number" step="0.01" id="fPricePerLiter" oninput="app.calculateFuelCost()" placeholder="на пр. 72" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white">
+                    </div>
+                    <div>
+                        <label class="block text-slate-300 mb-1">Вкупна сума (МКД):</label>
+                        <input type="number" step="0.01" id="fCost" placeholder="Автоматски" class="w-full bg-slate-950 border border-pink-600/50 rounded-xl px-3 py-2 text-pink-400 font-bold">
+                    </div>
+                    <div>
+                        <label class="block text-slate-300 mb-1">Километри при точење:</label>
+                        <input type="number" id="fKm" placeholder="на пр. 145000" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white">
+                    </div>
                     <div class="flex gap-1">
-                        <button type="button" onclick="app.saveFuel()" class="flex-1 bg-pink-600 hover:bg-pink-500 text-white font-semibold py-2 rounded-xl transition shadow-md">Зачувај</button>
-                        <button type="button" id="cancelFuelEditBtn" onclick="app.cancelFuelEdit()" class="hidden bg-slate-800 hover:bg-slate-750 text-slate-200 px-3 py-2 rounded-xl">Откажи</button>
+                        <button type="button" onclick="app.saveFuel()" class="flex-1 bg-pink-600 hover:bg-pink-500 text-white font-semibold py-2.5 rounded-xl transition shadow-md">Зачувај</button>
+                        <button type="button" id="cancelFuelEditBtn" onclick="app.cancelFuelEdit()" class="hidden bg-slate-800 hover:bg-slate-750 text-slate-200 px-3 py-2.5 rounded-xl">Откажи</button>
                     </div>
                 </div>
             </div>
@@ -272,6 +300,7 @@
                                 <th class="pb-3 px-3">Возило</th>
                                 <th class="pb-3 px-3">Гориво</th>
                                 <th class="pb-3 px-3">Литри</th>
+                                <th class="pb-3 px-3">Цена / L</th>
                                 <th class="pb-3 px-3">Сума (МКД)</th>
                                 <th class="pb-3 px-3">Километри</th>
                                 <th class="pb-3 px-3">Возач</th>
@@ -279,7 +308,7 @@
                             </tr>
                         </thead>
                         <tbody id="fuelTableBody">
-                            <tr><td colspan="8" class="text-center py-6 text-slate-400">Вчитување...</td></tr>
+                            <tr><td colspan="9" class="text-center py-6 text-slate-400">Вчитување...</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -535,6 +564,12 @@
                 if(activeEl) activeEl.classList.remove('hidden');
                 if(activeBtn) activeBtn.className = 'px-4 py-2.5 rounded-xl text-sm font-semibold bg-pink-600 text-white transition whitespace-nowrap';
                 
+                if(tab === 'fuel') {
+                    const fDateEl = document.getElementById('fDate');
+                    if (fDateEl && !fDateEl.value) {
+                        fDateEl.value = new Date().toISOString().split('T')[0];
+                    }
+                }
                 if(tab === 'reports') {
                     this.generateDashboardReport();
                 }
@@ -853,20 +888,34 @@
                 document.getElementById('cancelVehicleEditBtn').classList.add('hidden');
             },
 
-            // FUEL EDIT
+            // FUEL CALCULATION & EDIT
+            calculateFuelCost() {
+                const liters = parseFloat(document.getElementById('fLiters').value);
+                const pricePerLiter = parseFloat(document.getElementById('fPricePerLiter').value);
+                const costEl = document.getElementById('fCost');
+                if (!Number.isNaN(liters) && !Number.isNaN(pricePerLiter) && liters > 0 && pricePerLiter > 0) {
+                    costEl.value = Math.round(liters * pricePerLiter * 100) / 100;
+                } else if (!liters || !pricePerLiter) {
+                    costEl.value = '';
+                }
+            },
             saveFuel() {
                 if(!this.isAdmin) { alert('Немате администраторски права!'); return; }
                 const editKey = document.getElementById('editFuelKey').value;
+                const date = document.getElementById('fDate').value || new Date().toISOString().split('T')[0];
                 const vehicle = document.getElementById('fVehicle').value;
                 const type = document.getElementById('fType').value;
                 const liters = document.getElementById('fLiters').value.trim();
-                const cost = document.getElementById('fCost').value.trim();
+                const pricePerLiter = document.getElementById('fPricePerLiter').value.trim();
+                let cost = document.getElementById('fCost').value.trim();
+                if ((!cost || Number(cost) <= 0) && Number(liters) > 0 && Number(pricePerLiter) > 0) {
+                    cost = String(Math.round(Number(liters) * Number(pricePerLiter) * 100) / 100);
+                }
                 const km = document.getElementById('fKm').value.trim();
                 const driver = document.getElementById('fDriver').value;
-                if(!vehicle || !liters || !cost) { alert('Избери возило и внеси литри и сума!'); return; }
-                const date = new Date().toISOString().split('T')[0];
+                if(!vehicle || !liters || !cost) { alert('Избери возило и внеси литри и цена за литар (или сума)!'); return; }
 
-                const payload = { vehicle, type, liters, cost, km, driver, date };
+                const payload = { vehicle, type, liters, pricePerLiter, cost, km, driver, date };
                 if(editKey) {
                     db.ref('fuel/' + editKey).set(payload);
                     alert('Успешно ажурирано точењето!');
@@ -876,14 +925,17 @@
                     alert('Успешно зачувано точење гориво!');
                 }
                 document.getElementById('fLiters').value = '';
+                document.getElementById('fPricePerLiter').value = '';
                 document.getElementById('fCost').value = '';
                 document.getElementById('fKm').value = '';
             },
-            editFuel(key, vehicle, type, liters, cost, km, driver) {
+            editFuel(key, date, vehicle, type, liters, pricePerLiter, cost, km, driver) {
                 document.getElementById('editFuelKey').value = key;
+                document.getElementById('fDate').value = date || new Date().toISOString().split('T')[0];
                 document.getElementById('fVehicle').value = vehicle;
                 document.getElementById('fType').value = type;
                 document.getElementById('fLiters').value = liters;
+                document.getElementById('fPricePerLiter').value = pricePerLiter || '';
                 document.getElementById('fCost').value = cost;
                 document.getElementById('fKm').value = km;
                 document.getElementById('fDriver').value = driver;
@@ -893,7 +945,9 @@
             },
             cancelFuelEdit() {
                 document.getElementById('editFuelKey').value = '';
+                document.getElementById('fDate').value = new Date().toISOString().split('T')[0];
                 document.getElementById('fLiters').value = '';
+                document.getElementById('fPricePerLiter').value = '';
                 document.getElementById('fCost').value = '';
                 document.getElementById('fKm').value = '';
                 document.getElementById('fuelFormTitle').innerHTML = `<i class="fa-solid fa-plus-circle text-pink-600"></i> Евиденција на Точење Гориво`;
@@ -990,6 +1044,11 @@
             },
 
             initData() {
+                const fDateEl = document.getElementById('fDate');
+                if (fDateEl && !fDateEl.value) {
+                    fDateEl.value = new Date().toISOString().split('T')[0];
+                }
+
                 db.ref('vehicles').on('value', (snapshot) => {
                     const data = snapshot.val();
                     this.vehiclesMap = {};
@@ -1087,21 +1146,27 @@
                     const data = snapshot.val();
                     const tbody = document.getElementById('fuelTableBody');
                     tbody.innerHTML = '';
-                    if (!data) { tbody.innerHTML = `<tr><td colspan="8" class="text-center py-6 text-slate-400">Нема точења.</td></tr>`; return; }
+                    if (!data) { tbody.innerHTML = `<tr><td colspan="9" class="text-center py-6 text-slate-400">Нема точења.</td></tr>`; return; }
                     Object.keys(data).forEach(key => {
                         const f = data[key];
+                        const lNum = parseFloat(f.liters);
+                        const cNum = parseFloat(f.cost);
+                        const unitPrice = f.pricePerLiter
+                            ? Number(f.pricePerLiter)
+                            : (!Number.isNaN(lNum) && !Number.isNaN(cNum) && lNum > 0 ? Math.round((cNum / lNum) * 100) / 100 : null);
                         tbody.innerHTML += `
                             <tr class="border-b border-slate-800/50 hover:bg-slate-800/30">
                                 <td class="py-3 px-3 text-slate-300">${f.date || '-'}</td>
                                 <td class="py-3 px-3 font-medium text-white">${f.vehicle}</td>
                                 <td class="py-3 px-3 text-slate-200"><span class="bg-slate-800 px-2.5 py-1 rounded">${f.type || 'Дизел'}</span></td>
                                 <td class="py-3 px-3 text-slate-200">${f.liters} L</td>
-                                <td class="py-3 px-3 text-slate-200">${f.cost} ден.</td>
+                                <td class="py-3 px-3 text-slate-200">${unitPrice ? unitPrice + ' ден.' : '-'}</td>
+                                <td class="py-3 px-3 text-pink-400 font-bold">${Number(f.cost).toLocaleString()} ден.</td>
                                 <td class="py-3 px-3 text-slate-200">${f.km ? f.km + ' км' : '-'}</td>
                                 <td class="py-3 px-3 text-slate-200">${f.driver || '-'}</td>
                                 <td class="py-3 px-3 text-right space-x-1">
                                     ${this.isAdmin ? `
-                                        <button type="button" onclick="app.editFuel('${key}', '${f.vehicle}', '${f.type || 'Дизел'}', '${f.liters}', '${f.cost}', '${f.km || ''}', '${f.driver || ''}')" class="text-amber-400 hover:text-amber-300 bg-amber-950/40 border border-amber-900/50 px-2.5 py-1.5 rounded-lg" title="Измени"><i class="fa-solid fa-pen"></i></button>
+                                        <button type="button" onclick="app.editFuel('${key}', '${f.date || ''}', '${f.vehicle}', '${f.type || 'Дизел'}', '${f.liters}', '${unitPrice || ''}', '${f.cost}', '${f.km || ''}', '${f.driver || ''}')" class="text-amber-400 hover:text-amber-300 bg-amber-950/40 border border-amber-900/50 px-2.5 py-1.5 rounded-lg" title="Измени"><i class="fa-solid fa-pen"></i></button>
                                         <button type="button" onclick="app.removeRecord('fuel', '${key}')" class="text-red-400 hover:text-red-300 bg-red-950/40 border border-red-900/50 px-2.5 py-1.5 rounded-lg" title="Избриши"><i class="fa-solid fa-trash"></i></button>
                                     ` : '<span class="text-slate-500">-</span>'}
                                 </td>
