@@ -639,11 +639,14 @@
                             <span id="selectedItemsCount" class="text-sm text-slate-300">Избрани ставки: 0</span>
                         </div>
                     </div>
-                    <div class="flex items-center gap-4 flex-wrap">
+                    <div class="flex items-center gap-3 flex-wrap">
                         <div class="flex gap-2">
                             <button type="button" onclick="app.toggleAllSelections(true)" class="bg-slate-800 hover:bg-slate-700 text-slate-100 border border-slate-700 px-3.5 py-2 rounded-xl text-sm transition">Избери сè</button>
                             <button type="button" onclick="app.toggleAllSelections(false)" class="bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 px-3.5 py-2 rounded-xl text-sm transition">Исчисти сè</button>
                         </div>
+                        <button type="button" onclick="app.shareSelectedItems()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-semibold px-3.5 py-2 rounded-xl text-sm transition flex items-center gap-1.5 shadow-md">
+                            <i class="fa-solid fa-paper-plane"></i> <span>Сподели избрани</span>
+                        </button>
                         <div class="bg-slate-950 border border-pink-600/50 px-4 py-2 rounded-xl text-right">
                             <span id="selectedGrandTotal" class="text-xl font-bold text-white">0 ден.</span>
                         </div>
@@ -1693,6 +1696,110 @@
                 document.getElementById('selectedItemsCount').innerText = `Избрани ставки: ${count}`;
             },
 
+            shareSelectedItems() {
+                const checkedItems = Array.from(document.querySelectorAll('.dash-item-cb:checked'));
+                if (checkedItems.length === 0) {
+                    alert('Прво штиклирај барем едно возило или ставка од картичките подолу.');
+                    return;
+                }
+
+                const sDate = document.getElementById('repStartDate')?.value || '';
+                const eDate = document.getElementById('repEndDate')?.value || '';
+                const periodLabel = (sDate || eDate)
+                    ? `${sDate || 'почеток'} до ${eDate || 'денес'}`
+                    : 'Сите датуми';
+
+                const { fuel, service, registrations, tolls } = this.dashCache;
+                const inPeriod = (d) => (!sDate || (d && d >= sDate)) && (!eDate || (d && d <= eDate));
+
+                const groupedByVehicle = new Map();
+                let grandSum = 0;
+
+                checkedItems.forEach(cb => {
+                    const plate = cb.dataset.plate || '';
+                    const vTitle = cb.dataset.vehicleTitle || 'Возило';
+                    const catType = cb.dataset.categoryType || '';
+                    const catLabel = cb.dataset.category || 'Ставка';
+                    const amt = Number(cb.dataset.amount) || 0;
+                    grandSum += amt;
+
+                    if (!groupedByVehicle.has(vTitle)) {
+                        groupedByVehicle.set(vTitle, { blocks: [], subtotal: 0 });
+                    }
+                    const entry = groupedByVehicle.get(vTitle);
+                    entry.subtotal += amt;
+
+                    const detailLines = [];
+                    if (catType === 'fuel') {
+                        Object.values(fuel || {}).forEach(f => {
+                            if (f.vehicle === plate && inPeriod(f.date)) {
+                                detailLines.push(`      - ${f.date || '-'}: ${f.type || 'Дизел'}, ${f.liters || 0}L${f.km ? `, ${Number(f.km).toLocaleString()} км` : ''} -> ${Number(f.cost || 0).toLocaleString()} ден.`);
+                            }
+                        });
+                    } else if (catType === 'service') {
+                        Object.values(service || {}).forEach(s => {
+                            if (s.vehicle === plate && inPeriod(s.date)) {
+                                const inv = Number(s.totalInvoice || s.cost) || 0;
+                                const itemsTxt = (s.items && Array.isArray(s.items) && s.items.length > 0)
+                                    ? ` [${s.items.map(i => `${i.desc} ${i.cost}д.`).join(', ')}]`
+                                    : '';
+                                detailLines.push(`      - ${s.date || '-'}: Фактура ${inv.toLocaleString()} ден.${s.km ? `, ${Number(s.km).toLocaleString()} км` : ''}${itemsTxt}`);
+                            }
+                        });
+                    } else if (catType === 'regs') {
+                        Object.values(registrations || {}).forEach(r => {
+                            if (r.vehicle === plate && inPeriod(r.date)) {
+                                detailLines.push(`      - ${r.date || '-'}: ${r.type || ''}${r.desc ? ` (${r.desc})` : ''} -> ${Number(r.cost || 0).toLocaleString()} ден.`);
+                            }
+                        });
+                    } else if (catType === 'tolls') {
+                        Object.values(tolls || {}).forEach(t => {
+                            if (t.vehicle === plate && inPeriod(t.date)) {
+                                detailLines.push(`      - ${t.date || '-'}: ${t.route || '-'}${t.waybill ? ` (Налог: ${t.waybill})` : ''}${t.driver ? ` [${t.driver}]` : ''} -> ${Number(t.cost || 0).toLocaleString()} ден.`);
+                            }
+                        });
+                    }
+
+                    entry.blocks.push(`  • ${catLabel}: ${amt.toLocaleString()} ден.` + (detailLines.length ? `\n` + detailLines.join('\n') : ''));
+                });
+
+                const lines = [
+                    `Сара Фешн - Извод од Контролна Табла`,
+                    `Период: ${periodLabel}`,
+                    ``
+                ];
+
+                groupedByVehicle.forEach((data, vTitle) => {
+                    lines.push(`▸ ${vTitle} (Вкупно: ${data.subtotal.toLocaleString()} ден.)`);
+                    data.blocks.forEach(b => lines.push(b));
+                    lines.push(``);
+                });
+
+                lines.push(`ВКУПНО ИЗБРАНИ СТАВКИ: ${grandSum.toLocaleString()} ден.`);
+                lines.push(`Линк: https://zoranstrojmanovski-byte.github.io/vozen-park/`);
+
+                const messageText = lines.join('\n').trim();
+                const subject = encodeURIComponent(`Сара Фешн - Извештај по возила (${periodLabel})`);
+                const body = encodeURIComponent(messageText);
+
+                const choice = prompt(
+                    `Избери каде да ги испратиш избраните ставки (${checkedItems.length} ставки | ${grandSum.toLocaleString()} ден.):\n\n` +
+                    `1 - Преку Gmail\n` +
+                    `2 - Преку Viber\n` +
+                    `3 - Копирај текст за лепење (Paste)`
+                );
+
+                if (choice === '1') {
+                    window.open(`https://mail.google.com/mail/?view=cm&fs=1&su=${subject}&body=${body}`, '_blank');
+                } else if (choice === '2') {
+                    window.open(`viber://forward?text=${body}`, '_blank');
+                } else if (choice === '3') {
+                    navigator.clipboard.writeText(messageText).then(() => {
+                        alert('Текстот со деталите за избраните возила и ставки е копиран!');
+                    });
+                }
+            },
+
             resetDashboardFilters() {
                 document.getElementById('repStartDate').value = '';
                 document.getElementById('repEndDate').value = '';
@@ -1876,6 +1983,7 @@
                     Object.keys(vehicles).forEach(vKey => {
                         const v = vehicles[vKey];
                         const plate = v.plate;
+                        const cardTitle = `${v.model} (${plate})`;
                         const isChecked = !hasExistingPills || prevSelectedPlates.has(plate);
 
                         pillsContainer.innerHTML += `
@@ -1960,7 +2068,7 @@
                                 <div>
                                     <h5 class="text-sm font-bold text-slate-200 mb-1.5 flex justify-between items-center">
                                         <label class="flex items-center gap-2 cursor-pointer">
-                                            <input type="checkbox" data-amount="${vFuelTotal}" onchange="app.onItemCheckboxChange('${vKey}')" class="dash-item-cb item-select-${vKey} w-4 h-4 accent-pink-600 rounded cursor-pointer">
+                                            <input type="checkbox" data-amount="${vFuelTotal}" data-plate="${plate}" data-vehicle-title="${cardTitle}" data-category-type="fuel" data-category="Гориво" onchange="app.onItemCheckboxChange('${vKey}')" class="dash-item-cb item-select-${vKey} w-4 h-4 accent-pink-600 rounded cursor-pointer">
                                             <span><i class="fa-solid fa-gas-pump mr-1 text-pink-500"></i> Гориво</span>
                                         </label>
                                         <span class="text-pink-400">${vFuelTotal.toLocaleString()} ден.</span>
@@ -1976,7 +2084,7 @@
                                 <div>
                                     <h5 class="text-sm font-bold text-slate-200 mb-1.5 flex justify-between items-center">
                                         <label class="flex items-center gap-2 cursor-pointer">
-                                            <input type="checkbox" data-amount="${vServTotal}" onchange="app.onItemCheckboxChange('${vKey}')" class="dash-item-cb item-select-${vKey} w-4 h-4 accent-pink-600 rounded cursor-pointer">
+                                            <input type="checkbox" data-amount="${vServTotal}" data-plate="${plate}" data-vehicle-title="${cardTitle}" data-category-type="service" data-category="Сервиси & Фактури" onchange="app.onItemCheckboxChange('${vKey}')" class="dash-item-cb item-select-${vKey} w-4 h-4 accent-pink-600 rounded cursor-pointer">
                                             <span><i class="fa-solid fa-screwdriver-wrench mr-1 text-pink-500"></i> Сервиси & Фактури</span>
                                         </label>
                                         <span class="text-pink-400">${vServTotal.toLocaleString()} ден.</span>
@@ -1992,7 +2100,7 @@
                                 <div>
                                     <h5 class="text-sm font-bold text-slate-200 mb-1.5 flex justify-between items-center">
                                         <label class="flex items-center gap-2 cursor-pointer">
-                                            <input type="checkbox" data-amount="${vRegTotal}" onchange="app.onItemCheckboxChange('${vKey}')" class="dash-item-cb item-select-${vKey} w-4 h-4 accent-pink-600 rounded cursor-pointer">
+                                            <input type="checkbox" data-amount="${vRegTotal}" data-plate="${plate}" data-vehicle-title="${cardTitle}" data-category-type="regs" data-category="Регистрации, Каско & Други" onchange="app.onItemCheckboxChange('${vKey}')" class="dash-item-cb item-select-${vKey} w-4 h-4 accent-pink-600 rounded cursor-pointer">
                                             <span><i class="fa-solid fa-file-shield mr-1 text-pink-500"></i> Регистрации, Каско & Други</span>
                                         </label>
                                         <span class="text-pink-400">${vRegTotal.toLocaleString()} ден.</span>
@@ -2008,7 +2116,7 @@
                                 <div>
                                     <h5 class="text-sm font-bold text-slate-200 mb-1.5 flex justify-between items-center">
                                         <label class="flex items-center gap-2 cursor-pointer">
-                                            <input type="checkbox" data-amount="${vTollTotal}" onchange="app.onItemCheckboxChange('${vKey}')" class="dash-item-cb item-select-${vKey} w-4 h-4 accent-pink-600 rounded cursor-pointer">
+                                            <input type="checkbox" data-amount="${vTollTotal}" data-plate="${plate}" data-vehicle-title="${cardTitle}" data-category-type="tolls" data-category="Патарини & Релации" onchange="app.onItemCheckboxChange('${vKey}')" class="dash-item-cb item-select-${vKey} w-4 h-4 accent-pink-600 rounded cursor-pointer">
                                             <span><i class="fa-solid fa-road mr-1 text-pink-500"></i> Патарини & Релации</span>
                                         </label>
                                         <span class="text-pink-400">${vTollTotal.toLocaleString()} ден.</span>
