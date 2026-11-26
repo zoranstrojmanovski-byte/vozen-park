@@ -77,6 +77,29 @@
         </div>
     </div>
 
+    <!-- SHARE OPTIONS MODAL -->
+    <div id="shareModal" class="hidden fixed inset-0 bg-black/75 z-50 flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-800 w-full max-w-lg rounded-2xl p-6 shadow-2xl space-y-4">
+            <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+                <h3 class="text-base font-bold text-white flex items-center gap-2"><i class="fa-solid fa-paper-plane text-emerald-500"></i> Сподели Избран Извештај</h3>
+                <button type="button" onclick="document.getElementById('shareModal').classList.add('hidden')" class="text-slate-300 hover:text-white"><i class="fa-solid fa-xmark text-xl"></i></button>
+            </div>
+            <p id="shareModalSummary" class="text-sm text-slate-300"></p>
+            <textarea id="shareModalText" rows="8" readonly class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-slate-200 font-mono focus:outline-none"></textarea>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5 pt-1">
+                <a id="shareGmailBtn" href="#" target="_blank" rel="noopener" class="bg-red-600 hover:bg-red-500 text-white font-semibold py-2.5 px-3 rounded-xl text-sm text-center transition flex items-center justify-center gap-1.5">
+                    <i class="fa-solid fa-envelope"></i> Gmail
+                </a>
+                <a id="shareViberBtn" href="#" target="_blank" rel="noopener" class="bg-purple-600 hover:bg-purple-500 text-white font-semibold py-2.5 px-3 rounded-xl text-sm text-center transition flex items-center justify-center gap-1.5">
+                    <i class="fa-brands fa-viber"></i> Viber
+                </a>
+                <button type="button" onclick="app.copyShareModalText()" class="bg-slate-800 hover:bg-slate-700 text-white border border-slate-700 font-semibold py-2.5 px-3 rounded-xl text-sm transition flex items-center justify-center gap-1.5">
+                    <i class="fa-solid fa-copy"></i> Копирај
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- SERVICE MODAL -->
     <div id="serviceModal" class="hidden fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4">
         <div class="bg-slate-900 border border-slate-800 w-full max-w-4xl rounded-2xl p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
@@ -1733,7 +1756,7 @@
                     if (catType === 'fuel') {
                         Object.values(fuel || {}).forEach(f => {
                             if (f.vehicle === plate && inPeriod(f.date)) {
-                                detailLines.push(`      - ${f.date || '-'}: ${f.type || 'Дизел'}, ${f.liters || 0}L${f.km ? `, ${Number(f.km).toLocaleString()} км` : ''} -> ${Number(f.cost || 0).toLocaleString()} ден.`);
+                                detailLines.push(`  - ${f.date || '-'}: ${f.type || 'Дизел'}, ${f.liters || 0}L${f.km ? `, ${Number(f.km).toLocaleString()} км` : ''} -> ${Number(f.cost || 0).toLocaleString()} ден.`);
                             }
                         });
                     } else if (catType === 'service') {
@@ -1743,24 +1766,24 @@
                                 const itemsTxt = (s.items && Array.isArray(s.items) && s.items.length > 0)
                                     ? ` [${s.items.map(i => `${i.desc} ${i.cost}д.`).join(', ')}]`
                                     : '';
-                                detailLines.push(`      - ${s.date || '-'}: Фактура ${inv.toLocaleString()} ден.${s.km ? `, ${Number(s.km).toLocaleString()} км` : ''}${itemsTxt}`);
+                                detailLines.push(`  - ${s.date || '-'}: Фактура ${inv.toLocaleString()} ден.${s.km ? `, ${Number(s.km).toLocaleString()} км` : ''}${itemsTxt}`);
                             }
                         });
                     } else if (catType === 'regs') {
                         Object.values(registrations || {}).forEach(r => {
                             if (r.vehicle === plate && inPeriod(r.date)) {
-                                detailLines.push(`      - ${r.date || '-'}: ${r.type || ''}${r.desc ? ` (${r.desc})` : ''} -> ${Number(r.cost || 0).toLocaleString()} ден.`);
+                                detailLines.push(`  - ${r.date || '-'}: ${r.type || ''}${r.desc ? ` (${r.desc})` : ''} -> ${Number(r.cost || 0).toLocaleString()} ден.`);
                             }
                         });
                     } else if (catType === 'tolls') {
                         Object.values(tolls || {}).forEach(t => {
                             if (t.vehicle === plate && inPeriod(t.date)) {
-                                detailLines.push(`      - ${t.date || '-'}: ${t.route || '-'}${t.waybill ? ` (Налог: ${t.waybill})` : ''}${t.driver ? ` [${t.driver}]` : ''} -> ${Number(t.cost || 0).toLocaleString()} ден.`);
+                                detailLines.push(`  - ${t.date || '-'}: ${t.route || '-'}${t.waybill ? ` (Налог: ${t.waybill})` : ''}${t.driver ? ` [${t.driver}]` : ''} -> ${Number(t.cost || 0).toLocaleString()} ден.`);
                             }
                         });
                     }
 
-                    entry.blocks.push(`  • ${catLabel}: ${amt.toLocaleString()} ден.` + (detailLines.length ? `\n` + detailLines.join('\n') : ''));
+                    entry.blocks.push(`• ${catLabel}: ${amt.toLocaleString()} ден.` + (detailLines.length ? `\n` + detailLines.join('\n') : ''));
                 });
 
                 const lines = [
@@ -1782,22 +1805,17 @@
                 const subject = encodeURIComponent(`Сара Фешн - Извештај по возила (${periodLabel})`);
                 const body = encodeURIComponent(messageText);
 
-                const choice = prompt(
-                    `Избери каде да ги испратиш избраните ставки (${checkedItems.length} ставки | ${grandSum.toLocaleString()} ден.):\n\n` +
-                    `1 - Преку Gmail\n` +
-                    `2 - Преку Viber\n` +
-                    `3 - Копирај текст за лепење (Paste)`
-                );
-
-                if (choice === '1') {
-                    window.open(`https://mail.google.com/mail/?view=cm&fs=1&su=${subject}&body=${body}`, '_blank');
-                } else if (choice === '2') {
-                    window.open(`viber://forward?text=${body}`, '_blank');
-                } else if (choice === '3') {
-                    navigator.clipboard.writeText(messageText).then(() => {
-                        alert('Текстот со деталите за избраните возила и ставки е копиран!');
-                    });
-                }
+                document.getElementById('shareModalSummary').innerText = `Избрани ставки: ${checkedItems.length} | Вкупно: ${grandSum.toLocaleString()} ден.`;
+                document.getElementById('shareModalText').value = messageText;
+                document.getElementById('shareGmailBtn').href = `https://mail.google.com/mail/?view=cm&fs=1&su=${subject}&body=${body}`;
+                document.getElementById('shareViberBtn').href = `viber://forward?text=${body}`;
+                document.getElementById('shareModal').classList.remove('hidden');
+            },
+            copyShareModalText() {
+                const txt = document.getElementById('shareModalText').value;
+                navigator.clipboard.writeText(txt).then(() => {
+                    alert('Текстот е копиран!');
+                });
             },
 
             resetDashboardFilters() {
@@ -2140,22 +2158,11 @@
                 const subject = encodeURIComponent("Контролна Табла Возен Парк Сара Фешн");
                 const body = encodeURIComponent("Здраво! Еве линк од активната Контролна Табла за Возен Парк - Сара Фешн:\n" + url);
 
-                const choice = prompt(
-                    "Избери начин на споделување (внеси број 1, 2 или 3):\n\n" +
-                    "1 - Преку Gmail (директно во прелистувач)\n" +
-                    "2 - Преку Viber\n" +
-                    "3 - Копирај го линкот (па залепи го каде сакаш)"
-                );
-
-                if (choice === "1") {
-                    window.open(`https://mail.google.com/mail/?view=cm&fs=1&su=${subject}&body=${body}`, "_blank");
-                } else if (choice === "2") {
-                    window.open(`viber://forward?text=${body}`, "_blank");
-                } else if (choice === "3") {
-                    navigator.clipboard.writeText(url).then(() => {
-                        alert("Линкот е копиран! Сега можеш да го залепиш (Paste) во било кој меил или порака.");
-                    });
-                }
+                document.getElementById('shareModalSummary').innerText = "Сподели линк до активната Контролна Табла:";
+                document.getElementById('shareModalText').value = `Здраво! Еве линк од активната Контролна Табла за Возен Парк - Сара Фешн:\n${url}`;
+                document.getElementById('shareGmailBtn').href = `https://mail.google.com/mail/?view=cm&fs=1&su=${subject}&body=${body}`;
+                document.getElementById('shareViberBtn').href = `viber://forward?text=${body}`;
+                document.getElementById('shareModal').classList.remove('hidden');
             }
         };
     </script>
