@@ -7,13 +7,14 @@
     <link rel="icon" type="image/png" href="icon.png">
     <link rel="apple-touch-icon" href="icon.png">
     <meta name="theme-color" content="#db2777">
-    <script src="[https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4](https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4)"></script>
-    <link rel="stylesheet" href="[https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css](https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css)">
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Firebase SDKs -->
-    <script src="[https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js](https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js)"></script>
-    <script src="[https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js](https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js)"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
     <style>
         html { font-size: 18px; }
+        body { background-color: #020617; color: #f1f5f9; font-family: system-ui, -apple-system, sans-serif; margin: 0; }
         ::-webkit-scrollbar { width: 8px; height: 8px; }
         ::-webkit-scrollbar-track { background: #1e293b; }
         ::-webkit-scrollbar-thumb { background: #db2777; border-radius: 4px; }
@@ -23,7 +24,7 @@
         const firebaseConfig = {
           apiKey: "AIzaSyAvDir-JCKQ5yTMum9I6kxcDR94V2khwbE",
           authDomain: "sara-fashion-vozen-park.firebaseapp.com",
-          databaseURL: "[https://sara-fashion-vozen-park-default-rtdb.europe-west1.firebasedatabase.app](https://sara-fashion-vozen-park-default-rtdb.europe-west1.firebasedatabase.app)",
+          databaseURL: "https://sara-fashion-vozen-park-default-rtdb.europe-west1.firebasedatabase.app",
           projectId: "sara-fashion-vozen-park",
           storageBucket: "sara-fashion-vozen-park.appspot.com",
           messagingSenderId: "422190359412",
@@ -83,7 +84,7 @@
                 <h3 id="serviceModalTitle" class="text-base font-bold text-white flex items-center gap-2"><i class="fa-solid fa-screwdriver-wrench text-pink-600"></i> Нов Сервис - Внеси Фактура и Делови</h3>
                 <button type="button" onclick="app.closeServiceModal()" class="text-slate-300 hover:text-white"><i class="fa-solid fa-xmark text-xl"></i></button>
             </div>
-            
+
             <input type="hidden" id="modalEditServiceKey" value="">
 
             <div class="grid grid-cols-1 sm:grid-cols-5 gap-3 text-sm bg-slate-950 p-4 rounded-xl border border-slate-800">
@@ -478,7 +479,7 @@
                     <h3 class="text-base font-bold text-white flex items-center gap-2"><i class="fa-solid fa-chart-pie text-pink-600"></i> Професионална Контролна Табла & Извештаи по Период</h3>
                     <p class="text-sm text-slate-300 mt-1">Избери период, возило (или повеќе возила) и вид гориво за детална анализа на гориво, поминати километри и вкупни трошоци.</p>
                 </div>
-                
+
                 <!-- PERIOD & FUEL TYPE FILTER -->
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-sm bg-slate-950 p-4 rounded-xl border border-slate-800">
                     <div>
@@ -630,7 +631,7 @@
                 const activeBtn = document.getElementById('tabBtn' + tab.charAt(0).toUpperCase() + tab.slice(1));
                 if(activeEl) activeEl.classList.remove('hidden');
                 if(activeBtn) activeBtn.className = 'px-4 py-2.5 rounded-xl text-sm font-semibold bg-pink-600 text-white transition whitespace-nowrap';
-                
+
                 if(tab === 'fuel') {
                     const fDateEl = document.getElementById('fDate');
                     if (fDateEl && !fDateEl.value) {
@@ -641,7 +642,7 @@
                     this.generateDashboardReport();
                 }
             },
-            
+
             // SERVICE MODAL & EDIT
             openServiceModal(editKey = null) {
                 document.getElementById('serviceModal').classList.remove('hidden');
@@ -699,7 +700,7 @@
                 const totalInvoice = Number(document.getElementById('modalTotalInvoice').value) || 0;
                 const km = document.getElementById('modalSKm').value.trim();
                 const nextKm = document.getElementById('modalSNextKm').value.trim();
-                
+
                 if(!vehicle || !date || totalInvoice <= 0) { alert('Избери возило, датум и внеси ја вкупната сума на фактурата!'); return; }
 
                 const rows = document.querySelectorAll('#serviceRowsBody tr');
@@ -1308,9 +1309,9 @@
                         `;
                     });
                     document.getElementById('statTotalTolls').innerText = totalTollsSum.toLocaleString() + ' ден.';
-                    
+
                     Promise.all([
-                        db.ref('fuel').once('value'), 
+                        db.ref('fuel').once('value'),
                         db.ref('service').once('value'),
                         db.ref('registrations').once('value')
                     ]).then(([fSnap, sSnap, rSnap]) => {
@@ -1698,7 +1699,7 @@
                 });
             },
             shareReport() {
-                const url = "[https://zoranstrojmanovski-byte.github.io/vozen-park/](https://zoranstrojmanovski-byte.github.io/vozen-park/)";
+                const url = "https://zoranstrojmanovski-byte.github.io/vozen-park/";
                 const subject = encodeURIComponent("Контролна Табла Возен Парк Сара Фешн");
                 const body = encodeURIComponent("Здраво! Еве линк од активната Контролна Табла за Возен Парк - Сара Фешн:\n" + url);
 
@@ -1710,7 +1711,7 @@
                 );
 
                 if (choice === "1") {
-                    window.open(`[https://mail.google.com/mail/?view=cm&fs=1&su=$](https://mail.google.com/mail/?view=cm&fs=1&su=$){subject}&body=${body}`, "_blank");
+                    window.open(`https://mail.google.com/mail/?view=cm&fs=1&su=${subject}&body=${body}`, "_blank");
                 } else if (choice === "2") {
                     window.open(`viber://forward?text=${body}`, "_blank");
                 } else if (choice === "3") {
