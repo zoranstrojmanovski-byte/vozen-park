@@ -153,8 +153,22 @@
             </div>
         </div>
 
+        <!-- SERVICE ALERT BANNER (<= 1000 KM) -->
+        <div id="serviceAlertBanner" class="hidden mb-5 bg-amber-950/50 border border-amber-500/50 rounded-2xl p-4 shadow-lg">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2">
+                <h3 class="text-sm font-bold text-amber-300 flex items-center gap-2">
+                    <i class="fa-solid fa-bell text-amber-400"></i>
+                    <span>Известување за Сервиси (праг: 1.000 км пред следен сервис)</span>
+                </h3>
+                <button type="button" onclick="app.switchTab('service')" class="text-xs bg-amber-500/20 hover:bg-amber-500/30 text-amber-200 border border-amber-400/40 px-3 py-1 rounded-lg transition self-start sm:self-auto">
+                    Отвори Сервиси & Километри
+                </button>
+            </div>
+            <div id="serviceAlertList" class="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs"></div>
+        </div>
+
         <!-- STATS / ALERTS BAR -->
-        <div class="grid grid-cols-1 sm:grid-cols-4 gap-4 mb-6">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
             <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl flex items-center gap-4 shadow-lg">
                 <div class="bg-pink-600/20 text-pink-500 p-3 rounded-xl"><i class="fa-solid fa-car text-xl"></i></div>
                 <div>
@@ -167,6 +181,13 @@
                 <div>
                     <p class="text-sm text-slate-300">Истекуваат Регистрации (30 д.)</p>
                     <h3 id="statExpiring" class="text-xl font-bold text-white">0</h3>
+                </div>
+            </div>
+            <div onclick="app.switchTab('service')" class="bg-slate-900 border border-slate-800 hover:border-pink-500/60 p-4 rounded-2xl flex items-center gap-4 shadow-lg cursor-pointer transition">
+                <div class="bg-pink-600/20 text-pink-400 p-3 rounded-xl"><i class="fa-solid fa-screwdriver-wrench text-xl"></i></div>
+                <div>
+                    <p class="text-sm text-slate-300">Претстојни Сервиси (≤1.000 км)</p>
+                    <h3 id="statServiceAlerts" class="text-xl font-bold text-white">0</h3>
                 </div>
             </div>
             <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl flex items-center gap-4 shadow-lg">
@@ -223,13 +244,14 @@
                                 <th class="pb-3 px-3">Таблички</th>
                                 <th class="pb-3 px-3">Возач</th>
                                 <th class="pb-3 px-3">Километража</th>
+                                <th class="pb-3 px-3">Сервис (1.000 км)</th>
                                 <th class="pb-3 px-3">Регистрација До</th>
                                 <th class="pb-3 px-3">Прва Помош / Документ</th>
                                 <th class="pb-3 px-3 text-right">Акција</th>
                             </tr>
                         </thead>
                         <tbody id="vehiclesTableBody">
-                            <tr><td colspan="7" class="text-center py-6 text-slate-400">Вчитување...</td></tr>
+                            <tr><td colspan="8" class="text-center py-6 text-slate-400">Вчитување...</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -639,7 +661,9 @@
     <!-- APP LOGIC -->
     <script>
         const app = {
+            SERVICE_ALERT_KM: 1000,
             isAdmin: false,
+            allVehiclesData: {},
             allServicesData: {},
             allTollsData: {},
             vehiclesMap: {},
@@ -697,6 +721,109 @@
                 }
                 if(tab === 'reports') {
                     this.generateDashboardReport();
+                }
+            },
+
+            // SERVICE THRESHOLD (1,000 KM) HELPERS
+            getVehicleServiceStatus(plate, currentKmInput) {
+                const currentKm = parseFloat(currentKmInput);
+                const services = Object.values(this.allServicesData || {}).filter(
+                    s => s.vehicle === plate && parseFloat(s.nextKm) > 0
+                );
+                if (services.length === 0 || Number.isNaN(currentKm)) {
+                    return null;
+                }
+                services.sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+                const nextKm = parseFloat(services[0].nextKm);
+                const remainingKm = nextKm - currentKm;
+
+                if (remainingKm <= 0) {
+                    return {
+                        level: 'overdue',
+                        nextKm,
+                        remainingKm,
+                        label: `Пробиен за ${Math.abs(Math.round(remainingKm)).toLocaleString()} км (следен: ${Math.round(nextKm).toLocaleString()} км)`
+                    };
+                }
+                if (remainingKm <= this.SERVICE_ALERT_KM) {
+                    return {
+                        level: 'due_soon',
+                        nextKm,
+                        remainingKm,
+                        label: `Уште ${Math.round(remainingKm).toLocaleString()} км (следен: ${Math.round(nextKm).toLocaleString()} км)`
+                    };
+                }
+                return {
+                    level: 'ok',
+                    nextKm,
+                    remainingKm,
+                    label: `За ${Math.round(remainingKm).toLocaleString()} км (на ${Math.round(nextKm).toLocaleString()} км)`
+                };
+            },
+
+            updateServiceNotifications() {
+                const alerts = [];
+                Object.keys(this.allVehiclesData || {}).forEach(key => {
+                    const v = this.allVehiclesData[key];
+                    if (!v || !v.plate) return;
+                    const status = this.getVehicleServiceStatus(v.plate, v.km);
+                    if (status && (status.level === 'due_soon' || status.level === 'overdue')) {
+                        alerts.push({
+                            model: v.model,
+                            plate: v.plate,
+                            driver: v.driver || '-',
+                            currentKm: parseFloat(v.km) || 0,
+                            ...status
+                        });
+                    }
+                });
+
+                alerts.sort((a, b) => a.remainingKm - b.remainingKm);
+
+                const countEl = document.getElementById('statServiceAlerts');
+                const bannerEl = document.getElementById('serviceAlertBanner');
+                const listEl = document.getElementById('serviceAlertList');
+
+                if (countEl) countEl.innerText = String(alerts.length);
+                if (!bannerEl || !listEl) return;
+
+                if (alerts.length === 0) {
+                    bannerEl.classList.add('hidden');
+                    listEl.innerHTML = '';
+                    return;
+                }
+
+                bannerEl.classList.remove('hidden');
+                listEl.innerHTML = alerts.map(a => {
+                    const isOverdue = a.level === 'overdue';
+                    const cardStyle = isOverdue
+                        ? 'bg-red-950/60 border-red-500/50 text-red-200'
+                        : 'bg-slate-900/90 border-amber-500/40 text-amber-200';
+                    const badgeText = isOverdue
+                        ? `НАДМИНАТ за ${Math.abs(Math.round(a.remainingKm)).toLocaleString()} км!`
+                        : `ОСТАНАТИ ${Math.round(a.remainingKm).toLocaleString()} км`;
+                    return `
+                        <div class="border ${cardStyle} rounded-xl px-3.5 py-2.5 flex items-center justify-between gap-2">
+                            <div>
+                                <span class="font-bold text-white">${a.model} (${a.plate})</span>
+                                <span class="text-slate-300"> • Возач: ${a.driver} • Моментално: ${a.currentKm.toLocaleString()} км / Сервис: ${Math.round(a.nextKm).toLocaleString()} км</span>
+                            </div>
+                            <span class="font-bold shrink-0 ${isOverdue ? 'text-red-400' : 'text-amber-400'}">${badgeText}</span>
+                        </div>
+                    `;
+                }).join('');
+            },
+
+            syncVehicleKmIfHigher(plate, kmValue) {
+                const newKm = parseFloat(kmValue);
+                if (!plate || Number.isNaN(newKm) || newKm <= 0) return;
+                const foundKey = Object.keys(this.allVehiclesData || {}).find(
+                    k => (this.allVehiclesData[k]?.plate || '') === plate
+                );
+                if (!foundKey) return;
+                const currentKm = parseFloat(this.allVehiclesData[foundKey]?.km) || 0;
+                if (newKm > currentKm) {
+                    db.ref('vehicles/' + foundKey + '/km').set(String(newKm));
                 }
             },
 
@@ -773,9 +900,11 @@
                 const payload = { vehicle, date, km, nextKm, totalInvoice, items };
                 if(editKey) {
                     db.ref('service/' + editKey).set(payload);
+                    this.syncVehicleKmIfHigher(vehicle, km);
                     alert('Успешно ажуриран сервисот!');
                 } else {
                     db.ref('service').push(payload);
+                    this.syncVehicleKmIfHigher(vehicle, km);
                     alert(`Успешно зачуван сервис со фактура од ${totalInvoice.toLocaleString()} ден.!`);
                 }
                 this.closeServiceModal();
@@ -931,14 +1060,29 @@
                             itemsHtml = '<span class="text-slate-400">Само фактура (без поединечни делови)</span>';
                         }
 
+                        const vCurrentKm = this.vehiclesMap[s.vehicle]?.km;
+                        const status = this.getVehicleServiceStatus(s.vehicle, vCurrentKm);
+                        let nextKmBadge = s.nextKm ? `${Number(s.nextKm).toLocaleString()} км` : '-';
+                        if (s.nextKm && status) {
+                            if (status.level === 'overdue') {
+                                nextKmBadge = `<span class="text-red-400 font-bold">${Number(s.nextKm).toLocaleString()} км (Пробиен!)</span>`;
+                            } else if (status.level === 'due_soon') {
+                                nextKmBadge = `<span class="text-amber-400 font-bold">${Number(s.nextKm).toLocaleString()} км (Уште ${Math.round(status.remainingKm).toLocaleString()} км)</span>`;
+                            } else {
+                                nextKmBadge = `<span class="text-emerald-400 font-semibold">${Number(s.nextKm).toLocaleString()} км</span>`;
+                            }
+                        } else if (s.nextKm) {
+                            nextKmBadge = `<span class="text-amber-400 font-semibold">${Number(s.nextKm).toLocaleString()} км</span>`;
+                        }
+
                         tbody.innerHTML += `
                             <tr class="border-b border-slate-800/50 hover:bg-slate-800/30">
                                 <td class="py-3 px-3 text-slate-300">${s.date || '-'}</td>
                                 <td class="py-3 px-3 font-medium text-white">${s.vehicle}</td>
                                 <td class="py-3 px-3 text-slate-200">${itemsHtml}</td>
                                 <td class="py-3 px-3 text-pink-400 font-bold">${totalInv.toLocaleString()} ден.</td>
-                                <td class="py-3 px-3 text-slate-200">${s.km ? s.km + ' км' : '-'}</td>
-                                <td class="py-3 px-3 text-amber-400 font-semibold">${s.nextKm ? s.nextKm + ' км' : '-'}</td>
+                                <td class="py-3 px-3 text-slate-200">${s.km ? Number(s.km).toLocaleString() + ' км' : '-'}</td>
+                                <td class="py-3 px-3">${nextKmBadge}</td>
                                 <td class="py-3 px-3 text-right space-x-1">
                                     ${this.isAdmin ? `
                                         <button type="button" onclick="app.openServiceModal('${key}')" class="text-amber-400 hover:text-amber-300 bg-amber-950/40 border border-amber-900/50 px-2.5 py-1.5 rounded-lg" title="Измени"><i class="fa-solid fa-pen"></i></button>
@@ -959,6 +1103,68 @@
                         summaryEl.innerText = '';
                     }
                 }
+            },
+
+            renderVehiclesTable() {
+                const data = this.allVehiclesData || {};
+                const tbody = document.getElementById('vehiclesTableBody');
+                tbody.innerHTML = '';
+
+                if (Object.keys(data).length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="8" class="text-center py-6 text-slate-400">Нема внесено возила.</td></tr>`;
+                    return;
+                }
+
+                const today = new Date();
+                Object.keys(data).forEach(key => {
+                    const v = data[key];
+
+                    let regBadge = v.regDate || 'Нема';
+                    if(v.regDate) {
+                        const diffDays = Math.ceil((new Date(v.regDate) - today) / (1000 * 60 * 60 * 24));
+                        if(diffDays < 0) regBadge = `<span class="text-red-400 font-bold">${v.regDate} (Истечена!)</span>`;
+                        else if(diffDays <= 30) regBadge = `<span class="text-amber-400 font-bold">${v.regDate} (${diffDays} д.)</span>`;
+                        else regBadge = `<span class="text-emerald-400">${v.regDate}</span>`;
+                    }
+
+                    let docBadge = v.docDate || 'Нема';
+                    if(v.docDate) {
+                        const diffDoc = Math.ceil((new Date(v.docDate) - today) / (1000 * 60 * 60 * 24));
+                        if(diffDoc < 0) docBadge = `<span class="text-red-400 font-bold">${v.docDate} (Истечено!)</span>`;
+                        else if(diffDoc <= 30) docBadge = `<span class="text-amber-400 font-bold">${v.docDate} (${diffDoc} д.)</span>`;
+                        else docBadge = `<span class="text-emerald-400">${v.docDate}</span>`;
+                    }
+
+                    const srvStatus = this.getVehicleServiceStatus(v.plate, v.km);
+                    let srvBadge = '<span class="text-slate-400">-</span>';
+                    if (srvStatus) {
+                        if (srvStatus.level === 'overdue') {
+                            srvBadge = `<span class="bg-red-950/70 border border-red-500/50 text-red-300 px-2 py-1 rounded text-xs font-bold inline-block">Пробиен (${Math.abs(Math.round(srvStatus.remainingKm)).toLocaleString()} км)</span>`;
+                        } else if (srvStatus.level === 'due_soon') {
+                            srvBadge = `<span class="bg-amber-950/70 border border-amber-500/50 text-amber-300 px-2 py-1 rounded text-xs font-bold inline-block">Уште ${Math.round(srvStatus.remainingKm).toLocaleString()} км</span>`;
+                        } else {
+                            srvBadge = `<span class="text-emerald-400 text-xs">За ${Math.round(srvStatus.remainingKm).toLocaleString()} км</span>`;
+                        }
+                    }
+
+                    tbody.innerHTML += `
+                        <tr class="border-b border-slate-800/50 hover:bg-slate-800/30">
+                            <td class="py-3 px-3 font-medium text-white">${v.model}</td>
+                            <td class="py-3 px-3 text-slate-200">${v.plate}</td>
+                            <td class="py-3 px-3 text-slate-200">${v.driver || '-'}</td>
+                            <td class="py-3 px-3 text-slate-200">${v.km ? Number(v.km).toLocaleString() + ' км' : '-'}</td>
+                            <td class="py-3 px-3">${srvBadge}</td>
+                            <td class="py-3 px-3 text-slate-200">${regBadge}</td>
+                            <td class="py-3 px-3 text-slate-200">${docBadge}</td>
+                            <td class="py-3 px-3 text-right space-x-1">
+                                ${this.isAdmin ? `
+                                    <button type="button" onclick="app.editVehicle('${key}', '${v.model}', '${v.plate}', '${v.driver || ''}', '${v.km || ''}', '${v.regDate || ''}', '${v.docDate || ''}')" class="text-amber-400 hover:text-amber-300 bg-amber-950/40 border border-amber-900/50 px-2.5 py-1.5 rounded-lg" title="Измени"><i class="fa-solid fa-pen"></i></button>
+                                    <button type="button" onclick="app.removeRecord('vehicles', '${key}')" class="text-red-400 hover:text-red-300 bg-red-950/40 border border-red-900/50 px-2.5 py-1.5 rounded-lg" title="Избриши"><i class="fa-solid fa-trash"></i></button>
+                                ` : '<span class="text-slate-500">-</span>'}
+                            </td>
+                        </tr>
+                    `;
+                });
             },
 
             // VEHICLE EDIT
@@ -1043,10 +1249,12 @@
                 const payload = { vehicle, type, liters, pricePerLiter, cost, km, driver, date };
                 if(editKey) {
                     db.ref('fuel/' + editKey).set(payload);
+                    this.syncVehicleKmIfHigher(vehicle, km);
                     alert('Успешно ажурирано точењето!');
                     this.cancelFuelEdit();
                 } else {
                     db.ref('fuel').push(payload);
+                    this.syncVehicleKmIfHigher(vehicle, km);
                     alert('Успешно зачувано точење гориво!');
                 }
                 document.getElementById('fLiters').value = '';
@@ -1248,9 +1456,10 @@
                 if (tDateEl && !tDateEl.value) tDateEl.value = todayStr;
 
                 db.ref('vehicles').on('value', (snapshot) => {
-                    const data = snapshot.val();
+                    const data = snapshot.val() || {};
+                    this.allVehiclesData = data;
                     this.vehiclesMap = {};
-                    const tbody = document.getElementById('vehiclesTableBody');
+
                     const fVehSelect = document.getElementById('fVehicle');
                     const tVehSelect = document.getElementById('tVehicle');
                     const regVehSelect = document.getElementById('regVehicle');
@@ -1258,7 +1467,13 @@
                     const filterSVSelect = document.getElementById('filterSVehicle');
                     const filterTVSelect = document.getElementById('filterTVehicle');
 
-                    tbody.innerHTML = '';
+                    const prevFVeh = fVehSelect.value;
+                    const prevTVeh = tVehSelect.value;
+                    const prevRegVeh = regVehSelect.value;
+                    const prevModalSV = modalSVSelect.value;
+                    const prevFilterSV = filterSVSelect ? filterSVSelect.value : '';
+                    const prevFilterTV = filterTVSelect ? filterTVSelect.value : '';
+
                     fVehSelect.innerHTML = `<option value="">-- Избери возило --</option>`;
                     tVehSelect.innerHTML = `<option value="">-- Избери возило --</option>`;
                     regVehSelect.innerHTML = `<option value="">-- Избери возило --</option>`;
@@ -1267,15 +1482,6 @@
                     if (filterTVSelect) filterTVSelect.innerHTML = `<option value="">-- Сите возила --</option>`;
 
                     const driversSet = new Set();
-
-                    if (!data) {
-                        tbody.innerHTML = `<tr><td colspan="7" class="text-center py-6 text-slate-400">Нема внесено возила.</td></tr>`;
-                        document.getElementById('statTotalVehicles').innerText = '0';
-                        document.getElementById('statExpiring').innerText = '0';
-                        this.renderServicesTable();
-                        return;
-                    }
-
                     const today = new Date();
                     let totalCount = 0;
                     let expiringCount = 0;
@@ -1294,44 +1500,26 @@
                         if (filterSVSelect) filterSVSelect.innerHTML += optHtml;
                         if (filterTVSelect) filterTVSelect.innerHTML += optHtml;
 
-                        let regBadge = v.regDate || 'Нема';
                         if(v.regDate) {
                             const diffDays = Math.ceil((new Date(v.regDate) - today) / (1000 * 60 * 60 * 24));
-                            if(diffDays < 0) { regBadge = `<span class="text-red-400 font-bold">${v.regDate} (Истечена!)</span>`; expiringCount++; }
-                            else if(diffDays <= 30) { regBadge = `<span class="text-amber-400 font-bold">${v.regDate} (${diffDays} д.)</span>`; expiringCount++; }
-                            else { regBadge = `<span class="text-emerald-400">${v.regDate}</span>`; }
+                            if(diffDays <= 30) expiringCount++;
                         }
-
-                        let docBadge = v.docDate || 'Нема';
-                        if(v.docDate) {
-                            const diffDoc = Math.ceil((new Date(v.docDate) - today) / (1000 * 60 * 60 * 24));
-                            if(diffDoc < 0) { docBadge = `<span class="text-red-400 font-bold">${v.docDate} (Истечено!)</span>`; }
-                            else if(diffDoc <= 30) { docBadge = `<span class="text-amber-400 font-bold">${v.docDate} (${diffDoc} д.)</span>`; }
-                            else { docBadge = `<span class="text-emerald-400">${v.docDate}</span>`; }
-                        }
-
-                        tbody.innerHTML += `
-                            <tr class="border-b border-slate-800/50 hover:bg-slate-800/30">
-                                <td class="py-3 px-3 font-medium text-white">${v.model}</td>
-                                <td class="py-3 px-3 text-slate-200">${v.plate}</td>
-                                <td class="py-3 px-3 text-slate-200">${v.driver || '-'}</td>
-                                <td class="py-3 px-3 text-slate-200">${v.km ? v.km + ' км' : '-'}</td>
-                                <td class="py-3 px-3 text-slate-200">${regBadge}</td>
-                                <td class="py-3 px-3 text-slate-200">${docBadge}</td>
-                                <td class="py-3 px-3 text-right space-x-1">
-                                    ${this.isAdmin ? `
-                                        <button type="button" onclick="app.editVehicle('${key}', '${v.model}', '${v.plate}', '${v.driver || ''}', '${v.km || ''}', '${v.regDate || ''}', '${v.docDate || ''}')" class="text-amber-400 hover:text-amber-300 bg-amber-950/40 border border-amber-900/50 px-2.5 py-1.5 rounded-lg" title="Измени"><i class="fa-solid fa-pen"></i></button>
-                                        <button type="button" onclick="app.removeRecord('vehicles', '${key}')" class="text-red-400 hover:text-red-300 bg-red-950/40 border border-red-900/50 px-2.5 py-1.5 rounded-lg" title="Избриши"><i class="fa-solid fa-trash"></i></button>
-                                    ` : '<span class="text-slate-500">-</span>'}
-                                </td>
-                            </tr>
-                        `;
                     });
+
+                    if (prevFVeh) fVehSelect.value = prevFVeh;
+                    if (prevTVeh) tVehSelect.value = prevTVeh;
+                    if (prevRegVeh) regVehSelect.value = prevRegVeh;
+                    if (prevModalSV) modalSVSelect.value = prevModalSV;
+                    if (filterSVSelect && prevFilterSV) filterSVSelect.value = prevFilterSV;
+                    if (filterTVSelect && prevFilterTV) filterTVSelect.value = prevFilterTV;
 
                     const fDrvSelect = document.getElementById('fDriver');
                     const tDrvSelect = document.getElementById('tDriver');
                     const filterTDSelect = document.getElementById('filterTDriver');
+                    const prevFDrv = fDrvSelect.value;
+                    const prevTDrv = tDrvSelect.value;
                     const prevFilterDrv = filterTDSelect ? filterTDSelect.value : '';
+
                     fDrvSelect.innerHTML = `<option value="">-- Избери возач --</option>`;
                     tDrvSelect.innerHTML = `<option value="">-- Избери возач --</option>`;
                     if (filterTDSelect) filterTDSelect.innerHTML = `<option value="">-- Сите возачи --</option>`;
@@ -1343,11 +1531,16 @@
                         tDrvSelect.innerHTML += `<option value="${drv}">${drv}</option>`;
                         if (filterTDSelect) filterTDSelect.innerHTML += `<option value="${drv}">${drv}</option>`;
                     });
+                    if (prevFDrv) fDrvSelect.value = prevFDrv;
+                    if (prevTDrv) tDrvSelect.value = prevTDrv;
                     if (filterTDSelect && prevFilterDrv) filterTDSelect.value = prevFilterDrv;
 
                     document.getElementById('statTotalVehicles').innerText = totalCount;
                     document.getElementById('statExpiring').innerText = expiringCount;
+
+                    this.renderVehiclesTable();
                     this.renderServicesTable();
+                    this.updateServiceNotifications();
                 });
 
                 // Fuel listener
@@ -1371,7 +1564,7 @@
                                 <td class="py-3 px-3 text-slate-200">${f.liters} L</td>
                                 <td class="py-3 px-3 text-slate-200">${unitPrice ? unitPrice + ' ден.' : '-'}</td>
                                 <td class="py-3 px-3 text-pink-400 font-bold">${Number(f.cost).toLocaleString()} ден.</td>
-                                <td class="py-3 px-3 text-slate-200">${f.km ? f.km + ' км' : '-'}</td>
+                                <td class="py-3 px-3 text-slate-200">${f.km ? Number(f.km).toLocaleString() + ' км' : '-'}</td>
                                 <td class="py-3 px-3 text-slate-200">${f.driver || '-'}</td>
                                 <td class="py-3 px-3 text-right space-x-1">
                                     ${this.isAdmin ? `
@@ -1387,7 +1580,9 @@
                 // Service listener
                 db.ref('service').on('value', (snapshot) => {
                     this.allServicesData = snapshot.val() || {};
+                    this.renderVehiclesTable();
                     this.renderServicesTable();
+                    this.updateServiceNotifications();
                 });
 
                 // Registrations & Other Costs listener
