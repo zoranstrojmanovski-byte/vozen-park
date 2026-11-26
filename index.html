@@ -8,6 +8,7 @@
     <link rel="apple-touch-icon" href="icon.png">
     <meta name="theme-color" content="#db2777">
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
@@ -77,16 +78,30 @@
         </div>
     </div>
 
-    <!-- SHARE OPTIONS MODAL -->
-    <div id="shareModal" class="hidden fixed inset-0 bg-black/75 z-50 flex items-center justify-center p-4">
-        <div class="bg-slate-900 border border-slate-800 w-full max-w-lg rounded-2xl p-6 shadow-2xl space-y-4">
+    <!-- SHARE OPTIONS MODAL WITH PERSONALIZED CARD -->
+    <div id="shareModal" class="hidden fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-pink-500/40 w-full max-w-xl rounded-2xl p-5 sm:p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
             <div class="flex justify-between items-center border-b border-slate-800 pb-3">
-                <h3 class="text-base font-bold text-white flex items-center gap-2"><i class="fa-solid fa-paper-plane text-emerald-500"></i> Сподели Избран Извештај</h3>
+                <h3 class="text-base font-bold text-white flex items-center gap-2"><i class="fa-solid fa-id-card text-pink-500"></i> Лична Картичка за Споделување</h3>
                 <button type="button" onclick="document.getElementById('shareModal').classList.add('hidden')" class="text-slate-300 hover:text-white"><i class="fa-solid fa-xmark text-xl"></i></button>
             </div>
             <p id="shareModalSummary" class="text-sm text-slate-300"></p>
-            <textarea id="shareModalText" rows="8" readonly class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-slate-200 font-mono focus:outline-none"></textarea>
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5 pt-1">
+
+            <!-- PERSONALIZED CARD PREVIEW -->
+            <div id="shareVisualCard" class="bg-gradient-to-br from-slate-950 via-slate-900 to-pink-950/50 border-2 border-pink-500/60 rounded-2xl p-4 space-y-3.5 text-white shadow-2xl shadow-pink-950/30"></div>
+
+            <!-- IMAGE ACTIONS FOR CARD -->
+            <div id="shareCardActions" class="grid grid-cols-2 gap-2.5">
+                <button type="button" onclick="app.copyCardImage()" class="bg-pink-600 hover:bg-pink-500 text-white font-semibold py-2.5 px-3 rounded-xl text-sm transition flex items-center justify-center gap-1.5 shadow-md">
+                    <i class="fa-solid fa-image"></i> Копирај Слика
+                </button>
+                <button type="button" onclick="app.downloadCardImage()" class="bg-pink-950/70 hover:bg-pink-900/70 text-pink-200 border border-pink-500/40 font-semibold py-2.5 px-3 rounded-xl text-sm transition flex items-center justify-center gap-1.5">
+                    <i class="fa-solid fa-download"></i> Симни PNG
+                </button>
+            </div>
+
+            <!-- GMAIL / VIBER / COPY TEXT ACTIONS -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5 pt-1 border-t border-slate-800">
                 <a id="shareGmailBtn" href="#" target="_blank" rel="noopener" class="bg-red-600 hover:bg-red-500 text-white font-semibold py-2.5 px-3 rounded-xl text-sm text-center transition flex items-center justify-center gap-1.5">
                     <i class="fa-solid fa-envelope"></i> Gmail
                 </a>
@@ -94,7 +109,7 @@
                     <i class="fa-brands fa-viber"></i> Viber
                 </a>
                 <button type="button" onclick="app.copyShareModalText()" class="bg-slate-800 hover:bg-slate-700 text-white border border-slate-700 font-semibold py-2.5 px-3 rounded-xl text-sm transition flex items-center justify-center gap-1.5">
-                    <i class="fa-solid fa-copy"></i> Копирај
+                    <i class="fa-solid fa-copy"></i> Копирај Текст
                 </button>
             </div>
         </div>
@@ -171,7 +186,7 @@
             </div>
             <div class="flex items-center gap-3 flex-wrap">
                 <div id="userRoleBadge" class="text-sm bg-slate-900 border border-slate-800 px-3.5 py-2 rounded-xl text-slate-200">Режим: Преглед</div>
-                <button type="button" onclick="app.shareReport()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-3.5 py-2 rounded-xl text-sm transition flex items-center gap-1.5"><i class="fa-solid fa-share-nodes"></i> Сподели (Viber/Gmail)</button>
+                <button type="button" onclick="app.shareReport()" class="bg-pink-600 hover:bg-pink-500 text-white px-3.5 py-2 rounded-xl text-sm transition flex items-center gap-1.5 shadow-md"><i class="fa-solid fa-id-card"></i> Сподели Картичка</button>
                 <button type="button" onclick="location.reload()" class="bg-slate-900 border border-slate-800 hover:bg-slate-800 text-slate-200 px-3.5 py-2 rounded-xl text-sm transition"><i class="fa-solid fa-right-from-bracket"></i> Излез</button>
             </div>
         </div>
@@ -667,8 +682,8 @@
                             <button type="button" onclick="app.toggleAllSelections(true)" class="bg-slate-800 hover:bg-slate-700 text-slate-100 border border-slate-700 px-3.5 py-2 rounded-xl text-sm transition">Избери сè</button>
                             <button type="button" onclick="app.toggleAllSelections(false)" class="bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 px-3.5 py-2 rounded-xl text-sm transition">Исчисти сè</button>
                         </div>
-                        <button type="button" onclick="app.shareSelectedItems()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-semibold px-3.5 py-2 rounded-xl text-sm transition flex items-center gap-1.5 shadow-md">
-                            <i class="fa-solid fa-paper-plane"></i> <span>Сподели избрани</span>
+                        <button type="button" onclick="app.shareSelectedItems()" class="bg-pink-600 hover:bg-pink-500 text-white font-semibold px-3.5 py-2 rounded-xl text-sm transition flex items-center gap-1.5 shadow-md">
+                            <i class="fa-solid fa-id-card"></i> <span>Сподели картичка</span>
                         </button>
                         <div class="bg-slate-950 border border-pink-600/50 px-4 py-2 rounded-xl text-right">
                             <span id="selectedGrandTotal" class="text-xl font-bold text-white">0 ден.</span>
@@ -694,6 +709,7 @@
             allTollsData: {},
             vehiclesMap: {},
             dashCache: { vehicles: {}, fuel: {}, service: {}, registrations: {}, tolls: {} },
+            lastShareText: '',
             loginAdmin() {
                 const pass = document.getElementById('loginPassword').value;
                 if(pass === 'admin123') {
@@ -1719,6 +1735,7 @@
                 document.getElementById('selectedItemsCount').innerText = `Избрани ставки: ${count}`;
             },
 
+            // MODERN PERSONALIZED CARD FOR SELECTED ITEMS / CATEGORIES
             shareSelectedItems() {
                 const checkedItems = Array.from(document.querySelectorAll('.dash-item-cb:checked'));
                 if (checkedItems.length === 0) {
@@ -1737,6 +1754,7 @@
 
                 const groupedByVehicle = new Map();
                 let grandSum = 0;
+                const textSummaryLines = [`Сара Фешн • Лична Картичка (${periodLabel})`];
 
                 checkedItems.forEach(cb => {
                     const plate = cb.dataset.plate || '';
@@ -1747,16 +1765,26 @@
                     grandSum += amt;
 
                     if (!groupedByVehicle.has(vTitle)) {
-                        groupedByVehicle.set(vTitle, { blocks: [], subtotal: 0 });
+                        const vObj = this.vehiclesMap[plate] || {};
+                        groupedByVehicle.set(vTitle, {
+                            plate,
+                            driver: vObj.driver || '-',
+                            km: vObj.km ? `${Number(vObj.km).toLocaleString()} км` : '-',
+                            sections: [],
+                            subtotal: 0
+                        });
                     }
                     const entry = groupedByVehicle.get(vTitle);
                     entry.subtotal += amt;
 
-                    const detailLines = [];
+                    const rowsHtml = [];
                     if (catType === 'fuel') {
                         Object.values(fuel || {}).forEach(f => {
                             if (f.vehicle === plate && inPeriod(f.date)) {
-                                detailLines.push(`  - ${f.date || '-'}: ${f.type || 'Дизел'}, ${f.liters || 0}L${f.km ? `, ${Number(f.km).toLocaleString()} км` : ''} -> ${Number(f.cost || 0).toLocaleString()} ден.`);
+                                rowsHtml.push(`<div class="flex justify-between gap-2 text-xs py-1 border-b border-pink-500/15 last:border-0">
+                                    <span class="text-slate-200">${f.date || '-'} • <span class="text-pink-300 font-medium">${f.type || 'Дизел'}</span> (${f.liters || 0}L${f.km ? `, ${Number(f.km).toLocaleString()} км` : ''})</span>
+                                    <span class="text-white font-bold shrink-0">${Number(f.cost || 0).toLocaleString()} ден.</span>
+                                </div>`);
                             }
                         });
                     } else if (catType === 'service') {
@@ -1764,58 +1792,145 @@
                             if (s.vehicle === plate && inPeriod(s.date)) {
                                 const inv = Number(s.totalInvoice || s.cost) || 0;
                                 const itemsTxt = (s.items && Array.isArray(s.items) && s.items.length > 0)
-                                    ? ` [${s.items.map(i => `${i.desc} ${i.cost}д.`).join(', ')}]`
-                                    : '';
-                                detailLines.push(`  - ${s.date || '-'}: Фактура ${inv.toLocaleString()} ден.${s.km ? `, ${Number(s.km).toLocaleString()} км` : ''}${itemsTxt}`);
+                                    ? s.items.map(i => `${i.desc} (${i.cost}д.)`).join(', ')
+                                    : 'Фактура';
+                                rowsHtml.push(`<div class="flex justify-between gap-2 text-xs py-1 border-b border-pink-500/15 last:border-0">
+                                    <span class="text-slate-200">${s.date || '-'} • <span class="text-pink-300 font-medium">${itemsTxt}</span></span>
+                                    <span class="text-white font-bold shrink-0">${inv.toLocaleString()} ден.</span>
+                                </div>`);
                             }
                         });
                     } else if (catType === 'regs') {
                         Object.values(registrations || {}).forEach(r => {
                             if (r.vehicle === plate && inPeriod(r.date)) {
-                                detailLines.push(`  - ${r.date || '-'}: ${r.type || ''}${r.desc ? ` (${r.desc})` : ''} -> ${Number(r.cost || 0).toLocaleString()} ден.`);
+                                rowsHtml.push(`<div class="flex justify-between gap-2 text-xs py-1 border-b border-pink-500/15 last:border-0">
+                                    <span class="text-slate-200">${r.date || '-'} • <span class="text-pink-300 font-medium">${r.type || ''}</span>${r.desc ? ` (${r.desc})` : ''}</span>
+                                    <span class="text-white font-bold shrink-0">${Number(r.cost || 0).toLocaleString()} ден.</span>
+                                </div>`);
                             }
                         });
                     } else if (catType === 'tolls') {
                         Object.values(tolls || {}).forEach(t => {
                             if (t.vehicle === plate && inPeriod(t.date)) {
-                                detailLines.push(`  - ${t.date || '-'}: ${t.route || '-'}${t.waybill ? ` (Налог: ${t.waybill})` : ''}${t.driver ? ` [${t.driver}]` : ''} -> ${Number(t.cost || 0).toLocaleString()} ден.`);
+                                rowsHtml.push(`<div class="flex justify-between gap-2 text-xs py-1 border-b border-pink-500/15 last:border-0">
+                                    <span class="text-slate-200">${t.date || '-'} • <span class="text-pink-300 font-medium">${t.route || '-'}</span>${t.waybill ? ` (Налог: ${t.waybill})` : ''}</span>
+                                    <span class="text-white font-bold shrink-0">${Number(t.cost || 0).toLocaleString()} ден.</span>
+                                </div>`);
                             }
                         });
                     }
 
-                    entry.blocks.push(`• ${catLabel}: ${amt.toLocaleString()} ден.` + (detailLines.length ? `\n` + detailLines.join('\n') : ''));
+                    entry.sections.push({ catLabel, amt, rowsHtml });
                 });
 
-                const lines = [
-                    `Сара Фешн - Извод од Контролна Табла`,
-                    `Период: ${periodLabel}`,
-                    ``
-                ];
-
+                let vehicleCardsHtml = '';
                 groupedByVehicle.forEach((data, vTitle) => {
-                    lines.push(`▸ ${vTitle} (Вкупно: ${data.subtotal.toLocaleString()} ден.)`);
-                    data.blocks.forEach(b => lines.push(b));
-                    lines.push(``);
+                    textSummaryLines.push(`• ${vTitle}: ${data.subtotal.toLocaleString()} ден.`);
+                    const sectionsHtml = data.sections.map(sec => `
+                        <div class="bg-slate-950/80 border border-pink-500/25 rounded-xl p-2.5 space-y-1">
+                            <div class="flex justify-between items-center text-xs font-bold">
+                                <span class="inline-flex items-center gap-1.5 bg-pink-600/20 border border-pink-500/40 text-pink-200 px-2.5 py-0.5 rounded-full">${sec.catLabel}</span>
+                                <span class="text-pink-300 font-extrabold">${sec.amt.toLocaleString()} ден.</span>
+                            </div>
+                            ${sec.rowsHtml.length ? sec.rowsHtml.join('') : '<div class="text-xs text-slate-400 pt-1">Нема поединечни записи во периодот</div>'}
+                        </div>
+                    `).join('');
+
+                    vehicleCardsHtml += `
+                        <div class="bg-slate-900/75 border border-pink-500/35 rounded-2xl p-3.5 space-y-2.5 shadow-lg">
+                            <div class="flex justify-between items-center border-b border-pink-500/25 pb-2">
+                                <div>
+                                    <div class="font-bold text-white text-sm flex items-center gap-1.5">
+                                        <span class="w-2 h-2 rounded-full bg-pink-500 inline-block"></span>
+                                        <span>${vTitle}</span>
+                                    </div>
+                                    <div class="text-xs text-slate-300 mt-0.5">Возач: <b class="text-pink-200">${data.driver}</b> • Км: <b class="text-slate-100">${data.km}</b></div>
+                                </div>
+                                <div class="text-right bg-pink-600/15 border border-pink-500/40 px-3 py-1 rounded-xl">
+                                    <span class="text-[10px] uppercase tracking-wider text-pink-300 block font-semibold">Износ</span>
+                                    <span class="text-sm font-extrabold text-white">${data.subtotal.toLocaleString()} ден.</span>
+                                </div>
+                            </div>
+                            ${sectionsHtml}
+                        </div>
+                    `;
                 });
 
-                lines.push(`ВКУПНО ИЗБРАНИ СТАВКИ: ${grandSum.toLocaleString()} ден.`);
-                lines.push(`Линк: https://zoranstrojmanovski-byte.github.io/vozen-park/`);
+                textSummaryLines.push(`ВКУПНО: ${grandSum.toLocaleString()} ден.`);
+                this.lastShareText = textSummaryLines.join('\n');
 
-                const messageText = lines.join('\n').trim();
-                const subject = encodeURIComponent(`Сара Фешн - Извештај по возила (${periodLabel})`);
-                const body = encodeURIComponent(messageText);
+                const cardEl = document.getElementById('shareVisualCard');
+                cardEl.innerHTML = `
+                    <div class="flex items-center justify-between border-b border-pink-500/35 pb-3 gap-2">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-xl bg-pink-600/25 border border-pink-500/50 flex items-center justify-center text-pink-400 shrink-0">
+                                <i class="fa-solid fa-crown text-base"></i>
+                            </div>
+                            <div>
+                                <div class="text-[11px] uppercase tracking-widest text-pink-400 font-extrabold">САРА ФЕШН • ВОЗЕН ПАРК</div>
+                                <div class="text-base font-bold text-white leading-tight">Лична Картичка / Извод</div>
+                            </div>
+                        </div>
+                        <span class="text-xs font-semibold bg-pink-600/25 border border-pink-500/45 text-pink-200 px-3 py-1 rounded-full shrink-0">
+                            ${periodLabel}
+                        </span>
+                    </div>
+                    <div class="space-y-3">
+                        ${vehicleCardsHtml}
+                    </div>
+                    <div class="bg-gradient-to-r from-pink-600/35 via-pink-900/55 to-slate-900 border border-pink-500/55 rounded-xl px-4 py-3 flex justify-between items-center">
+                        <span class="text-xs font-bold uppercase tracking-wider text-pink-200">Вкупно избрани ставки</span>
+                        <span class="text-lg font-extrabold text-pink-300">${grandSum.toLocaleString()} ден.</span>
+                    </div>
+                `;
 
-                document.getElementById('shareModalSummary').innerText = `Избрани ставки: ${checkedItems.length} | Вкупно: ${grandSum.toLocaleString()} ден.`;
-                document.getElementById('shareModalText').value = messageText;
+                const subject = encodeURIComponent(`Сара Фешн - Картичка за возен парк (${periodLabel})`);
+                const body = encodeURIComponent(this.lastShareText);
+
+                document.getElementById('shareModalSummary').innerText = `Подготвена е лична картичка за ${groupedByVehicle.size} возил${groupedByVehicle.size === 1 ? 'о' : 'а'} (${grandSum.toLocaleString()} ден.):`;
+                document.getElementById('shareCardActions').classList.remove('hidden');
                 document.getElementById('shareGmailBtn').href = `https://mail.google.com/mail/?view=cm&fs=1&su=${subject}&body=${body}`;
                 document.getElementById('shareViberBtn').href = `viber://forward?text=${body}`;
                 document.getElementById('shareModal').classList.remove('hidden');
             },
+
             copyShareModalText() {
-                const txt = document.getElementById('shareModalText').value;
-                navigator.clipboard.writeText(txt).then(() => {
-                    alert('Текстот е копиран!');
+                if (!this.lastShareText) return;
+                navigator.clipboard.writeText(this.lastShareText).then(() => {
+                    alert('Краткиот резиме текст е копиран!');
                 });
+            },
+
+            async copyCardImage() {
+                const cardEl = document.getElementById('shareVisualCard');
+                if (!window.html2canvas) {
+                    alert('Библиотеката за слика сè уште се вчитува, обиди се повторно за 1 секунда.');
+                    return;
+                }
+                try {
+                    const canvas = await html2canvas(cardEl, { backgroundColor: '#020617', scale: 2 });
+                    canvas.toBlob(async (blob) => {
+                        if (!blob) return;
+                        try {
+                            await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
+                            alert('Личната картичка е копирана како слика! Отвори Viber или Gmail и притисни Paste (Ctrl+V).');
+                        } catch (err) {
+                            this.downloadCardImage();
+                        }
+                    }, 'image/png');
+                } catch (e) {
+                    alert('Грешка при генерирање на сликата: ' + e.message);
+                }
+            },
+
+            async downloadCardImage() {
+                const cardEl = document.getElementById('shareVisualCard');
+                if (!window.html2canvas) return;
+                const canvas = await html2canvas(cardEl, { backgroundColor: '#020617', scale: 2 });
+                const link = document.createElement('a');
+                link.download = `sara-fashion-licna-karticka-${new Date().toISOString().split('T')[0]}.png`;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
             },
 
             resetDashboardFilters() {
@@ -2155,11 +2270,30 @@
             },
             shareReport() {
                 const url = "https://zoranstrojmanovski-byte.github.io/vozen-park/";
+                const shareMsg = `Здраво! Еве линк од активната Контролна Табла за Возен Парк - Сара Фешн:\n${url}`;
+                this.lastShareText = shareMsg;
                 const subject = encodeURIComponent("Контролна Табла Возен Парк Сара Фешн");
-                const body = encodeURIComponent("Здраво! Еве линк од активната Контролна Табла за Возен Парк - Сара Фешн:\n" + url);
+                const body = encodeURIComponent(shareMsg);
 
-                document.getElementById('shareModalSummary').innerText = "Сподели линк до активната Контролна Табла:";
-                document.getElementById('shareModalText').value = `Здраво! Еве линк од активната Контролна Табла за Возен Парк - Сара Фешн:\n${url}`;
+                document.getElementById('shareModalSummary').innerText = "Лична картичка со линк до активната Контролна Табла:";
+                document.getElementById('shareVisualCard').innerHTML = `
+                    <div class="flex items-center justify-between border-b border-pink-500/35 pb-3">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-xl bg-pink-600/25 border border-pink-500/50 flex items-center justify-center text-pink-400">
+                                <i class="fa-solid fa-crown text-base"></i>
+                            </div>
+                            <div>
+                                <div class="text-[11px] uppercase tracking-widest text-pink-400 font-extrabold">САРА ФЕШН • ВОЗЕН ПАРК</div>
+                                <div class="text-base font-bold text-white">Контролна Табла & Сервисна Книга</div>
+                            </div>
+                        </div>
+                        <span class="text-xs font-semibold bg-pink-600/25 border border-pink-500/45 text-pink-200 px-3 py-1 rounded-full">Активно</span>
+                    </div>
+                    <div class="bg-slate-950/80 border border-pink-500/25 rounded-xl p-3 text-xs text-pink-200 break-all">
+                        ${url}
+                    </div>
+                `;
+                document.getElementById('shareCardActions').classList.remove('hidden');
                 document.getElementById('shareGmailBtn').href = `https://mail.google.com/mail/?view=cm&fs=1&su=${subject}&body=${body}`;
                 document.getElementById('shareViberBtn').href = `viber://forward?text=${body}`;
                 document.getElementById('shareModal').classList.remove('hidden');
