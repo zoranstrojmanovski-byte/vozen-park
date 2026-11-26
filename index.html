@@ -433,24 +433,74 @@
             <div id="adminPanelTolls" class="hidden bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl">
                 <h3 id="tollFormTitle" class="text-base font-bold text-white mb-3 flex items-center gap-2"><i class="fa-solid fa-plus-circle text-pink-600"></i> Патарина, Возач, Патен Налог & Релација</h3>
                 <input type="hidden" id="editTollKey" value="">
-                <div class="grid grid-cols-1 sm:grid-cols-6 gap-3 text-sm">
-                    <select id="tVehicle" class="bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white">
-                        <option value="">-- Избери возило --</option>
-                    </select>
-                    <select id="tDriver" class="bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white">
-                        <option value="">-- Избери возач --</option>
-                    </select>
-                    <input type="text" id="tWaybill" placeholder="Бр. на патен налог" class="bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white">
-                    <input type="text" id="tRoute" placeholder="Релација (на пр. Скопје - Куманово)" class="bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white">
-                    <input type="number" id="tCost" placeholder="Сума за патарина (МКД)" class="bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white">
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-7 gap-3 text-sm items-end">
+                    <div>
+                        <label class="block text-slate-300 mb-1">Датум:</label>
+                        <input type="date" id="tDate" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white">
+                    </div>
+                    <div>
+                        <label class="block text-slate-300 mb-1">Возило:</label>
+                        <select id="tVehicle" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white">
+                            <option value="">-- Избери возило --</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-slate-300 mb-1">Возач:</label>
+                        <select id="tDriver" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white">
+                            <option value="">-- Избери возач --</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-slate-300 mb-1">Патен налог:</label>
+                        <input type="text" id="tWaybill" placeholder="Бр. на налог" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white">
+                    </div>
+                    <div>
+                        <label class="block text-slate-300 mb-1">Релација:</label>
+                        <input type="text" id="tRoute" placeholder="Скопје - Куманово" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white">
+                    </div>
+                    <div>
+                        <label class="block text-slate-300 mb-1">Патарина (МКД):</label>
+                        <input type="number" id="tCost" placeholder="Сума (МКД)" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white">
+                    </div>
                     <div class="flex gap-1">
                         <button type="button" onclick="app.saveToll()" class="flex-1 bg-pink-600 hover:bg-pink-500 text-white font-semibold py-2 rounded-xl transition shadow-md">Зачувај</button>
                         <button type="button" id="cancelTollEditBtn" onclick="app.cancelTollEdit()" class="hidden bg-slate-800 hover:bg-slate-750 text-slate-200 px-3 py-2 rounded-xl">Откажи</button>
                     </div>
                 </div>
             </div>
-            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl">
-                <h3 class="text-base font-bold text-white mb-4 flex items-center gap-2"><i class="fa-solid fa-road text-pink-600"></i> Евиденција на Патни Налози, Релации и Патарини</h3>
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-4">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
+                    <h3 class="text-base font-bold text-white flex items-center gap-2"><i class="fa-solid fa-road text-pink-600"></i> Евиденција на Патни Налози, Релации и Патарини</h3>
+                    <div id="tollFilterSummary" class="text-sm text-pink-400 font-bold"></div>
+                </div>
+
+                <!-- FILTER BAR FOR TOLLS & WAYBILLS -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-2.5 text-sm bg-slate-950 p-3.5 rounded-xl border border-slate-800">
+                    <div>
+                        <label class="block text-slate-300 mb-1">Возило:</label>
+                        <select id="filterTVehicle" onchange="app.renderTollsTable()" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white">
+                            <option value="">-- Сите возила --</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-slate-300 mb-1">Возач:</label>
+                        <select id="filterTDriver" onchange="app.renderTollsTable()" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white">
+                            <option value="">-- Сите возачи --</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-slate-300 mb-1">Од датум:</label>
+                        <input type="date" id="filterTStartDate" onchange="app.renderTollsTable()" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white">
+                    </div>
+                    <div>
+                        <label class="block text-slate-300 mb-1">До датум:</label>
+                        <input type="date" id="filterTEndDate" onchange="app.renderTollsTable()" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white">
+                    </div>
+                    <div class="flex items-end">
+                        <button type="button" onclick="app.resetTollFilter()" class="w-full bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 py-2 rounded-xl transition">Исчисти филтер</button>
+                    </div>
+                </div>
+
                 <div class="overflow-x-auto">
                     <table class="w-full text-left text-sm">
                         <thead>
@@ -591,6 +641,7 @@
         const app = {
             isAdmin: false,
             allServicesData: {},
+            allTollsData: {},
             vehiclesMap: {},
             dashCache: { vehicles: {}, fuel: {}, service: {}, registrations: {}, tolls: {} },
             loginAdmin() {
@@ -636,6 +687,12 @@
                     const fDateEl = document.getElementById('fDate');
                     if (fDateEl && !fDateEl.value) {
                         fDateEl.value = new Date().toISOString().split('T')[0];
+                    }
+                }
+                if(tab === 'tolls') {
+                    const tDateEl = document.getElementById('tDate');
+                    if (tDateEl && !tDateEl.value) {
+                        tDateEl.value = new Date().toISOString().split('T')[0];
                     }
                 }
                 if(tab === 'reports') {
@@ -1066,17 +1123,17 @@
                 document.getElementById('cancelRegEditBtn').classList.add('hidden');
             },
 
-            // TOLLS EDIT
+            // TOLLS & WAYBILLS EDIT & FILTER
             saveToll() {
                 if(!this.isAdmin) { alert('Немате администраторски права!'); return; }
                 const editKey = document.getElementById('editTollKey').value;
+                const date = document.getElementById('tDate').value || new Date().toISOString().split('T')[0];
                 const vehicle = document.getElementById('tVehicle').value;
                 const driver = document.getElementById('tDriver').value;
                 const waybill = document.getElementById('tWaybill').value.trim();
                 const route = document.getElementById('tRoute').value.trim();
                 const cost = document.getElementById('tCost').value.trim();
                 if(!vehicle || !cost) { alert('Избери возило и внеси сума!'); return; }
-                const date = new Date().toISOString().split('T')[0];
 
                 const payload = { vehicle, driver, waybill, route, cost, date };
                 if(editKey) {
@@ -1091,8 +1148,9 @@
                 document.getElementById('tRoute').value = '';
                 document.getElementById('tCost').value = '';
             },
-            editToll(key, vehicle, driver, waybill, route, cost) {
+            editToll(key, date, vehicle, driver, waybill, route, cost) {
                 document.getElementById('editTollKey').value = key;
+                document.getElementById('tDate').value = date || new Date().toISOString().split('T')[0];
                 document.getElementById('tVehicle').value = vehicle;
                 document.getElementById('tDriver').value = driver;
                 document.getElementById('tWaybill').value = waybill;
@@ -1104,18 +1162,90 @@
             },
             cancelTollEdit() {
                 document.getElementById('editTollKey').value = '';
+                document.getElementById('tDate').value = new Date().toISOString().split('T')[0];
                 document.getElementById('tWaybill').value = '';
                 document.getElementById('tRoute').value = '';
                 document.getElementById('tCost').value = '';
                 document.getElementById('tollFormTitle').innerHTML = `<i class="fa-solid fa-plus-circle text-pink-600"></i> Патарина, Возач, Патен Налог & Релација`;
                 document.getElementById('cancelTollEditBtn').classList.add('hidden');
             },
+            resetTollFilter() {
+                document.getElementById('filterTVehicle').value = '';
+                document.getElementById('filterTDriver').value = '';
+                document.getElementById('filterTStartDate').value = '';
+                document.getElementById('filterTEndDate').value = '';
+                this.renderTollsTable();
+            },
+            renderTollsTable() {
+                const data = this.allTollsData || {};
+                const tbody = document.getElementById('tollsTableBody');
+                const summaryEl = document.getElementById('tollFilterSummary');
+                const fVeh = (document.getElementById('filterTVehicle')?.value || '').trim();
+                const fDrv = (document.getElementById('filterTDriver')?.value || '').trim();
+                const fStart = document.getElementById('filterTStartDate')?.value || '';
+                const fEnd = document.getElementById('filterTEndDate')?.value || '';
+                const isFiltering = Boolean(fVeh || fDrv || fStart || fEnd);
+
+                tbody.innerHTML = '';
+
+                if (Object.keys(data).length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="7" class="text-center py-6 text-slate-400">Нема патни налози.</td></tr>`;
+                    if (summaryEl) summaryEl.innerText = '';
+                    return;
+                }
+
+                const entries = [];
+                let filteredSum = 0;
+
+                Object.keys(data).forEach(key => {
+                    const t = data[key];
+                    if (fVeh && t.vehicle !== fVeh) return;
+                    if (fDrv && (t.driver || '') !== fDrv) return;
+                    if (fStart && (!t.date || t.date < fStart)) return;
+                    if (fEnd && (!t.date || t.date > fEnd)) return;
+
+                    filteredSum += Number(t.cost) || 0;
+                    entries.push({ key, t });
+                });
+
+                entries.sort((a, b) => (b.t.date || '').localeCompare(a.t.date || ''));
+
+                if (entries.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="7" class="text-center py-6 text-slate-400">Нема пронајдено патни налози за избраниот филтер.</td></tr>`;
+                } else {
+                    entries.forEach(({ key, t }) => {
+                        tbody.innerHTML += `
+                            <tr class="border-b border-slate-800/50 hover:bg-slate-800/30">
+                                <td class="py-3 px-3 text-slate-300">${t.date || '-'}</td>
+                                <td class="py-3 px-3 font-medium text-white">${t.vehicle}</td>
+                                <td class="py-3 px-3 text-slate-200">${t.driver || '-'}</td>
+                                <td class="py-3 px-3 text-slate-200 font-semibold">${t.waybill || '-'}</td>
+                                <td class="py-3 px-3 text-slate-200">${t.route || '-'}</td>
+                                <td class="py-3 px-3 text-pink-400 font-bold">${Number(t.cost || 0).toLocaleString()} ден.</td>
+                                <td class="py-3 px-3 text-right space-x-1">
+                                    ${this.isAdmin ? `
+                                        <button type="button" onclick="app.editToll('${key}', '${t.date || ''}', '${t.vehicle}', '${t.driver || ''}', '${t.waybill || ''}', '${t.route || ''}', '${t.cost}')" class="text-amber-400 hover:text-amber-300 bg-amber-950/40 border border-amber-900/50 px-2.5 py-1.5 rounded-lg" title="Измени"><i class="fa-solid fa-pen"></i></button>
+                                        <button type="button" onclick="app.removeRecord('tolls', '${key}')" class="text-red-400 hover:text-red-300 bg-red-950/40 border border-red-900/50 px-2.5 py-1.5 rounded-lg" title="Избриши"><i class="fa-solid fa-trash"></i></button>
+                                    ` : '<span class="text-slate-500">-</span>'}
+                                </td>
+                            </tr>
+                        `;
+                    });
+                }
+
+                if (summaryEl) {
+                    summaryEl.innerText = isFiltering
+                        ? `Пронајдено: ${entries.length} налози | Вкупно патарини: ${filteredSum.toLocaleString()} ден.`
+                        : `Вкупно налози: ${entries.length} | Патарини: ${filteredSum.toLocaleString()} ден.`;
+                }
+            },
 
             initData() {
+                const todayStr = new Date().toISOString().split('T')[0];
                 const fDateEl = document.getElementById('fDate');
-                if (fDateEl && !fDateEl.value) {
-                    fDateEl.value = new Date().toISOString().split('T')[0];
-                }
+                if (fDateEl && !fDateEl.value) fDateEl.value = todayStr;
+                const tDateEl = document.getElementById('tDate');
+                if (tDateEl && !tDateEl.value) tDateEl.value = todayStr;
 
                 db.ref('vehicles').on('value', (snapshot) => {
                     const data = snapshot.val();
@@ -1126,6 +1256,7 @@
                     const regVehSelect = document.getElementById('regVehicle');
                     const modalSVSelect = document.getElementById('modalSVehicle');
                     const filterSVSelect = document.getElementById('filterSVehicle');
+                    const filterTVSelect = document.getElementById('filterTVehicle');
 
                     tbody.innerHTML = '';
                     fVehSelect.innerHTML = `<option value="">-- Избери возило --</option>`;
@@ -1133,6 +1264,7 @@
                     regVehSelect.innerHTML = `<option value="">-- Избери возило --</option>`;
                     modalSVSelect.innerHTML = `<option value="">-- Избери возило --</option>`;
                     if (filterSVSelect) filterSVSelect.innerHTML = `<option value="">-- Сите возила --</option>`;
+                    if (filterTVSelect) filterTVSelect.innerHTML = `<option value="">-- Сите возила --</option>`;
 
                     const driversSet = new Set();
 
@@ -1160,6 +1292,7 @@
                         regVehSelect.innerHTML += optHtml;
                         modalSVSelect.innerHTML += optHtml;
                         if (filterSVSelect) filterSVSelect.innerHTML += optHtml;
+                        if (filterTVSelect) filterTVSelect.innerHTML += optHtml;
 
                         let regBadge = v.regDate || 'Нема';
                         if(v.regDate) {
@@ -1197,12 +1330,20 @@
 
                     const fDrvSelect = document.getElementById('fDriver');
                     const tDrvSelect = document.getElementById('tDriver');
+                    const filterTDSelect = document.getElementById('filterTDriver');
+                    const prevFilterDrv = filterTDSelect ? filterTDSelect.value : '';
                     fDrvSelect.innerHTML = `<option value="">-- Избери возач --</option>`;
                     tDrvSelect.innerHTML = `<option value="">-- Избери возач --</option>`;
+                    if (filterTDSelect) filterTDSelect.innerHTML = `<option value="">-- Сите возачи --</option>`;
+                    Object.values(this.allTollsData || {}).forEach(t => {
+                        if (t.driver) driversSet.add(t.driver);
+                    });
                     driversSet.forEach(drv => {
                         fDrvSelect.innerHTML += `<option value="${drv}">${drv}</option>`;
                         tDrvSelect.innerHTML += `<option value="${drv}">${drv}</option>`;
+                        if (filterTDSelect) filterTDSelect.innerHTML += `<option value="${drv}">${drv}</option>`;
                     });
+                    if (filterTDSelect && prevFilterDrv) filterTDSelect.value = prevFilterDrv;
 
                     document.getElementById('statTotalVehicles').innerText = totalCount;
                     document.getElementById('statExpiring').innerText = expiringCount;
@@ -1278,36 +1419,29 @@
                 // Tolls listener
                 db.ref('tolls').on('value', (snapshot) => {
                     const data = snapshot.val();
-                    const tbody = document.getElementById('tollsTableBody');
-                    tbody.innerHTML = '';
+                    this.allTollsData = data || {};
                     let totalTollsSum = 0;
-                    if (!data) {
-                        tbody.innerHTML = `<tr><td colspan="7" class="text-center py-6 text-slate-400">Нема патни налози.</td></tr>`;
-                        document.getElementById('statTotalTolls').innerText = '0 ден.';
-                        document.getElementById('statTotalCosts').innerText = '0 ден.';
-                        return;
+
+                    if (data) {
+                        Object.values(data).forEach(t => {
+                            totalTollsSum += Number(t.cost) || 0;
+                        });
                     }
-                    Object.keys(data).forEach(key => {
-                        const t = data[key];
-                        const cNum = Number(t.cost) || 0;
-                        totalTollsSum += cNum;
-                        tbody.innerHTML += `
-                            <tr class="border-b border-slate-800/50 hover:bg-slate-800/30">
-                                <td class="py-3 px-3 text-slate-300">${t.date || '-'}</td>
-                                <td class="py-3 px-3 font-medium text-white">${t.vehicle}</td>
-                                <td class="py-3 px-3 text-slate-200">${t.driver || '-'}</td>
-                                <td class="py-3 px-3 text-slate-200 font-semibold">${t.waybill || '-'}</td>
-                                <td class="py-3 px-3 text-slate-200">${t.route || '-'}</td>
-                                <td class="py-3 px-3 text-slate-200">${t.cost} ден.</td>
-                                <td class="py-3 px-3 text-right space-x-1">
-                                    ${this.isAdmin ? `
-                                        <button type="button" onclick="app.editToll('${key}', '${t.vehicle}', '${t.driver || ''}', '${t.waybill || ''}', '${t.route || ''}', '${t.cost}')" class="text-amber-400 hover:text-amber-300 bg-amber-950/40 border border-amber-900/50 px-2.5 py-1.5 rounded-lg" title="Измени"><i class="fa-solid fa-pen"></i></button>
-                                        <button type="button" onclick="app.removeRecord('tolls', '${key}')" class="text-red-400 hover:text-red-300 bg-red-950/40 border border-red-900/50 px-2.5 py-1.5 rounded-lg" title="Избриши"><i class="fa-solid fa-trash"></i></button>
-                                    ` : '<span class="text-slate-500">-</span>'}
-                                </td>
-                            </tr>
-                        `;
-                    });
+
+                    const filterTDSelect = document.getElementById('filterTDriver');
+                    if (filterTDSelect) {
+                        const prevVal = filterTDSelect.value;
+                        const allDrivers = new Set();
+                        Object.values(this.vehiclesMap || {}).forEach(v => { if (v.driver) allDrivers.add(v.driver); });
+                        Object.values(this.allTollsData).forEach(t => { if (t.driver) allDrivers.add(t.driver); });
+                        filterTDSelect.innerHTML = `<option value="">-- Сите возачи --</option>`;
+                        allDrivers.forEach(drv => {
+                            filterTDSelect.innerHTML += `<option value="${drv}">${drv}</option>`;
+                        });
+                        if (prevVal) filterTDSelect.value = prevVal;
+                    }
+
+                    this.renderTollsTable();
                     document.getElementById('statTotalTolls').innerText = totalTollsSum.toLocaleString() + ' ден.';
 
                     Promise.all([
