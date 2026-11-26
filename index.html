@@ -7,11 +7,11 @@
     <link rel="icon" type="image/png" href="icon.png">
     <link rel="apple-touch-icon" href="icon.png">
     <meta name="theme-color" content="#db2777">
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="[https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4](https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4)"></script>
+    <link rel="stylesheet" href="[https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css](https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css)">
     <!-- Firebase SDKs -->
-    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
+    <script src="[https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js](https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js)"></script>
+    <script src="[https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js](https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js)"></script>
     <style>
         html { font-size: 18px; }
         ::-webkit-scrollbar { width: 8px; height: 8px; }
@@ -23,7 +23,7 @@
         const firebaseConfig = {
           apiKey: "AIzaSyAvDir-JCKQ5yTMum9I6kxcDR94V2khwbE",
           authDomain: "sara-fashion-vozen-park.firebaseapp.com",
-          databaseURL: "https://sara-fashion-vozen-park-default-rtdb.europe-west1.firebasedatabase.app",
+          databaseURL: "[https://sara-fashion-vozen-park-default-rtdb.europe-west1.firebasedatabase.app](https://sara-fashion-vozen-park-default-rtdb.europe-west1.firebasedatabase.app)",
           projectId: "sara-fashion-vozen-park",
           storageBucket: "sara-fashion-vozen-park.appspot.com",
           messagingSenderId: "422190359412",
@@ -473,21 +473,87 @@
 
         <!-- TAB 5: REPORTS & VEHICLE CARDS DASHBOARD -->
         <div id="tabReports" class="hidden space-y-6">
-            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-4">
-                <h3 class="text-base font-bold text-white flex items-center gap-2"><i class="fa-solid fa-chart-pie text-pink-600"></i> Професионална Контролна Табла & Извештаи по Период</h3>
-                <p class="text-sm text-slate-300">Внеси сакан временски период (Од - До) и штиклирај ги возилата или поединечните ставки што сакаш да ги собереш.</p>
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-5">
+                <div>
+                    <h3 class="text-base font-bold text-white flex items-center gap-2"><i class="fa-solid fa-chart-pie text-pink-600"></i> Професионална Контролна Табла & Извештаи по Период</h3>
+                    <p class="text-sm text-slate-300 mt-1">Избери период, возило (или повеќе возила) и вид гориво за детална анализа на гориво, поминати километри и вкупни трошоци.</p>
+                </div>
                 
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-sm bg-slate-950 p-4 rounded-xl border border-slate-800">
+                <!-- PERIOD & FUEL TYPE FILTER -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-sm bg-slate-950 p-4 rounded-xl border border-slate-800">
                     <div>
                         <label class="block text-slate-300 mb-1">Од датум:</label>
-                        <input type="date" id="repStartDate" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white">
+                        <input type="date" id="repStartDate" onchange="app.generateDashboardReport()" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white">
                     </div>
                     <div>
                         <label class="block text-slate-300 mb-1">До датум:</label>
-                        <input type="date" id="repEndDate" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white">
+                        <input type="date" id="repEndDate" onchange="app.generateDashboardReport()" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white">
                     </div>
-                    <div class="flex items-end">
-                        <button type="button" onclick="app.generateDashboardReport()" class="w-full bg-pink-600 hover:bg-pink-500 text-white font-semibold py-2.5 rounded-xl transition shadow-md"><i class="fa-solid fa-magnifying-glass mr-1"></i> Прикажи Контролна Табла</button>
+                    <div>
+                        <label class="block text-slate-300 mb-1">Вид на гориво (за анализа):</label>
+                        <select id="repFuelType" onchange="app.updateAnalytics()" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white">
+                            <option value="ALL">-- Сите горива (Вкупно) --</option>
+                            <option value="Дизел">Дизел</option>
+                            <option value="Бензин">Бензин</option>
+                            <option value="Плин / ЛПГ">Плин / ЛПГ</option>
+                            <option value="Метан">Метан</option>
+                        </select>
+                    </div>
+                    <div class="flex items-end gap-2">
+                        <button type="button" onclick="app.generateDashboardReport()" class="flex-1 bg-pink-600 hover:bg-pink-500 text-white font-semibold py-2.5 rounded-xl transition shadow-md"><i class="fa-solid fa-magnifying-glass mr-1"></i> Прикажи</button>
+                        <button type="button" onclick="app.resetDashboardFilters()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 px-3 py-2.5 rounded-xl transition" title="Исчисти датуми"><i class="fa-solid fa-rotate-left"></i></button>
+                    </div>
+                </div>
+
+                <!-- VEHICLE MULTI-SELECTOR BAR -->
+                <div class="bg-slate-950 border border-slate-800 rounded-xl p-4 space-y-2.5">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                        <span class="text-sm font-bold text-slate-200"><i class="fa-solid fa-car-side text-pink-500 mr-1.5"></i> Избери возила за пресметка (едно, неколку по избор или сите):</span>
+                        <div class="flex gap-2">
+                            <button type="button" onclick="app.toggleAnalyticsVehicles(true)" class="bg-slate-800 hover:bg-slate-700 text-slate-100 border border-slate-700 px-3 py-1 rounded-lg text-xs transition">Сите возила</button>
+                            <button type="button" onclick="app.toggleAnalyticsVehicles(false)" class="bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 px-3 py-1 rounded-lg text-xs transition">Ниедно</button>
+                        </div>
+                    </div>
+                    <div id="analyticsVehiclePills" class="flex flex-wrap gap-2">
+                        <span class="text-xs text-slate-400">Вчитување возила...</span>
+                    </div>
+                </div>
+
+                <!-- FUEL & MILEAGE ANALYTICS CARDS -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                    <!-- FUEL SUMMARY BOX -->
+                    <div class="bg-slate-950 border border-pink-600/40 rounded-2xl p-4 space-y-3 shadow-lg">
+                        <div class="flex items-center justify-between border-b border-slate-800 pb-2.5">
+                            <h4 class="text-sm font-bold text-white flex items-center gap-2"><i class="fa-solid fa-gas-pump text-pink-500"></i> Потрошено Гориво за Избраните Возила</h4>
+                            <span id="analyticsFuelBadge" class="text-xs bg-pink-950/60 border border-pink-600/40 text-pink-300 px-2.5 py-1 rounded-lg font-semibold">Сите горива</span>
+                        </div>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div class="bg-slate-900 border border-slate-800 rounded-xl p-3">
+                                <span class="text-xs text-slate-300 block">Вкупно Литри</span>
+                                <span id="analyticsFuelLiters" class="text-xl font-bold text-white">0 L</span>
+                            </div>
+                            <div class="bg-slate-900 border border-slate-800 rounded-xl p-3">
+                                <span class="text-xs text-slate-300 block">Вкупно Сума (МКД)</span>
+                                <span id="analyticsFuelCost" class="text-xl font-bold text-pink-400">0 ден.</span>
+                            </div>
+                        </div>
+                        <div id="analyticsFuelBreakdown" class="text-xs text-slate-300 space-y-1"></div>
+                    </div>
+
+                    <!-- MILEAGE SUMMARY BOX -->
+                    <div class="bg-slate-950 border border-blue-500/40 rounded-2xl p-4 space-y-3 shadow-lg">
+                        <div class="flex items-center justify-between border-b border-slate-800 pb-2.5">
+                            <h4 class="text-sm font-bold text-white flex items-center gap-2"><i class="fa-solid fa-gauge-high text-blue-400"></i> Поминати Километри во Периодот</h4>
+                            <span id="analyticsAvgConsumption" class="text-xs bg-blue-950/60 border border-blue-500/40 text-blue-300 px-2.5 py-1 rounded-lg font-semibold">Просек: -</span>
+                        </div>
+                        <div class="bg-slate-900 border border-slate-800 rounded-xl p-3 flex items-center justify-between">
+                            <div>
+                                <span class="text-xs text-slate-300 block">Вкупно поминати километри</span>
+                                <span id="analyticsTotalKm" class="text-xl font-bold text-white">0 км</span>
+                            </div>
+                            <span class="text-xs text-slate-400 text-right max-w-[190px]">Пресметано од почетна до крајна км во периодот</span>
+                        </div>
+                        <div id="analyticsKmPerVehicle" class="text-xs text-slate-300 space-y-1 max-h-28 overflow-y-auto"></div>
                     </div>
                 </div>
 
@@ -513,7 +579,7 @@
 
                 <!-- VEHICLES CARDS CONTAINER -->
                 <div id="vehicleCardsContainer" class="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
-                    <p class="text-slate-400 text-center py-8 lg:col-span-2 text-sm">Избери период и кликни „Прикажи Контролна Табла“ за да се вчитаат картичките по возила.</p>
+                    <p class="text-slate-400 text-center py-8 lg:col-span-2 text-sm">Избери период и кликни „Прикажи“ за да се вчитаат картичките по возила.</p>
                 </div>
             </div>
         </div>
@@ -525,6 +591,7 @@
             isAdmin: false,
             allServicesData: {},
             vehiclesMap: {},
+            dashCache: { vehicles: {}, fuel: {}, service: {}, registrations: {}, tolls: {} },
             loginAdmin() {
                 const pass = document.getElementById('loginPassword').value;
                 if(pass === 'admin123') {
@@ -1296,11 +1363,151 @@
                 document.getElementById('selectedItemsCount').innerText = `Избрани ставки: ${count}`;
             },
 
+            resetDashboardFilters() {
+                document.getElementById('repStartDate').value = '';
+                document.getElementById('repEndDate').value = '';
+                document.getElementById('repFuelType').value = 'ALL';
+                this.generateDashboardReport();
+            },
+
+            toggleAnalyticsVehicles(state) {
+                document.querySelectorAll('.analytics-veh-cb').forEach(cb => {
+                    cb.checked = state;
+                });
+                this.updateAnalytics();
+            },
+
+            updateAnalytics() {
+                const sDate = document.getElementById('repStartDate')?.value || '';
+                const eDate = document.getElementById('repEndDate')?.value || '';
+                const selectedFuelType = document.getElementById('repFuelType')?.value || 'ALL';
+
+                const selectedPlates = new Set(
+                    Array.from(document.querySelectorAll('.analytics-veh-cb:checked')).map(cb => cb.value)
+                );
+
+                const { vehicles, fuel, service } = this.dashCache;
+
+                // 1. Fuel aggregation
+                let totalLiters = 0;
+                let totalFuelCost = 0;
+                const byFuelType = {};
+                let totalAllFuelLiters = 0;
+
+                Object.values(fuel).forEach(f => {
+                    if (!selectedPlates.has(f.vehicle)) return;
+                    if ((sDate && (!f.date || f.date < sDate)) || (eDate && (!f.date || f.date > eDate))) return;
+
+                    const fType = f.type || 'Дизел';
+                    const l = parseFloat(f.liters) || 0;
+                    const c = parseFloat(f.cost) || 0;
+                    totalAllFuelLiters += l;
+
+                    if (!byFuelType[fType]) byFuelType[fType] = { liters: 0, cost: 0 };
+                    byFuelType[fType].liters += l;
+                    byFuelType[fType].cost += c;
+
+                    if (selectedFuelType === 'ALL' || fType === selectedFuelType) {
+                        totalLiters += l;
+                        totalFuelCost += c;
+                    }
+                });
+
+                document.getElementById('analyticsFuelBadge').innerText =
+                    selectedFuelType === 'ALL' ? 'Сите горива' : selectedFuelType;
+                document.getElementById('analyticsFuelLiters').innerText =
+                    (Math.round(totalLiters * 100) / 100).toLocaleString() + ' L';
+                document.getElementById('analyticsFuelCost').innerText =
+                    Math.round(totalFuelCost).toLocaleString() + ' ден.';
+
+                const breakdownEl = document.getElementById('analyticsFuelBreakdown');
+                const typesKeys = Object.keys(byFuelType);
+                if (selectedPlates.size === 0) {
+                    breakdownEl.innerHTML = `<span class="text-slate-400">Избери барем едно возило.</span>`;
+                } else if (typesKeys.length === 0) {
+                    breakdownEl.innerHTML = `<span class="text-slate-400">Нема евидентирано гориво во избраниот период.</span>`;
+                } else {
+                    breakdownEl.innerHTML = typesKeys.map(t => {
+                        const item = byFuelType[t];
+                        const isHighlighted = selectedFuelType === t;
+                        return `<div class="flex justify-between ${isHighlighted ? 'text-pink-400 font-bold' : 'text-slate-300'}">
+                            <span>${t}:</span>
+                            <span>${(Math.round(item.liters * 100) / 100).toLocaleString()} L (${Math.round(item.cost).toLocaleString()} ден.)</span>
+                        </div>`;
+                    }).join('');
+                }
+
+                // 2. Mileage aggregation per vehicle
+                let grandKmDriven = 0;
+                const kmLines = [];
+
+                Object.values(vehicles).forEach(v => {
+                    const plate = v.plate;
+                    if (!selectedPlates.has(plate)) return;
+
+                    const readings = [];
+                    Object.values(fuel).forEach(f => {
+                        if (f.vehicle !== plate) return;
+                        if ((sDate && (!f.date || f.date < sDate)) || (eDate && (!f.date || f.date > eDate))) return;
+                        const k = parseFloat(f.km);
+                        if (!Number.isNaN(k) && k > 0) readings.push({ date: f.date || '', km: k });
+                    });
+                    Object.values(service).forEach(s => {
+                        if (s.vehicle !== plate) return;
+                        if ((sDate && (!s.date || s.date < sDate)) || (eDate && (!s.date || s.date > eDate))) return;
+                        const k = parseFloat(s.km);
+                        if (!Number.isNaN(k) && k > 0) readings.push({ date: s.date || '', km: k });
+                    });
+
+                    if (readings.length >= 2) {
+                        const kmVals = readings.map(r => r.km);
+                        const minKm = Math.min(...kmVals);
+                        const maxKm = Math.max(...kmVals);
+                        const diff = Math.max(0, maxKm - minKm);
+                        grandKmDriven += diff;
+                        kmLines.push(`<div class="flex justify-between gap-2">
+                            <span class="text-slate-200 truncate">${v.model} (${plate}):</span>
+                            <span class="text-blue-300 font-semibold shrink-0">+${diff.toLocaleString()} км <span class="text-slate-400 font-normal">(${minKm.toLocaleString()} → ${maxKm.toLocaleString()})</span></span>
+                        </div>`);
+                    } else if (readings.length === 1) {
+                        kmLines.push(`<div class="flex justify-between gap-2">
+                            <span class="text-slate-200 truncate">${v.model} (${plate}):</span>
+                            <span class="text-slate-400 shrink-0">Само 1 запис (${readings[0].km.toLocaleString()} км)</span>
+                        </div>`);
+                    } else {
+                        kmLines.push(`<div class="flex justify-between gap-2">
+                            <span class="text-slate-200 truncate">${v.model} (${plate}):</span>
+                            <span class="text-slate-500 shrink-0">Нема внесени км</span>
+                        </div>`);
+                    }
+                });
+
+                document.getElementById('analyticsTotalKm').innerText = grandKmDriven.toLocaleString() + ' км';
+                const avgEl = document.getElementById('analyticsAvgConsumption');
+                if (grandKmDriven > 0 && totalAllFuelLiters > 0) {
+                    const avgPer100 = Math.round((totalAllFuelLiters / grandKmDriven) * 1000) / 10;
+                    avgEl.innerText = `Просек: ${avgPer100} L / 100 км`;
+                } else {
+                    avgEl.innerText = 'Просек: -';
+                }
+
+                const kmListEl = document.getElementById('analyticsKmPerVehicle');
+                kmListEl.innerHTML = selectedPlates.size === 0
+                    ? `<span class="text-slate-400">Избери барем едно возило.</span>`
+                    : kmLines.join('');
+            },
+
             generateDashboardReport() {
                 const sDate = document.getElementById('repStartDate').value;
                 const eDate = document.getElementById('repEndDate').value;
                 const container = document.getElementById('vehicleCardsContainer');
                 const summaryPanel = document.getElementById('selectedSummaryPanel');
+                const pillsContainer = document.getElementById('analyticsVehiclePills');
+
+                const prevSelectedPlates = new Set(
+                    Array.from(document.querySelectorAll('.analytics-veh-cb:checked')).map(cb => cb.value)
+                );
+                const hasExistingPills = document.querySelectorAll('.analytics-veh-cb').length > 0;
 
                 Promise.all([
                     db.ref('vehicles').once('value'),
@@ -1315,11 +1522,22 @@
                     const regData = regSnap.val() || {};
                     const tollData = tollSnap.val() || {};
 
+                    this.dashCache = {
+                        vehicles,
+                        fuel: fuelData,
+                        service: servData,
+                        registrations: regData,
+                        tolls: tollData
+                    };
+
                     container.innerHTML = '';
+                    pillsContainer.innerHTML = '';
 
                     if(Object.keys(vehicles).length === 0) {
                         summaryPanel.classList.add('hidden');
+                        pillsContainer.innerHTML = `<span class="text-xs text-slate-400">Нема внесено возила.</span>`;
                         container.innerHTML = `<p class="text-slate-400 text-center py-8 lg:col-span-2 text-sm">Нема внесено возила во системот.</p>`;
+                        this.updateAnalytics();
                         return;
                     }
 
@@ -1328,6 +1546,14 @@
                     Object.keys(vehicles).forEach(vKey => {
                         const v = vehicles[vKey];
                         const plate = v.plate;
+                        const isChecked = !hasExistingPills || prevSelectedPlates.has(plate);
+
+                        pillsContainer.innerHTML += `
+                            <label class="inline-flex items-center gap-2 bg-slate-900 hover:bg-slate-800 border border-slate-700 px-3 py-1.5 rounded-xl text-xs text-slate-100 cursor-pointer select-none">
+                                <input type="checkbox" value="${plate}" ${isChecked ? 'checked' : ''} onchange="app.updateAnalytics()" class="analytics-veh-cb w-3.5 h-3.5 accent-pink-600 rounded cursor-pointer">
+                                <span><b>${v.model}</b> (${plate})</span>
+                            </label>
+                        `;
 
                         let fRows = '';
                         let vFuelTotal = 0;
@@ -1467,11 +1693,12 @@
                         `;
                     });
 
+                    this.updateAnalytics();
                     this.calculateSelectedTotal();
                 });
             },
             shareReport() {
-                const url = "https://zoranstrojmanovski-byte.github.io/vozen-park/";
+                const url = "[https://zoranstrojmanovski-byte.github.io/vozen-park/](https://zoranstrojmanovski-byte.github.io/vozen-park/)";
                 const subject = encodeURIComponent("Контролна Табла Возен Парк Сара Фешн");
                 const body = encodeURIComponent("Здраво! Еве линк од активната Контролна Табла за Возен Парк - Сара Фешн:\n" + url);
 
@@ -1483,7 +1710,7 @@
                 );
 
                 if (choice === "1") {
-                    window.open(`https://mail.google.com/mail/?view=cm&fs=1&su=${subject}&body=${body}`, "_blank");
+                    window.open(`[https://mail.google.com/mail/?view=cm&fs=1&su=$](https://mail.google.com/mail/?view=cm&fs=1&su=$){subject}&body=${body}`, "_blank");
                 } else if (choice === "2") {
                     window.open(`viber://forward?text=${body}`, "_blank");
                 } else if (choice === "3") {
